@@ -1,0 +1,11 @@
+{
+  "id": "resort-and-retreat",
+  "displayName": "Resort and Retreat",
+  "vertical": [
+    "HOSPITALITY"
+  ],
+  "purpose": [
+    "LOCATION"
+  ],
+  "pageSetType": "ENTITY"
+}
