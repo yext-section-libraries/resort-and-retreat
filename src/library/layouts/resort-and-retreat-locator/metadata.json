@@ -1,5 +1,5 @@
 {
   "id": "resort-and-retreat-locator",
   "displayName": "Locator",
-  "pageGroupType": "LOCATOR"
+  "pageSetType": "LOCATOR"
 }
