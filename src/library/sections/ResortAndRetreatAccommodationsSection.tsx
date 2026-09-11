@@ -10,13 +10,10 @@ import {
   createItemSource,
   EntityField,
   getAnalyticsScopeHash,
-  getDefaultRTF,
   getSurfaceColorStyle,
   getThemeColorCssValue,
-  MaybeRTF,
   resolveComponentData,
   type ComprehensiveCTAValue,
-  type RichText,
   type StyledTextValue,
   type StreamDocument,
   type ThemeColor,
@@ -31,6 +28,17 @@ import {
   useDocument,
   VisibilityWrapper,
 } from "@yext/visual-editor";
+import {
+  createImageFieldDefault,
+  createRichTextFieldDefault,
+  createStringFieldDefault,
+  defaultTextStyles,
+} from "../shared/sectionDefaults";
+import {
+  renderRichText,
+  resolveStyledTextStyles,
+  type RichTextStyleOverrides,
+} from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -54,9 +62,6 @@ type SharedCardAction = Pick<
   "data" | "styles" | "className" | "eventName"
 >;
 
-type RichTextStyleOverrides = NonNullable<
-  React.ComponentProps<typeof MaybeRTF>["richTextStyleOverrides"]
->;
 type AccommodationCardItem = {
   title: YextEntityField<TranslatableString>;
   description: YextEntityField<TranslatableRichText>;
@@ -88,124 +93,9 @@ export type ResortAndRetreatAccommodationsSectionProps = {
   };
 };
 
-const renderResolvedRichText = (
-  value: unknown,
-  className: string,
-  richTextStyleOverrides: RichTextStyleOverrides,
-) => {
-  if (React.isValidElement(value)) {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    return (
-      <MaybeRTF
-        data={value}
-        className={className}
-        richTextStyleOverrides={richTextStyleOverrides}
-      />
-    );
-  }
-
-  if (isRichTextValue(value)) {
-    return (
-      <MaybeRTF
-        data={value}
-        className={className}
-        richTextStyleOverrides={richTextStyleOverrides}
-      />
-    );
-  }
-
-  return null;
-};
-
-const isRichTextValue = (value: unknown): value is RichText =>
-  (() => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-
-    return (
-      ("html" in value && typeof value.html === "string") ||
-      ("json" in value && typeof value.json === "string")
-    );
-  })();
-
-const resolveStyledTextStyles = (
-  styles: StyledTextValue,
-  fontColor: ThemeColor | undefined,
-  fallbackColor: string,
-  fallbackFontFamily: string,
-  fallbackFontSize: string,
-  fallbackFontWeight: React.CSSProperties["fontWeight"],
-  fallbackTextTransform?: React.CSSProperties["textTransform"],
-) => ({
-  color: getThemeColorCssValue(fontColor) ?? fallbackColor,
-  fontFamily:
-    styles.fontFamily === "default" ? fallbackFontFamily : styles.fontFamily,
-  fontSize: styles.fontSize === "default" ? fallbackFontSize : styles.fontSize,
-  fontWeight:
-    styles.fontWeight === "default" ? fallbackFontWeight : styles.fontWeight,
-  fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-  textTransform:
-    styles.textTransform === "default"
-      ? fallbackTextTransform
-      : styles.textTransform,
-});
-
 const createStyledRtfDefault = (defaultValue: string): StyledRtfProps => ({
-  text: {
-    field: "",
-    constantValue: {
-      defaultValue: getDefaultRTF(defaultValue),
-      hasLocalizedValue: "true",
-    },
-    constantValueEnabled: true,
-  },
-  styles: {
-    fontFamily: "default",
-    fontSize: "default",
-    fontWeight: "default",
-    fontStyle: "default",
-    textTransform: "default",
-  },
-});
-
-const createStringFieldDefault = (
-  defaultValue: string,
-): YextEntityField<TranslatableString> => ({
-  field: "",
-  constantValue: {
-    defaultValue,
-    hasLocalizedValue: "true",
-  },
-  constantValueEnabled: true,
-});
-
-const createRichTextFieldDefault = (
-  defaultValue: string,
-): YextEntityField<TranslatableRichText> => ({
-  field: "",
-  constantValue: {
-    defaultValue: getDefaultRTF(defaultValue),
-    hasLocalizedValue: "true",
-  },
-  constantValueEnabled: true,
-});
-
-const createImageFieldDefault = (
-  url: string,
-  width: number,
-  height: number,
-): YextEntityField<TranslatableAssetImage> => ({
-  field: "",
-  constantValue: {
-    url,
-    width,
-    height,
-  },
-  constantValueEnabled: true,
+  text: createRichTextFieldDefault(defaultValue),
+  styles: defaultTextStyles,
 });
 
 function createAccommodationCta(): ComprehensiveCTAValue {
@@ -478,9 +368,7 @@ const AccommodationCardView = ({
       "currentColor",
   };
   const description = card.description
-    ? resolveComponentData(card.description, locale, streamDocument, {
-        richTextStyleOverrides: cardDescriptionRichTextStyleOverrides,
-      })
+    ? resolveComponentData(card.description, locale, streamDocument)
     : undefined;
   const ctaLabel = card.ctaLabel
     ? resolveComponentData(card.ctaLabel, locale, streamDocument)
@@ -492,7 +380,7 @@ const AccommodationCardView = ({
     ...cardAction,
     data: {
       ...defaultAccommodationCta.data,
-      ...(cardAction.data ?? {}),
+      ...cardAction.data,
       cta: {
         field: "",
         constantValueEnabled: true,
@@ -544,10 +432,10 @@ const AccommodationCardView = ({
           >
             {title}
           </h3>
-          {renderResolvedRichText(
+          {renderRichText(
             description,
-            "m-0",
             cardDescriptionRichTextStyleOverrides,
+            "m-0",
           )}
         </div>
         <div>
@@ -609,7 +497,6 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
     props.description.text,
     locale,
     streamDocument,
-    { richTextStyleOverrides: sectionDescriptionRichTextStyleOverrides },
   );
   const entries = accommodationCardSource.resolveItems(
     props.entries,
@@ -762,10 +649,10 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
                     props.description.text.constantValueEnabled
                   }
                 >
-                  {renderResolvedRichText(
+                  {renderRichText(
                     description,
-                    "mt-4",
                     sectionDescriptionRichTextStyleOverrides,
+                    "mt-4",
                   )}
                 </EntityField>
               </div>

@@ -32,11 +32,16 @@ import {
   getThemeColorCssValue,
   i18nComponentsInstance,
   normalizeLink,
-  normalizeThemeColorToken,
   resolveComponentData,
-  ThemeOptions,
   useDocument,
 } from "@yext/visual-editor";
+import { aspectRatioOptions } from "../shared/fieldOptions";
+import { hasImageSource } from "../shared/imageUtils";
+import {
+  getTextStyles,
+  hasExplicitThemeColor,
+  resolveBorderRadius,
+} from "../shared/sectionStyles";
 
 type SharedHeaderVariant =
   | "centerLogoSplitNav"
@@ -150,46 +155,6 @@ const defaultUtilityIconImage: SharedHeaderAction["iconImage"] = {
   },
 };
 
-const hasExplicitThemeColor = (color?: ThemeColor): color is ThemeColor => {
-  return Boolean(normalizeThemeColorToken(color));
-};
-
-const resolveBorderRadius = (value?: string): string | undefined => {
-  if (!value || value === "default") {
-    return undefined;
-  }
-
-  return value;
-};
-
-const getTextStyles = ({
-  color,
-  styles,
-}: {
-  color?: ThemeColor;
-  styles: Pick<
-    StyledLinkValue,
-    | "fontFamily"
-    | "fontSize"
-    | "fontWeight"
-    | "fontStyle"
-    | "textTransform"
-    | "letterSpacing"
-  >;
-}): React.CSSProperties => {
-  return {
-    color: getThemeColorCssValue(color),
-    fontFamily: styles.fontFamily === "default" ? undefined : styles.fontFamily,
-    fontSize: styles.fontSize === "default" ? undefined : styles.fontSize,
-    fontWeight: styles.fontWeight === "default" ? undefined : styles.fontWeight,
-    fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-    textTransform:
-      styles.textTransform === "default" ? undefined : styles.textTransform,
-    letterSpacing:
-      styles.letterSpacing === "default" ? undefined : styles.letterSpacing,
-  };
-};
-
 const getTranslatableSummary = (
   value: TranslatableString | undefined,
   fallback: string,
@@ -235,31 +200,6 @@ const normalizeResolvedLink = ({
   }
 
   return normalizeLink(link, linkType);
-};
-
-const hasImageSource = (
-  image: ImageType | ComplexImageType | TranslatableAssetImage | undefined,
-): boolean => {
-  if (!image || typeof image !== "object") {
-    return false;
-  }
-
-  if ("url" in image && typeof image.url === "string" && image.url.trim()) {
-    return true;
-  }
-
-  if (
-    "image" in image &&
-    image.image &&
-    typeof image.image === "object" &&
-    "url" in image.image &&
-    typeof image.image.url === "string" &&
-    image.image.url.trim()
-  ) {
-    return true;
-  }
-
-  return false;
 };
 
 const SharedHeaderDefaultUtilityIcon = () => (
@@ -412,7 +352,7 @@ const ResortAndRetreatHeaderFields: YextFields<ResortAndRetreatHeaderProps> =
                 aspectRatio: {
                   label: "Aspect Ratio",
                   type: "basicSelector",
-                  options: ThemeOptions.ASPECT_RATIO,
+                  options: aspectRatioOptions,
                 },
                 imageConstrain: {
                   label: "Image Constrain",
@@ -562,7 +502,7 @@ const ResortAndRetreatHeaderFields: YextFields<ResortAndRetreatHeaderProps> =
         aspectRatio: {
           label: "Aspect Ratio",
           type: "basicSelector",
-          options: ThemeOptions.ASPECT_RATIO,
+          options: aspectRatioOptions,
         },
         imageConstrain: {
           label: "Image Constrain",

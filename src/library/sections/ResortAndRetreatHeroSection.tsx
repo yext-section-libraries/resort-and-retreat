@@ -11,7 +11,6 @@ import {
   getThemeColorCssValue,
   resolveComponentData,
   themeManagerCn,
-  ThemeOptions,
   type ComprehensiveCTAValue,
   type StyledImageValue,
   type StyledTextValue,
@@ -23,13 +22,20 @@ import {
   type YextEntityField,
   type YextFields,
   Image,
-  MaybeRTF,
   useDocument,
   VisibilityWrapper,
   Background,
   useBackground,
 } from "@yext/visual-editor";
 import { getDefaultRTF } from "@yext/visual-editor";
+import { aspectRatioOptions } from "../shared/fieldOptions";
+import { RatingStar as Star } from "../shared/icons";
+import { hasImageSource } from "../shared/imageUtils";
+import {
+  renderResolvedRichText,
+  resolveBodyTypographyVariables,
+  resolveStyledTextStyles,
+} from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -66,115 +72,6 @@ export type ResortAndRetreatHeroSectionProps = {
     visibleOnLivePage: boolean;
     backgroundColor: ThemeColor;
   };
-};
-
-const hasImageSource = (image?: TranslatableAssetImage) => {
-  if (!image || typeof image !== "object") {
-    return false;
-  }
-
-  const url = "url" in image ? image.url : image.image?.url;
-  return typeof url === "string" && Boolean(url.trim());
-};
-
-const resolveStyledTextStyles = (
-  styles: StyledTextValue,
-  fontColor: ThemeColor | undefined,
-  fallbackColor: string,
-  fallbackFontFamily: string,
-  fallbackFontSize: string,
-  fallbackFontWeight: React.CSSProperties["fontWeight"],
-  fallbackTransform?: React.CSSProperties["textTransform"],
-) => ({
-  color: getThemeColorCssValue(fontColor) ?? fallbackColor,
-  fontFamily:
-    styles.fontFamily === "default" ? fallbackFontFamily : styles.fontFamily,
-  fontSize: styles.fontSize === "default" ? fallbackFontSize : styles.fontSize,
-  fontWeight:
-    styles.fontWeight === "default" ? fallbackFontWeight : styles.fontWeight,
-  fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-  textTransform:
-    styles.textTransform === "default"
-      ? fallbackTransform
-      : styles.textTransform,
-});
-
-const Star = ({ active }: { active: boolean }) => (
-  <svg
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    className="h-4 w-4"
-    fill={active ? "currentColor" : "none"}
-    stroke="currentColor"
-    strokeWidth="1.8"
-  >
-    <path d="m12 2.5 2.91 5.9 6.51.95-4.71 4.59 1.11 6.48L12 17.37 6.18 20.42l1.11-6.48L2.58 9.35l6.51-.95L12 2.5Z" />
-  </svg>
-);
-
-const renderResolvedRichText = (
-  value: unknown,
-  className: string,
-  style: React.CSSProperties,
-) => {
-  if (React.isValidElement(value)) {
-    const element = value as React.ReactElement<{
-      className?: string;
-      style?: React.CSSProperties;
-    }>;
-
-    return React.cloneElement(element, {
-      className: [element.props.className, className].filter(Boolean).join(" "),
-      style: {
-        ...(element.props.style ?? {}),
-        ...style,
-      },
-    });
-  }
-
-  if (typeof value === "string") {
-    return <MaybeRTF data={value} className={className} style={style} />;
-  }
-
-  if (value && typeof value === "object" && "html" in value) {
-    return (
-      <MaybeRTF
-        data={value as { html: string }}
-        className={className}
-        style={style}
-      />
-    );
-  }
-
-  return null;
-};
-
-const resolveBodyTypographyVariables = (
-  styles: StyledTextValue,
-): React.CSSProperties => {
-  const resolvedStyles: Record<string, string> = {};
-
-  if (styles.fontFamily !== "default") {
-    resolvedStyles["--fontFamily-body-fontFamily"] = styles.fontFamily;
-  }
-
-  if (styles.fontSize !== "default") {
-    resolvedStyles["--fontSize-body-fontSize"] = styles.fontSize;
-  }
-
-  if (styles.fontWeight !== "default") {
-    resolvedStyles["--fontWeight-body-fontWeight"] = styles.fontWeight;
-  }
-
-  if (styles.fontStyle !== "default") {
-    resolvedStyles["--fontStyle-body-fontStyle"] = styles.fontStyle;
-  }
-
-  if (styles.textTransform !== "default") {
-    resolvedStyles["--textTransform-body-textTransform"] = styles.textTransform;
-  }
-
-  return resolvedStyles as React.CSSProperties;
 };
 
 const ResortAndRetreatHeroSectionFields: YextFields<ResortAndRetreatHeroSectionProps> =
@@ -300,7 +197,7 @@ const ResortAndRetreatHeroSectionFields: YextFields<ResortAndRetreatHeroSectionP
         aspectRatio: {
           label: "Aspect Ratio",
           type: "basicSelector",
-          options: ThemeOptions.ASPECT_RATIO,
+          options: aspectRatioOptions,
         },
         imageConstrain: {
           label: "Image Constrain",

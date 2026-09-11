@@ -18,7 +18,6 @@ import {
   getAnalyticsScopeHash,
   getDefaultRTF,
   getThemeColorCssValue,
-  MaybeRTF,
   resolveComponentData,
   type ComprehensiveCTAValue,
   type StyledTextValue,
@@ -33,7 +32,12 @@ import {
   useDocument,
   VisibilityWrapper,
 } from "@yext/visual-editor";
-import { parsePhoneNumber } from "awesome-phonenumber";
+import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
+import {
+  renderRichText as renderResolvedRichText,
+  resolveStyledTextStyles,
+  type RichTextStyleOverrides,
+} from "../shared/sectionStyles";
 
 type PhoneItemProps = {
   number: YextEntityField<string>;
@@ -57,10 +61,6 @@ type SharedTextStyles = {
   styles: StyledTextValue;
   fontColor?: ThemeColor;
 };
-
-type RichTextStyleOverrides = NonNullable<
-  React.ComponentProps<typeof MaybeRTF>["richTextStyleOverrides"]
->;
 
 const defaultSharedTextStyles: SharedTextStyles = {
   styles: {
@@ -131,73 +131,6 @@ export type ResortAndRetreatInfoSectionProps = {
     subheadings: SharedTextStyles;
     body: SharedTextStyles;
   };
-};
-
-const renderResolvedRichText = (
-  value: unknown,
-  richTextStyleOverrides: RichTextStyleOverrides,
-) => {
-  if (React.isValidElement(value)) {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    return (
-      <MaybeRTF data={value} richTextStyleOverrides={richTextStyleOverrides} />
-    );
-  }
-
-  if (value && typeof value === "object" && "html" in value) {
-    return (
-      <MaybeRTF
-        data={value as { html: string }}
-        richTextStyleOverrides={richTextStyleOverrides}
-      />
-    );
-  }
-
-  return null;
-};
-
-const resolveStyledTextStyles = (
-  styles: StyledTextValue,
-  fontColor: ThemeColor | undefined,
-  fallbackColor: string,
-  fallbackFontFamily: string,
-  fallbackFontSize: string,
-  fallbackFontWeight: React.CSSProperties["fontWeight"],
-  fallbackTextTransform?: React.CSSProperties["textTransform"],
-) => ({
-  color: getThemeColorCssValue(fontColor) ?? fallbackColor,
-  fontFamily:
-    styles.fontFamily === "default" ? fallbackFontFamily : styles.fontFamily,
-  fontSize: styles.fontSize === "default" ? fallbackFontSize : styles.fontSize,
-  fontWeight:
-    styles.fontWeight === "default" ? fallbackFontWeight : styles.fontWeight,
-  fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-  textTransform:
-    styles.textTransform === "default"
-      ? fallbackTextTransform
-      : styles.textTransform,
-});
-
-const formatPhoneNumber = (
-  phoneNumberString: string,
-  format: "international" | "domestic",
-) => {
-  const cleanedPhoneNumberString = phoneNumberString.replace(
-    /(?!^\+)\+|[^\d+]/g,
-    "",
-  );
-
-  const parsedPhoneNumber = parsePhoneNumber(cleanedPhoneNumberString);
-  if (!parsedPhoneNumber.valid || parsedPhoneNumber.number === undefined) {
-    return phoneNumberString;
-  }
-
-  return format === "international"
-    ? parsedPhoneNumber.number.international
-    : parsedPhoneNumber.number.national;
 };
 
 const cardTitleClassName = "m-0";
@@ -584,9 +517,6 @@ export const ResortAndRetreatInfoSectionComponent: PuckComponent<
     props.summaryCard.checkIn.checkInOutText,
     locale,
     streamDocument,
-    {
-      richTextStyleOverrides: bodyRichTextStyleOverrides,
-    },
   );
   const otherSubheading =
     resolveComponentData(
@@ -598,9 +528,6 @@ export const ResortAndRetreatInfoSectionComponent: PuckComponent<
     props.summaryCard.other.accessibilityText,
     locale,
     streamDocument,
-    {
-      richTextStyleOverrides: bodyRichTextStyleOverrides,
-    },
   );
   const deskHeading =
     resolveComponentData(props.hoursCard.deskHeading, locale, streamDocument) ||

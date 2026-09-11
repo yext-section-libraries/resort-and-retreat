@@ -3,7 +3,6 @@ import type { SectionConfig } from "@yext/visual-editor";
 import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider, Link } from "@yext/pages-components";
-import { parsePhoneNumber } from "awesome-phonenumber";
 import {
   Background,
   EntityField,
@@ -28,6 +27,8 @@ import {
   useBackground,
   VisibilityWrapper,
 } from "@yext/visual-editor";
+import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
+import { resolveStyledTextStyles } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -94,48 +95,12 @@ export type ResortAndRetreatNearbySectionProps = {
   };
 };
 
-const resolveStyledTextStyles = (
-  styles: StyledTextValue,
-  fontColor: ThemeColor | undefined,
-  fallbackColor: string,
-  fallbackFontFamily: string,
-  fallbackFontSize: string,
-  fallbackFontWeight: React.CSSProperties["fontWeight"],
-  fallbackTextTransform?: React.CSSProperties["textTransform"],
-) => ({
-  color: getThemeColorCssValue(fontColor) ?? fallbackColor,
-  fontFamily:
-    styles.fontFamily === "default" ? fallbackFontFamily : styles.fontFamily,
-  fontSize: styles.fontSize === "default" ? fallbackFontSize : styles.fontSize,
-  fontWeight:
-    styles.fontWeight === "default" ? fallbackFontWeight : styles.fontWeight,
-  fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-  textTransform:
-    styles.textTransform === "default"
-      ? fallbackTextTransform
-      : styles.textTransform,
-});
-
 const resolveSharedTextStyle = (
   value?: SharedTextStyleProps,
 ): SharedTextStyleProps => ({
   styles: value?.styles ?? defaultSharedTextStyles.styles,
   fontColor: value?.fontColor,
 });
-
-const formatPhoneNumber = (value?: string) => {
-  if (!value) {
-    return "";
-  }
-
-  const cleanedPhoneNumberString = value.replace(/(?!^\+)\+|[^\d+]/g, "");
-  const parsedPhoneNumber = parsePhoneNumber(cleanedPhoneNumberString);
-  if (!parsedPhoneNumber.valid || parsedPhoneNumber.number === undefined) {
-    return value;
-  }
-
-  return parsedPhoneNumber.number.national;
-};
 
 const calculateDistanceMi = (origin?: Coordinate, destination?: Coordinate) => {
   if (

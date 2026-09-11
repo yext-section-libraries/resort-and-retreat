@@ -9,11 +9,9 @@ import {
   createItemSource,
   EntityField,
   getAnalyticsScopeHash,
-  getDefaultRTF,
   getSurfaceColorStyle,
   getThemeColorCssValue,
   isDarkColor,
-  MaybeRTF,
   resolveComponentData,
   themeManagerCn,
   ThemeOptions,
@@ -31,6 +29,20 @@ import {
   useDocument,
   VisibilityWrapper,
 } from "@yext/visual-editor";
+import { aspectRatioOptions } from "../shared/fieldOptions";
+import { getImageUrl, hasImageSource } from "../shared/imageUtils";
+import {
+  createImageFieldDefault,
+  createRichTextFieldDefault,
+  createStringFieldDefault,
+  defaultTextStyles,
+} from "../shared/sectionDefaults";
+import {
+  renderResolvedRichText,
+  resolveBodyTypographyVariables,
+  resolveBorderRadius,
+  resolveStyledTextStyles,
+} from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -120,128 +132,6 @@ const defaultAmenityIconPresentation: AmenityIconPresentation = {
   styles: defaultImageStyles,
 };
 
-const renderResolvedRichText = (
-  value: unknown,
-  className: string,
-  style: React.CSSProperties,
-) => {
-  if (React.isValidElement(value)) {
-    const element = value as React.ReactElement<{
-      className?: string;
-      style?: React.CSSProperties;
-    }>;
-
-    return React.cloneElement(element, {
-      className: [element.props.className, className].filter(Boolean).join(" "),
-      style: {
-        ...(element.props.style ?? {}),
-        ...style,
-      },
-    });
-  }
-
-  if (typeof value === "string") {
-    return <MaybeRTF data={value} className={className} style={style} />;
-  }
-
-  if (value && typeof value === "object" && "html" in value) {
-    return (
-      <MaybeRTF
-        data={value as { html: string }}
-        className={className}
-        style={style}
-      />
-    );
-  }
-
-  return null;
-};
-
-const hasImageSource = (image: TranslatableAssetImage | undefined): boolean => {
-  if (!image || typeof image !== "object") {
-    return false;
-  }
-
-  const url =
-    "url" in image
-      ? image.url
-      : "image" in image
-        ? image.image?.url
-        : undefined;
-
-  return typeof url === "string" && Boolean(url.trim());
-};
-
-const getImageUrl = (image: TranslatableAssetImage): string | undefined => {
-  if ("url" in image) {
-    return typeof image.url === "string" ? image.url : undefined;
-  }
-
-  if ("image" in image) {
-    return typeof image.image?.url === "string" ? image.image.url : undefined;
-  }
-
-  return undefined;
-};
-
-const resolveStyledTextStyles = (
-  styles: StyledTextValue,
-  fontColor: ThemeColor | undefined,
-  fallbackColor: string,
-  fallbackFontFamily: string,
-  fallbackFontSize: string,
-  fallbackFontWeight: React.CSSProperties["fontWeight"],
-  fallbackTextTransform?: React.CSSProperties["textTransform"],
-) => ({
-  color: getThemeColorCssValue(fontColor) ?? fallbackColor,
-  fontFamily:
-    styles.fontFamily === "default" ? fallbackFontFamily : styles.fontFamily,
-  fontSize: styles.fontSize === "default" ? fallbackFontSize : styles.fontSize,
-  fontWeight:
-    styles.fontWeight === "default" ? fallbackFontWeight : styles.fontWeight,
-  fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-  textTransform:
-    styles.textTransform === "default"
-      ? fallbackTextTransform
-      : styles.textTransform,
-});
-
-const resolveBodyTypographyVariables = (
-  styles: StyledTextValue,
-): React.CSSProperties => {
-  const resolvedStyles: Record<string, string> = {};
-
-  if (styles.fontFamily !== "default") {
-    resolvedStyles["--fontFamily-body-fontFamily"] = styles.fontFamily;
-  }
-
-  if (styles.fontSize !== "default") {
-    resolvedStyles["--fontSize-body-fontSize"] = styles.fontSize;
-  }
-
-  if (styles.fontWeight !== "default") {
-    resolvedStyles["--fontWeight-body-fontWeight"] = styles.fontWeight;
-  }
-
-  if (styles.fontStyle !== "default") {
-    resolvedStyles["--fontStyle-body-fontStyle"] = styles.fontStyle;
-  }
-
-  if (styles.textTransform !== "default") {
-    resolvedStyles["--textTransform-body-textTransform"] = styles.textTransform;
-  }
-
-  return resolvedStyles;
-};
-
-const resolveBorderRadius = (value?: string): string | undefined => {
-  if (!value || value === "default") {
-    return undefined;
-  }
-
-  return value;
-};
-
 const resolveSharedTextStyle = (
   value?: SharedTextStyleProps,
 ): SharedTextStyleProps => ({
@@ -272,48 +162,9 @@ const resolveAmenityIconImage = (
 });
 
 const createStyledTextDefault = (defaultValue: string): StyledTextProps => ({
-  text: {
-    field: "",
-    constantValue: { defaultValue, hasLocalizedValue: "true" },
-    constantValueEnabled: true,
-  },
-  styles: {
-    fontFamily: "default",
-    fontSize: "default",
-    fontWeight: "default",
-    fontStyle: "default",
-    textTransform: "default",
-  },
+  text: createStringFieldDefault(defaultValue),
+  styles: defaultTextStyles,
   fontColor: undefined,
-});
-
-const createStringFieldDefault = (
-  defaultValue: string,
-): YextEntityField<TranslatableString> => ({
-  field: "",
-  constantValue: { defaultValue, hasLocalizedValue: "true" },
-  constantValueEnabled: true,
-});
-
-const createRichTextFieldDefault = (
-  defaultValue: string,
-): YextEntityField<TranslatableRichText> => ({
-  field: "",
-  constantValue: {
-    defaultValue: getDefaultRTF(defaultValue),
-    hasLocalizedValue: "true",
-  },
-  constantValueEnabled: true,
-});
-
-const createImageFieldDefault = (
-  url = "",
-  width = 0,
-  height = 0,
-): YextEntityField<TranslatableAssetImage> => ({
-  field: "",
-  constantValue: { url, width, height },
-  constantValueEnabled: true,
 });
 
 const createTextCta = (label: string): ComprehensiveCTAValue =>
@@ -546,7 +397,7 @@ const ResortAndRetreatAmenitiesSectionFields: YextFields<ResortAndRetreatAmeniti
             aspectRatio: {
               label: "Aspect Ratio",
               type: "basicSelector",
-              options: ThemeOptions.ASPECT_RATIO,
+              options: aspectRatioOptions,
             },
             imageConstrain: {
               label: "Image Constrain",

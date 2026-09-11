@@ -12,7 +12,6 @@ import {
   getDefaultRTF,
   getSurfaceColorStyle,
   getThemeColorCssValue,
-  MaybeRTF,
   resolveComponentData,
   themeManagerCn,
   ThemeOptions,
@@ -29,6 +28,15 @@ import {
   useDocument,
   VisibilityWrapper,
 } from "@yext/visual-editor";
+import {
+  createStringFieldDefault,
+  defaultTextStyles,
+} from "../shared/sectionDefaults";
+import {
+  renderResolvedRichText,
+  resolveBodyTypographyVariables,
+  resolveStyledTextStyles,
+} from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -226,117 +234,14 @@ export type ResortAndRetreatBlogSectionProps = {
   };
 };
 
-const renderResolvedRichText = (
-  value: unknown,
-  className: string,
-  style: React.CSSProperties,
-) => {
-  if (React.isValidElement(value)) {
-    const element = value as React.ReactElement<{
-      className?: string;
-      style?: React.CSSProperties;
-    }>;
-
-    return React.cloneElement(element, {
-      className: [element.props.className, className].filter(Boolean).join(" "),
-      style: {
-        ...(element.props.style ?? {}),
-        ...style,
-      },
-    });
-  }
-
-  if (typeof value === "string") {
-    return <MaybeRTF data={value} className={className} style={style} />;
-  }
-
-  if (value && typeof value === "object" && "html" in value) {
-    return (
-      <MaybeRTF
-        data={value as { html: string }}
-        className={className}
-        style={style}
-      />
-    );
-  }
-
-  return null;
-};
-
-const resolveStyledTextStyles = (
-  styles: StyledTextValue,
-  fontColor: ThemeColor | undefined,
-  fallbackColor: string,
-  fallbackFontFamily: string,
-  fallbackFontSize: string,
-  fallbackFontWeight: React.CSSProperties["fontWeight"],
-  fallbackTextTransform?: React.CSSProperties["textTransform"],
-) => ({
-  color: getThemeColorCssValue(fontColor) ?? fallbackColor,
-  fontFamily:
-    styles.fontFamily === "default" ? fallbackFontFamily : styles.fontFamily,
-  fontSize: styles.fontSize === "default" ? fallbackFontSize : styles.fontSize,
-  fontWeight:
-    styles.fontWeight === "default" ? fallbackFontWeight : styles.fontWeight,
-  fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-  textTransform:
-    styles.textTransform === "default"
-      ? fallbackTextTransform
-      : styles.textTransform,
-});
-
-const resolveBodyTypographyVariables = (
-  styles: StyledTextValue,
-): React.CSSProperties => {
-  const resolvedStyles: Record<string, string> = {};
-
-  if (styles.fontFamily !== "default") {
-    resolvedStyles["--fontFamily-body-fontFamily"] = styles.fontFamily;
-  }
-
-  if (styles.fontSize !== "default") {
-    resolvedStyles["--fontSize-body-fontSize"] = styles.fontSize;
-  }
-
-  if (styles.fontWeight !== "default") {
-    resolvedStyles["--fontWeight-body-fontWeight"] = styles.fontWeight;
-  }
-
-  if (styles.fontStyle !== "default") {
-    resolvedStyles["--fontStyle-body-fontStyle"] = styles.fontStyle;
-  }
-
-  if (styles.textTransform !== "default") {
-    resolvedStyles["--textTransform-body-textTransform"] = styles.textTransform;
-  }
-
-  return resolvedStyles;
-};
-
 const createStyledTextDefault = (defaultValue: string): StyledTextProps => ({
-  text: {
-    field: "",
-    constantValue: { defaultValue, hasLocalizedValue: "true" },
-    constantValueEnabled: true,
-  },
-  styles: {
-    fontFamily: "default",
-    fontSize: "default",
-    fontWeight: "default",
-    fontStyle: "default",
-    textTransform: "default",
-  },
+  text: createStringFieldDefault(defaultValue),
+  styles: defaultTextStyles,
   fontColor: undefined,
 });
 
 const createCardTextStyleDefault = (): CardTextStyleProps => ({
-  styles: {
-    fontFamily: "default",
-    fontSize: "default",
-    fontWeight: "default",
-    fontStyle: "default",
-    textTransform: "default",
-  },
+  styles: defaultTextStyles,
   fontColor: undefined,
 });
 

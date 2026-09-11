@@ -20,7 +20,8 @@ import {
   VisibilityWrapper,
 } from "@yext/visual-editor";
 import { Address, type AddressType } from "@yext/pages-components";
-import { parsePhoneNumber } from "awesome-phonenumber";
+import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
+import { resolveStyledTextStyles } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -72,47 +73,6 @@ export type ResortAndRetreatFooterProps = {
     borderColor: ThemeColor;
     topBorderColor: ThemeColor;
   };
-};
-
-const resolveStyledTextStyles = (
-  styles: StyledTextValue,
-  fontColor: ThemeColor | undefined,
-  fallbackColor: string,
-  fallbackFontFamily: string,
-  fallbackFontSize: string,
-  fallbackFontWeight: React.CSSProperties["fontWeight"],
-  fallbackTextTransform: React.CSSProperties["textTransform"] = "capitalize",
-) => ({
-  color: getThemeColorCssValue(fontColor) ?? fallbackColor,
-  fontFamily:
-    styles.fontFamily === "default" ? fallbackFontFamily : styles.fontFamily,
-  fontSize: styles.fontSize === "default" ? fallbackFontSize : styles.fontSize,
-  fontWeight:
-    styles.fontWeight === "default" ? fallbackFontWeight : styles.fontWeight,
-  fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-  textTransform:
-    styles.textTransform === "default"
-      ? fallbackTextTransform
-      : styles.textTransform,
-});
-
-const formatPhoneNumber = (
-  phoneNumberString: string,
-  format: "international" | "domestic",
-) => {
-  const cleanedPhoneNumberString = phoneNumberString.replace(
-    /(?!^\+)\+|[^\d+]/g,
-    "",
-  );
-
-  const parsedPhoneNumber = parsePhoneNumber(cleanedPhoneNumberString);
-  if (!parsedPhoneNumber.valid || parsedPhoneNumber.number === undefined) {
-    return phoneNumberString;
-  }
-
-  return format === "international"
-    ? parsedPhoneNumber.number.international
-    : parsedPhoneNumber.number.national;
 };
 
 const ResortAndRetreatFooterFields: YextFields<ResortAndRetreatFooterProps> =
@@ -482,6 +442,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
     "var(--fontFamily-body-fontFamily)",
     "1rem",
     "var(--fontWeight-body-fontWeight)",
+    "capitalize",
   );
 
   return (
