@@ -1,6 +1,33 @@
 {
   "schemaVersion": 1,
-  "id": "resort-and-retreat",
+  "id": "yext_resort-and-retreat",
   "displayName": "Resort and Retreat",
-  "description": ""
+  "description": "",
+  "locales": [
+    "cs",
+    "da",
+    "de",
+    "en",
+    "en-GB",
+    "es",
+    "et",
+    "fi",
+    "fr",
+    "hr",
+    "hu",
+    "it",
+    "ja",
+    "lt",
+    "lv",
+    "nb",
+    "nl",
+    "pl",
+    "pt",
+    "ro",
+    "sk",
+    "sv",
+    "tr",
+    "zh",
+    "zh-TW"
+  ]
 }

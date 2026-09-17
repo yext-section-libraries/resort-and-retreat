@@ -4,6 +4,8 @@ import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   ComprehensiveCTA,
   EntityField,
@@ -71,102 +73,102 @@ export type ResortAndRetreatEventsSectionProps = {
 const ResortAndRetreatEventsSectionFields: YextFields<ResortAndRetreatEventsSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
       },
     },
     title: {
-      label: "Title",
+      label: msg("fields.title", "Title"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.string"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     body: {
-      label: "Body",
+      label: msg("fields.body", "Body"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.rich_text_v2"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     backgroundImage: {
-      label: "Background Image",
+      label: msg("fields.backgroundImage", "Background Image"),
       type: "object",
       objectFields: {
         image: {
           type: "entityField",
-          label: "Image",
+          label: msg("fields.image", "Image"),
           filter: {
             types: ["type.image"],
           },
         },
         aspectRatio: {
-          label: "Aspect Ratio",
+          label: msg("fields.aspectRatio", "Aspect Ratio"),
           type: "basicSelector",
           options: aspectRatioOptions,
         },
         imageConstrain: {
-          label: "Image Constrain",
+          label: msg("fields.imageConstrain", "Image Constrain"),
           type: "select",
           options: [
-            { label: "Fixed", value: "fixed" },
-            { label: "Filled", value: "filled" },
+            { label: msg("fields.fixed", "Fixed"), value: "fixed" },
+            { label: msg("fields.filled", "Filled"), value: "filled" },
           ],
         },
       },
     },
     panelBackgroundColor: {
-      label: "Panel Background Color",
+      label: msg("fields.panelBackgroundColor", "Panel Background Color"),
       type: "basicSelector",
       options: "BACKGROUND_COLOR",
     },
     panelBorderColor: {
-      label: "Panel Border Color",
+      label: msg("fields.panelBorderColor", "Panel Border Color"),
       type: "basicSelector",
       options: ThemeOptions.BACKGROUND_COLOR.flatMap((group) => group.options),
     },
     // Shared ctas behavior is owned by this standalone action field.
     primaryAction: {
-      label: "Primary Action",
+      label: msg("fields.primaryAction", "Primary Action"),
       type: "comprehensiveCTA",
     },
   };
@@ -202,7 +204,7 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
           {hasImageSource(backgroundImage) ? (
             <div className="absolute inset-0">
               <EntityField
-                displayName="Events Background Image"
+                displayName={pt("eventsBackgroundImage", "Events Background Image")}
                 fieldId={props.backgroundImage.image.field}
                 constantValueEnabled={
                   props.backgroundImage.image.constantValueEnabled
@@ -238,7 +240,7 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
               }}
             >
               <EntityField
-                displayName="Events Title"
+                displayName={pt("eventsTitle", "Events Title")}
                 fieldId={props.title.text.field}
                 constantValueEnabled={props.title.text.constantValueEnabled}
               >
@@ -258,7 +260,7 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
                 </h2>
               </EntityField>
               <EntityField
-                displayName="Events Description"
+                displayName={pt("eventsDescription", "Events Description")}
                 fieldId={props.body.text.field}
                 constantValueEnabled={props.body.text.constantValueEnabled}
               >
@@ -282,7 +284,7 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
               </EntityField>
               <div>
                 <EntityField
-                  displayName="Events CTA"
+                  displayName={pt("eventsCta", "Events CTA")}
                   fieldId={props.primaryAction.data.cta.field}
                   constantValueEnabled={
                     props.primaryAction.data.cta.constantValueEnabled
@@ -316,7 +318,7 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
 
 export const ResortAndRetreatEventsSection: YextComponentConfig<ResortAndRetreatEventsSectionProps> =
   {
-    label: "Events Section",
+    label: msg("fields.eventsSection", "Events Section"),
     fields: ResortAndRetreatEventsSectionFields,
     defaultProps: {
       title: {

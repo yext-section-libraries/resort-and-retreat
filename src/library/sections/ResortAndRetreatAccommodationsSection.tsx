@@ -1,10 +1,13 @@
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider, useAnalytics } from "@yext/pages-components";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
+  pt,
+  msg,
   Background,
   ComprehensiveCTA,
   createItemSource,
@@ -193,31 +196,31 @@ const defaultAccommodationEntries: AccommodationCardItem[] = [
 ];
 
 const accommodationCardSource = createItemSource<AccommodationCardItem>({
-  label: "Accommodation Cards",
+  label: msg("fields.accommodationCards", "Accommodation Cards"),
   mappingFields: {
     title: {
       type: "entityField",
-      label: "Title",
+      label: msg("fields.title", "Title"),
       filter: { types: ["type.string"] },
     },
     description: {
       type: "entityField",
-      label: "Description",
+      label: msg("fields.description", "Description"),
       filter: { types: ["type.rich_text_v2"] },
     },
     image: {
       type: "entityField",
-      label: "Image",
+      label: msg("fields.image", "Image"),
       filter: { types: ["type.image"] },
     },
     ctaLabel: {
       type: "entityField",
-      label: "CTA Label",
+      label: msg("fields.ctaLabel", "CTA Label"),
       filter: { types: ["type.string"] },
     },
     ctaLink: {
       type: "entityField",
-      label: "CTA Link",
+      label: msg("fields.ctaLink", "CTA Link"),
       filter: { types: ["type.string"] },
     },
   },
@@ -236,29 +239,29 @@ const resolveSharedTextStyles = (
 const ResortAndRetreatAccommodationsSectionFields: YextFields<ResortAndRetreatAccommodationsSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBackgroundColor: {
-          label: "Card Background Color",
+          label: msg("fields.cardBackgroundColor", "Card Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBorderColor: {
-          label: "Card Border Color",
+          label: msg("fields.cardBorderColor", "Card Border Color"),
           type: "basicSelector",
           options: ThemeOptions.BACKGROUND_COLOR.flatMap(
             (group) => group.options,
@@ -267,65 +270,65 @@ const ResortAndRetreatAccommodationsSectionFields: YextFields<ResortAndRetreatAc
       },
     },
     title: {
-      label: "Title",
+      label: msg("fields.title", "Title"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: { types: ["type.string"] },
         },
-        styles: { label: "Text Styles", type: "styledText" },
+        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     description: {
-      label: "Description",
+      label: msg("fields.description", "Description"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: { types: ["type.rich_text_v2"] },
         },
-        styles: { label: "Text Styles", type: "styledText" },
+        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     cardTitle: {
-      label: "Card Title",
+      label: msg("fields.cardTitle", "Card Title"),
       type: "object",
       objectFields: {
-        styles: { label: "Text Styles", type: "styledText" },
+        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     cardDescription: {
-      label: "Card Description",
+      label: msg("fields.cardDescription", "Card Description"),
       type: "object",
       objectFields: {
-        styles: { label: "Text Styles", type: "styledText" },
+        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     cardAction: {
-      label: "Card Action Styles",
+      label: msg("fields.cardActionStyles", "Card Action Styles"),
       type: "comprehensiveCTA",
     },
     entries: accommodationCardSource.field,
@@ -477,6 +480,7 @@ const AccommodationCardView = ({
 export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
   ResortAndRetreatAccommodationsSectionProps
 > = (props) => {
+  const { t } = useTranslation();
   const analytics = useAnalytics();
   const cardsViewportRef = React.useRef<HTMLDivElement | null>(null);
   const cardRefs = React.useRef<Array<HTMLDivElement | null>>([]);
@@ -623,7 +627,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div className="max-w-[900px]">
                 <EntityField
-                  displayName="Accommodations Title"
+                  displayName={pt("accommodationsTitle", "Accommodations Title")}
                   fieldId={props.title.text.field}
                   constantValueEnabled={props.title.text.constantValueEnabled}
                 >
@@ -643,7 +647,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
                   </h2>
                 </EntityField>
                 <EntityField
-                  displayName="Accommodations Description"
+                  displayName={pt("accommodationsDescription", "Accommodations Description")}
                   fieldId={props.description.text.field}
                   constantValueEnabled={
                     props.description.text.constantValueEnabled
@@ -664,7 +668,10 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
                     borderColor: titleColor,
                     color: titleColor,
                   }}
-                  aria-label="Previous accommodation"
+                  aria-label={t(
+                    "previousAccommodation",
+                    "Previous accommodation",
+                  )}
                   onClick={moveBackward}
                 >
                   <ChevronLeft className="h-5 w-5" />
@@ -676,7 +683,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
                     borderColor: titleColor,
                     color: titleColor,
                   }}
-                  aria-label="Next accommodation"
+                  aria-label={t("nextAccommodation", "Next accommodation")}
                   onClick={moveForward}
                 >
                   <ChevronRight className="h-5 w-5" />
@@ -685,7 +692,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
             </div>
 
             <EntityField
-              displayName="Accommodation Cards"
+              displayName={pt("accommodationCards", "Accommodation Cards")}
               fieldId={props.entries.field}
               constantValueEnabled={props.entries.constantValueEnabled}
             >
@@ -730,7 +737,10 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
               <button
                 type="button"
                 className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--colors-palette-primary)] bg-white text-[var(--colors-palette-primary)]"
-                aria-label="Previous accommodation"
+                aria-label={t(
+                  "previousAccommodation",
+                  "Previous accommodation",
+                )}
                 onClick={moveBackward}
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -738,7 +748,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
               <button
                 type="button"
                 className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--colors-palette-primary)] bg-white text-[var(--colors-palette-primary)]"
-                aria-label="Next accommodation"
+                aria-label={t("nextAccommodation", "Next accommodation")}
                 onClick={moveForward}
               >
                 <ChevronRight className="h-5 w-5" />
@@ -753,7 +763,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
 
 export const ResortAndRetreatAccommodationsSection: YextComponentConfig<ResortAndRetreatAccommodationsSectionProps> =
   {
-    label: "Accommodations Section",
+    label: msg("fields.accommodationsSection", "Accommodations Section"),
     fields: ResortAndRetreatAccommodationsSectionFields,
     defaultProps: {
       title: {

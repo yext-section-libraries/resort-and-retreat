@@ -20,24 +20,40 @@ export const sharedComponentMetadata = [
 ] as const;
 
 /** Puck configs for the hidden internal components. */
-export const sharedComponentConfigs: Record<string, Config["components"][string]> = {
-  "HeadingTextSlot": SharedComponent0,
-  "BreadcrumbsSlot": SharedComponent1,
-  "DirectoryGrid": SharedComponent2,
-  "DirectoryCard": SharedComponent3,
-  "AddressSlot": SharedComponent4,
-  "HoursStatusSlot": SharedComponent5,
-  "PhoneSlot": SharedComponent6,
+export const sharedComponentConfigs: Record<
+  string,
+  Config["components"][string]
+> = {
+  HeadingTextSlot: SharedComponent0,
+  BreadcrumbsSlot: SharedComponent1,
+  DirectoryGrid: SharedComponent2,
+  DirectoryCard: SharedComponent3,
+  AddressSlot: SharedComponent4,
+  HoursStatusSlot: SharedComponent5,
+  PhoneSlot: SharedComponent6,
 };
 
-export const sharedRootConfigs: Partial<Record<string, NonNullable<Config["root"]>>> = {
+export const sharedRootConfigs: Partial<
+  Record<string, NonNullable<Config["root"]>>
+> = {
   DIRECTORY: directoryRootConfig,
   LOCATOR: locatorRootConfig,
 };
 
 export const sharedRootPageSetTypes = ["DIRECTORY", "LOCATOR"] as const;
 
-export const sharedRootAllowedComponentIds: Partial<Record<string, string[]>> = {
-  DIRECTORY: ["MainContent", "CustomCodeSection"],
-  LOCATOR: ["MainContent", "CustomCodeSection"],
-};
+export const sharedRootAllowedComponentIds: Partial<Record<string, string[]>> =
+  {
+    DIRECTORY: [
+      "MainContent",
+      "CustomCodeSection",
+      "ResortAndRetreatHeader",
+      "ResortAndRetreatFooter",
+    ],
+    LOCATOR: [
+      "MainContent",
+      "CustomCodeSection",
+      "ResortAndRetreatHeader",
+      "ResortAndRetreatFooter",
+    ],
+  };

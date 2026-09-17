@@ -4,6 +4,8 @@ import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   ComprehensiveCTA,
   EntityField,
@@ -69,100 +71,100 @@ export type ResortAndRetreatAboutSectionProps = {
 const ResortAndRetreatAboutSectionFields: YextFields<ResortAndRetreatAboutSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
       },
     },
     title: {
-      label: "Title",
+      label: msg("fields.title", "Title"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.string"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     body: {
-      label: "Body",
+      label: msg("fields.body", "Body"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.rich_text_v2"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     image: {
-      label: "Image",
+      label: msg("fields.image", "Image"),
       type: "object",
       objectFields: {
         image: {
           type: "entityField",
-          label: "Image",
+          label: msg("fields.image", "Image"),
           filter: {
             types: ["type.image"],
           },
         },
         imageConstrain: {
-          label: "Image Constrain",
+          label: msg("fields.imageConstrain", "Image Constrain"),
           type: "select",
           options: [
-            { label: "Fixed", value: "fixed" },
-            { label: "Filled", value: "filled" },
+            { label: msg("fields.fixed", "Fixed"), value: "fixed" },
+            { label: msg("fields.filled", "Filled"), value: "filled" },
           ],
         },
       },
     },
     cta: {
-      label: "Call to Action",
+      label: msg("fields.callToAction", "Call to Action"),
       type: "comprehensiveCTA",
     },
     panelBackgroundColor: {
-      label: "Panel Background Color",
+      label: msg("fields.panelBackgroundColor", "Panel Background Color"),
       type: "basicSelector",
       options: "BACKGROUND_COLOR",
     },
     boxBorderColor: {
-      label: "Box Border Color",
+      label: msg("fields.boxBorderColor", "Box Border Color"),
       type: "basicSelector",
       options: ThemeOptions.BACKGROUND_COLOR.flatMap((group) => group.options),
     },
@@ -216,7 +218,7 @@ export const ResortAndRetreatAboutSectionComponent: PuckComponent<
               <div className="order-2 xl:order-1 xl:relative xl:min-h-0 xl:flex-[1_1_50%] xl:self-stretch">
                 <div className="h-full max-w-full overflow-hidden xl:absolute xl:inset-0 xl:min-h-0">
                   <EntityField
-                    displayName="About Image"
+                    displayName={pt("aboutImage", "About Image")}
                     fieldId={props.image.image.field}
                     constantValueEnabled={
                       props.image.image.constantValueEnabled
@@ -242,7 +244,7 @@ export const ResortAndRetreatAboutSectionComponent: PuckComponent<
               </div>
               <div className="order-1 flex flex-col gap-5 p-6 md:p-8 xl:order-2 xl:flex-[1_1_50%] xl:justify-center xl:p-10">
                 <EntityField
-                  displayName="About Title"
+                  displayName={pt("aboutTitle", "About Title")}
                   fieldId={props.title.text.field}
                   constantValueEnabled={props.title.text.constantValueEnabled}
                 >
@@ -262,7 +264,7 @@ export const ResortAndRetreatAboutSectionComponent: PuckComponent<
                   </h2>
                 </EntityField>
                 <EntityField
-                  displayName="About Description"
+                  displayName={pt("aboutDescription", "About Description")}
                   fieldId={props.body.text.field}
                   constantValueEnabled={props.body.text.constantValueEnabled}
                 >
@@ -286,7 +288,7 @@ export const ResortAndRetreatAboutSectionComponent: PuckComponent<
                 </EntityField>
                 <div>
                   <EntityField
-                    displayName="About CTA"
+                    displayName={pt("aboutCta", "About CTA")}
                     fieldId={props.cta.data.cta.field}
                     constantValueEnabled={
                       props.cta.data.cta.constantValueEnabled
@@ -323,7 +325,7 @@ export const ResortAndRetreatAboutSectionComponent: PuckComponent<
 
 export const ResortAndRetreatAboutSection: YextComponentConfig<ResortAndRetreatAboutSectionProps> =
   {
-    label: "About Section",
+    label: msg("fields.aboutSection", "About Section"),
     fields: ResortAndRetreatAboutSectionFields,
     defaultProps: {
       title: {

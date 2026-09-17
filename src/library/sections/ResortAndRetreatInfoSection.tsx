@@ -2,6 +2,7 @@ import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
+import { useTranslation } from "react-i18next";
 import {
   Address,
   AnalyticsScopeProvider,
@@ -12,6 +13,8 @@ import {
   type HoursType,
 } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   ComprehensiveCTA,
   EntityField,
@@ -138,24 +141,24 @@ const cardTitleClassName = "m-0";
 const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBorderColor: {
-          label: "Card Border Color",
+          label: msg("fields.cardBorderColor", "Card Border Color"),
           type: "basicSelector",
           options: ThemeOptions.BACKGROUND_COLOR.flatMap(
             (group) => group.options,
@@ -164,80 +167,80 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
       },
     },
     summaryCard: {
-      label: "Summary Card",
+      label: msg("fields.summaryCard", "Summary Card"),
       type: "object",
       objectFields: {
         summaryHeading: {
           type: "entityField",
-          label: "Summary Heading",
+          label: msg("fields.summaryHeading", "Summary Heading"),
           filter: {
             types: ["type.string"],
           },
         },
         address: {
-          label: "Address",
+          label: msg("fields.address", "Address"),
           type: "object",
           objectFields: {
             subheading: {
               type: "entityField",
-              label: "Subheading",
+              label: msg("fields.subheading", "Subheading"),
               filter: {
                 types: ["type.string"],
               },
             },
             address: {
               type: "entityField",
-              label: "Address",
+              label: msg("fields.address", "Address"),
               filter: {
                 types: ["type.address"],
               },
             },
             showRegion: {
-              label: "Show Region",
+              label: msg("fields.showRegion", "Show Region"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
             showCountry: {
-              label: "Show Country",
+              label: msg("fields.showCountry", "Show Country"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
           },
         },
         phone: {
-          label: "Phone",
+          label: msg("fields.phone", "Phone"),
           type: "object",
           objectFields: {
             subheading: {
               type: "entityField",
-              label: "Subheading",
+              label: msg("fields.subheading", "Subheading"),
               filter: {
                 types: ["type.string"],
               },
             },
             phoneNumbers: {
-              label: "Phone Numbers",
+              label: msg("fields.phoneNumbers", "Phone Numbers"),
               type: "object",
               objectFields: {
                 items: {
-                  label: "Items",
+                  label: msg("fields.items", "Items"),
                   type: "array",
                   arrayFields: {
                     number: {
                       type: "entityField",
-                      label: "Number",
+                      label: msg("fields.number", "Number"),
                       filter: {
                         types: ["type.phone"],
                       },
                     },
                     label: {
-                      label: "Label",
+                      label: msg("fields.label", "Label"),
                       type: "entityField",
                       filter: {
                         types: ["type.string"],
@@ -262,19 +265,19 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
                   getItemSummary: (item) => item.number?.field || "Phone",
                 },
                 phoneFormat: {
-                  label: "Phone Format",
+                  label: msg("fields.phoneFormat", "Phone Format"),
                   type: "radio",
                   options: [
-                    { label: "Domestic", value: "domestic" },
-                    { label: "International", value: "international" },
+                    { label: msg("fields.domestic", "Domestic"), value: "domestic" },
+                    { label: msg("fields.international", "International"), value: "international" },
                   ],
                 },
                 includeHyperlink: {
-                  label: "Include Hyperlink",
+                  label: msg("fields.includeHyperlink", "Include Hyperlink"),
                   type: "radio",
                   options: [
-                    { label: "Yes", value: true },
-                    { label: "No", value: false },
+                    { label: msg("fields.yes", "Yes"), value: true },
+                    { label: msg("fields.no", "No"), value: false },
                   ],
                 },
               },
@@ -282,19 +285,19 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
           },
         },
         checkIn: {
-          label: "Check In/Out",
+          label: msg("fields.checkInOut", "Check In/Out"),
           type: "object",
           objectFields: {
             subheading: {
               type: "entityField",
-              label: "Subheading",
+              label: msg("fields.subheading", "Subheading"),
               filter: {
                 types: ["type.string"],
               },
             },
             checkInOutText: {
               type: "entityField",
-              label: "Check In/Out Text",
+              label: msg("fields.checkInOutText", "Check In/Out Text"),
               filter: {
                 types: ["type.rich_text_v2"],
               },
@@ -302,19 +305,19 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
           },
         },
         other: {
-          label: "Other",
+          label: msg("fields.other", "Other"),
           type: "object",
           objectFields: {
             subheading: {
               type: "entityField",
-              label: "Subheading",
+              label: msg("fields.subheading", "Subheading"),
               filter: {
                 types: ["type.string"],
               },
             },
             accessibilityText: {
               type: "entityField",
-              label: "Accessibility Text",
+              label: msg("fields.accessibilityText", "Accessibility Text"),
               filter: {
                 types: ["type.rich_text_v2"],
               },
@@ -322,28 +325,28 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
           },
         },
         primaryCta: {
-          label: "Primary Call to Action",
+          label: msg("fields.primaryCallToAction", "Primary Call to Action"),
           type: "comprehensiveCTA",
         },
         secondaryCta: {
-          label: "Secondary Call to Action",
+          label: msg("fields.secondaryCallToAction", "Secondary Call to Action"),
           type: "comprehensiveCTA",
         },
       },
     },
     hoursCard: {
-      label: "Hours Card",
+      label: msg("fields.hoursCard", "Hours Card"),
       type: "object",
       objectFields: {
         deskHeading: {
           type: "entityField",
-          label: "Subheading",
+          label: msg("fields.subheading", "Subheading"),
           filter: {
             types: ["type.string"],
           },
         },
         hours: {
-          label: "Hours",
+          label: msg("fields.hours", "Hours"),
           type: "entityField",
           filter: {
             types: ["type.hours"],
@@ -351,46 +354,46 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
           disableConstantValueToggle: true,
         },
         hoursStyles: {
-          label: "Hours Styles",
+          label: msg("fields.hoursStyles", "Hours Styles"),
           type: "object",
           objectFields: {
             startOfWeek: {
-              label: "Start Of Week",
+              label: msg("fields.startOfWeek", "Start Of Week"),
               type: "select",
               options: [
-                { label: "Monday", value: "monday" },
-                { label: "Tuesday", value: "tuesday" },
-                { label: "Wednesday", value: "wednesday" },
-                { label: "Thursday", value: "thursday" },
-                { label: "Friday", value: "friday" },
-                { label: "Saturday", value: "saturday" },
-                { label: "Sunday", value: "sunday" },
-                { label: "Today", value: "today" },
+                { label: msg("fields.monday", "Monday"), value: "monday" },
+                { label: msg("fields.tuesday", "Tuesday"), value: "tuesday" },
+                { label: msg("fields.wednesday", "Wednesday"), value: "wednesday" },
+                { label: msg("fields.thursday", "Thursday"), value: "thursday" },
+                { label: msg("fields.friday", "Friday"), value: "friday" },
+                { label: msg("fields.saturday", "Saturday"), value: "saturday" },
+                { label: msg("fields.sunday", "Sunday"), value: "sunday" },
+                { label: msg("fields.today", "Today"), value: "today" },
               ],
             },
             collapseDays: {
-              label: "Collapse Days",
+              label: msg("fields.collapseDays", "Collapse Days"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
             showAdditionalHoursText: {
-              label: "Show Additional Hours Text",
+              label: msg("fields.showAdditionalHoursText", "Show Additional Hours Text"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
             alignment: {
-              label: "Alignment",
+              label: msg("fields.alignment", "Alignment"),
               type: "select",
               options: [
-                { label: "Start", value: "items-start" },
-                { label: "Center", value: "items-center" },
-                { label: "End", value: "items-end" },
+                { label: msg("fields.start", "Start"), value: "items-start" },
+                { label: msg("fields.center", "Center"), value: "items-center" },
+                { label: msg("fields.end", "End"), value: "items-end" },
               ],
             },
           },
@@ -398,19 +401,19 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
       },
     },
     servicesCard: {
-      label: "Services Card",
+      label: msg("fields.servicesCard", "Services Card"),
       type: "object",
       objectFields: {
         complimentaryHeading: {
           type: "entityField",
-          label: "Subheading",
+          label: msg("fields.subheading", "Subheading"),
           filter: {
             types: ["type.string"],
           },
         },
         complimentaryItems: {
           type: "entityField",
-          label: "Services",
+          label: msg("fields.services", "Services"),
           filter: {
             types: ["type.string"],
             includeListsOnly: true,
@@ -419,49 +422,49 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
       },
     },
     styles: {
-      label: "Styles",
+      label: msg("fields.styles", "Styles"),
       type: "object",
       objectFields: {
         headings: {
-          label: "Headings",
+          label: msg("fields.headings", "Headings"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         subheadings: {
-          label: "Subheadings",
+          label: msg("fields.subheadings", "Subheadings"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         body: {
-          label: "Body",
+          label: msg("fields.body", "Body"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
@@ -743,6 +746,7 @@ const ResortAndRetreatInfoSectionContent = ({
   styles: ResortAndRetreatInfoSectionProps["styles"];
   summaryHeading: string;
 }) => {
+  const { t, i18n } = useTranslation();
   const sectionBackground = useBackground();
   const sectionForeground =
     getThemeColorCssValue(sectionBackground?.contrastingColor) ??
@@ -751,6 +755,24 @@ const ResortAndRetreatInfoSectionContent = ({
     borderColor: getThemeColorCssValue(cardBorderColor),
     color: sectionForeground,
   };
+  const dayOfWeekNames = React.useMemo<DayOfWeekNames>(() => {
+    const formatter = new Intl.DateTimeFormat(i18n.language, {
+      timeZone: "UTC",
+      weekday: "long",
+    });
+    const formatWeekday = (day: number) =>
+      formatter.format(new Date(Date.UTC(2024, 0, day)));
+
+    return {
+      sunday: formatWeekday(7),
+      monday: formatWeekday(8),
+      tuesday: formatWeekday(9),
+      wednesday: formatWeekday(10),
+      thursday: formatWeekday(11),
+      friday: formatWeekday(12),
+      saturday: formatWeekday(13),
+    };
+  }, [i18n.language]);
   const headingTextStyles = resolveStyledTextStyles(
     styles.headings.styles,
     styles.headings.fontColor,
@@ -793,7 +815,7 @@ const ResortAndRetreatInfoSectionContent = ({
         style={cardStyle}
       >
         <EntityField
-          displayName="Summary Heading"
+          displayName={pt("summaryHeading", "Summary Heading")}
           fieldId={entityFieldProps.summaryCard.summaryHeading.field}
           constantValueEnabled={
             entityFieldProps.summaryCard.summaryHeading.constantValueEnabled
@@ -809,7 +831,7 @@ const ResortAndRetreatInfoSectionContent = ({
         >
           <div className="flex flex-col gap-1">
             <EntityField
-              displayName="Address Heading"
+              displayName={pt("addressHeading", "Address Heading")}
               fieldId={entityFieldProps.summaryCard.address.subheading.field}
               constantValueEnabled={
                 entityFieldProps.summaryCard.address.subheading
@@ -822,7 +844,7 @@ const ResortAndRetreatInfoSectionContent = ({
             </EntityField>
             {resolvedAddress ? (
               <EntityField
-                displayName="Address"
+                displayName={pt("address", "Address")}
                 fieldId={entityFieldProps.summaryCard.address.address.field}
                 constantValueEnabled={
                   entityFieldProps.summaryCard.address.address
@@ -839,7 +861,7 @@ const ResortAndRetreatInfoSectionContent = ({
           </div>
           <div className="flex flex-col gap-1">
             <EntityField
-              displayName="Phone Heading"
+              displayName={pt("phoneHeading", "Phone Heading")}
               fieldId={entityFieldProps.summaryCard.phone.subheading.field}
               constantValueEnabled={
                 entityFieldProps.summaryCard.phone.subheading
@@ -859,7 +881,7 @@ const ResortAndRetreatInfoSectionContent = ({
               return phoneIncludeHyperlink ? (
                 <EntityField
                   key={`${item.originalNumber}-${index}`}
-                  displayName={`Phone ${index + 1}`}
+                  displayName={`${pt("phone", "Phone")} ${index + 1}`}
                   fieldId={sourceItem.number.field}
                   constantValueEnabled={sourceItem.number.constantValueEnabled}
                 >
@@ -873,7 +895,7 @@ const ResortAndRetreatInfoSectionContent = ({
                   >
                     {item.label && sourceItem.label ? (
                       <EntityField
-                        displayName={`Phone ${index + 1} Label`}
+                        displayName={`${pt("phone", "Phone")} ${index + 1} ${pt("label", "Label")}`}
                         fieldId={sourceItem.label.field}
                         constantValueEnabled={
                           sourceItem.label.constantValueEnabled
@@ -888,14 +910,14 @@ const ResortAndRetreatInfoSectionContent = ({
               ) : (
                 <EntityField
                   key={`${item.originalNumber}-${index}`}
-                  displayName={`Phone ${index + 1}`}
+                  displayName={`${pt("phone", "Phone")} ${index + 1}`}
                   fieldId={sourceItem.number.field}
                   constantValueEnabled={sourceItem.number.constantValueEnabled}
                 >
                   <p className="m-0">
                     {item.label && sourceItem.label ? (
                       <EntityField
-                        displayName={`Phone ${index + 1} Label`}
+                        displayName={`${pt("phone", "Phone")} ${index + 1} ${pt("label", "Label")}`}
                         fieldId={sourceItem.label.field}
                         constantValueEnabled={
                           sourceItem.label.constantValueEnabled
@@ -912,7 +934,7 @@ const ResortAndRetreatInfoSectionContent = ({
           </div>
           <div className="flex flex-col gap-1">
             <EntityField
-              displayName="Check-In Heading"
+              displayName={pt("checkInHeading", "Check-In Heading")}
               fieldId={entityFieldProps.summaryCard.checkIn.subheading.field}
               constantValueEnabled={
                 entityFieldProps.summaryCard.checkIn.subheading
@@ -924,7 +946,7 @@ const ResortAndRetreatInfoSectionContent = ({
               </p>
             </EntityField>
             <EntityField
-              displayName="Check-In and Check-Out Details"
+              displayName={pt("checkInAndCheckOutDetails", "Check-In and Check-Out Details")}
               fieldId={
                 entityFieldProps.summaryCard.checkIn.checkInOutText.field
               }
@@ -941,7 +963,7 @@ const ResortAndRetreatInfoSectionContent = ({
           </div>
           <div className="flex flex-col gap-1">
             <EntityField
-              displayName="Additional Information Heading"
+              displayName={pt("additionalInformationHeading", "Additional Information Heading")}
               fieldId={entityFieldProps.summaryCard.other.subheading.field}
               constantValueEnabled={
                 entityFieldProps.summaryCard.other.subheading
@@ -953,7 +975,7 @@ const ResortAndRetreatInfoSectionContent = ({
               </p>
             </EntityField>
             <EntityField
-              displayName="Accessibility Information"
+              displayName={pt("accessibilityInformation", "Accessibility Information")}
               fieldId={
                 entityFieldProps.summaryCard.other.accessibilityText.field
               }
@@ -971,7 +993,7 @@ const ResortAndRetreatInfoSectionContent = ({
         </div>
         <div className="flex flex-wrap gap-4">
           <EntityField
-            displayName="Primary CTA"
+            displayName={pt("primaryCta", "Primary CTA")}
             fieldId={entityFieldProps.primaryCta.field}
             constantValueEnabled={
               entityFieldProps.primaryCta.constantValueEnabled
@@ -997,7 +1019,7 @@ const ResortAndRetreatInfoSectionContent = ({
             />
           </EntityField>
           <EntityField
-            displayName="Secondary CTA"
+            displayName={pt("secondaryCta", "Secondary CTA")}
             fieldId={entityFieldProps.secondaryCta.field}
             constantValueEnabled={
               entityFieldProps.secondaryCta.constantValueEnabled
@@ -1030,7 +1052,7 @@ const ResortAndRetreatInfoSectionContent = ({
         style={cardStyle}
       >
         <EntityField
-          displayName="Front Desk Heading"
+          displayName={pt("frontDeskHeading", "Front Desk Heading")}
           fieldId={entityFieldProps.hoursCard.deskHeading.field}
           constantValueEnabled={
             entityFieldProps.hoursCard.deskHeading.constantValueEnabled
@@ -1042,7 +1064,7 @@ const ResortAndRetreatInfoSectionContent = ({
         </EntityField>
         {resolvedHours ? (
           <EntityField
-            displayName="Front Desk Hours"
+            displayName={pt("frontDeskHours", "Front Desk Hours")}
             fieldId={entityFieldProps.hoursCard.hours.field}
             constantValueEnabled={
               entityFieldProps.hoursCard.hours.constantValueEnabled
@@ -1055,8 +1077,15 @@ const ResortAndRetreatInfoSectionContent = ({
               <HoursTable
                 hours={resolvedHours}
                 comingSoon={comingSoon}
+                dayOfWeekNames={dayOfWeekNames}
                 startOfWeek={hoursStyles.startOfWeek}
                 collapseDays={hoursStyles.collapseDays}
+                intervalTranslations={{
+                  isClosed: t("closed", "Closed"),
+                  open24Hours: t("open24Hours", "Open 24 Hours"),
+                  reopenDate: t("reopenDate", "Reopen Date"),
+                  timeFormatLocale: i18n.language,
+                }}
               />
               {hoursStyles.showAdditionalHoursText && additionalHoursText ? (
                 <p className="m-0">{additionalHoursText}</p>
@@ -1071,7 +1100,7 @@ const ResortAndRetreatInfoSectionContent = ({
         style={cardStyle}
       >
         <EntityField
-          displayName="Complimentary Services Heading"
+          displayName={pt("complimentaryServicesHeading", "Complimentary Services Heading")}
           fieldId={entityFieldProps.servicesCard.complimentaryHeading.field}
           constantValueEnabled={
             entityFieldProps.servicesCard.complimentaryHeading
@@ -1083,7 +1112,7 @@ const ResortAndRetreatInfoSectionContent = ({
           </h2>
         </EntityField>
         <EntityField
-          displayName="Complimentary Services"
+          displayName={pt("complimentaryServices", "Complimentary Services")}
           fieldId={entityFieldProps.servicesCard.complimentaryItems.field}
           constantValueEnabled={
             entityFieldProps.servicesCard.complimentaryItems
@@ -1103,7 +1132,7 @@ const ResortAndRetreatInfoSectionContent = ({
 
 export const ResortAndRetreatInfoSection: YextComponentConfig<ResortAndRetreatInfoSectionProps> =
   {
-    label: "Info Section",
+    label: msg("fields.infoSection", "Info Section"),
     fields: ResortAndRetreatInfoSectionFields,
     defaultProps: {
       section: {

@@ -4,6 +4,8 @@ import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   ComprehensiveCTA,
   createItemSource,
@@ -203,31 +205,31 @@ const createTextCta = (label: string): ComprehensiveCTAValue =>
   }) as ComprehensiveCTAValue;
 
 const amenityItemSource = createItemSource<AmenityItem>({
-  label: "Amenities",
+  label: msg("fields.amenities", "Amenities"),
   mappingFields: {
     iconImage: {
       type: "entityField",
-      label: "Icon Image",
+      label: msg("fields.iconImage", "Icon Image"),
       filter: { types: ["type.image"] },
     },
     title: {
       type: "entityField",
-      label: "Title",
+      label: msg("fields.title", "Title"),
       filter: { types: ["type.string"] },
     },
     description: {
       type: "entityField",
-      label: "Description",
+      label: msg("fields.description", "Description"),
       filter: { types: ["type.rich_text_v2"] },
     },
     ctaLabel: {
       type: "entityField",
-      label: "CTA Label",
+      label: msg("fields.ctaLabel", "CTA Label"),
       filter: { types: ["type.string"] },
     },
     ctaLink: {
       type: "entityField",
-      label: "CTA Link",
+      label: msg("fields.ctaLink", "CTA Link"),
       filter: { types: ["type.string"] },
     },
   },
@@ -316,36 +318,36 @@ const amenityIcons = [
 const ResortAndRetreatAmenitiesSectionFields: YextFields<ResortAndRetreatAmenitiesSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
       },
     },
     title: {
-      label: "Title",
+      label: msg("fields.title", "Title"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: { types: ["type.string"] },
         },
-        styles: { label: "Text Styles", type: "styledText" },
+        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
@@ -353,91 +355,91 @@ const ResortAndRetreatAmenitiesSectionFields: YextFields<ResortAndRetreatAmeniti
     },
     features: amenityItemSource.field,
     featureStyles: {
-      label: "Feature Styles",
+      label: msg("fields.featureStyles", "Feature Styles"),
       type: "object",
       objectFields: {
         itemTitle: {
-          label: "Item Title",
+          label: msg("fields.itemTitle", "Item Title"),
           type: "object",
           objectFields: {
-            styles: { label: "Text Styles", type: "styledText" },
+            styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         itemDescription: {
-          label: "Item Description",
+          label: msg("fields.itemDescription", "Item Description"),
           type: "object",
           objectFields: {
-            styles: { label: "Text Styles", type: "styledText" },
+            styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         iconBorderColor: {
-          label: "Icon Border Color",
+          label: msg("fields.iconBorderColor", "Icon Border Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
         iconBackgroundColor: {
-          label: "Icon Background Color",
+          label: msg("fields.iconBackgroundColor", "Icon Background Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
         iconImage: {
-          label: "Icon Image Styles",
+          label: msg("fields.iconImageStyles", "Icon Image Styles"),
           type: "object",
           objectFields: {
             aspectRatio: {
-              label: "Aspect Ratio",
+              label: msg("fields.aspectRatio", "Aspect Ratio"),
               type: "basicSelector",
               options: aspectRatioOptions,
             },
             imageConstrain: {
-              label: "Image Constrain",
+              label: msg("fields.imageConstrain", "Image Constrain"),
               type: "select",
               options: [
-                { label: "Fixed", value: "fixed" },
-                { label: "Filled", value: "filled" },
+                { label: msg("fields.fixed", "Fixed"), value: "fixed" },
+                { label: msg("fields.filled", "Filled"), value: "filled" },
               ],
             },
             styles: {
-              label: "Image Styles",
+              label: msg("fields.imageStyles", "Image Styles"),
               type: "styledImage",
             },
           },
         },
         action: {
-          label: "Action Styles",
+          label: msg("fields.actionStyles", "Action Styles"),
           type: "comprehensiveCTA",
         },
       },
     },
     image: {
-      label: "Image",
+      label: msg("fields.image", "Image"),
       type: "object",
       objectFields: {
         image: {
           type: "entityField",
-          label: "Image",
+          label: msg("fields.image", "Image"),
           filter: { types: ["type.image"] },
         },
         imageConstrain: {
-          label: "Image Constrain",
+          label: msg("fields.imageConstrain", "Image Constrain"),
           type: "select",
           options: [
-            { label: "Fixed", value: "fixed" },
-            { label: "Filled", value: "filled" },
+            { label: msg("fields.fixed", "Fixed"), value: "fixed" },
+            { label: msg("fields.filled", "Filled"), value: "filled" },
           ],
         },
         borderColor: {
-          label: "Image Border Color",
+          label: msg("fields.imageBorderColor", "Image Border Color"),
           type: "basicSelector",
           options: ThemeOptions.BACKGROUND_COLOR.flatMap(
             (group) => group.options,
@@ -569,7 +571,7 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
               }}
             >
               <EntityField
-                displayName="Amenities Image"
+                displayName={pt("amenitiesImage", "Amenities Image")}
                 fieldId={props.image.image.field}
                 constantValueEnabled={props.image.image.constantValueEnabled}
               >
@@ -592,7 +594,7 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
             </div>
             <div className="flex flex-col gap-6">
               <EntityField
-                displayName="Amenities Title"
+                displayName={pt("amenitiesTitle", "Amenities Title")}
                 fieldId={props.title.text.field}
                 constantValueEnabled={props.title.text.constantValueEnabled}
               >
@@ -612,7 +614,7 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
                 </h2>
               </EntityField>
               <EntityField
-                displayName="Amenities"
+                displayName={pt("amenities", "Amenities")}
                 fieldId={props.features.field}
                 constantValueEnabled={props.features.constantValueEnabled}
               >
@@ -780,7 +782,7 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
               style={{ borderColor: imageBorderColor }}
             >
               <EntityField
-                displayName="Amenities Image"
+                displayName={pt("amenitiesImage", "Amenities Image")}
                 fieldId={props.image.image.field}
                 constantValueEnabled={props.image.image.constantValueEnabled}
               >
@@ -810,7 +812,7 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
 
 export const ResortAndRetreatAmenitiesSection: YextComponentConfig<ResortAndRetreatAmenitiesSectionProps> =
   {
-    label: "Amenities Section",
+    label: msg("fields.amenitiesSection", "Amenities Section"),
     fields: ResortAndRetreatAmenitiesSectionFields,
     defaultProps: {
       title: createStyledTextDefault("Resort Amenities"),

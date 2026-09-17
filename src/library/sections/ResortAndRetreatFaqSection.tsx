@@ -5,6 +5,8 @@ import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider, useAnalytics } from "@yext/pages-components";
 import { ChevronDown } from "lucide-react";
 import {
+  pt,
+  msg,
   getAnalyticsScopeHash,
   getDefaultRTF,
   createItemSource,
@@ -51,16 +53,16 @@ type FaqItemDataProps = {
 // resolveStyledTextStyles in the expanded answer render path below.
 
 const faqItemSource = createItemSource<FaqItemDataProps>({
-  label: "FAQ Items",
+  label: msg("fields.faqItems", "FAQ Items"),
   mappingFields: {
     question: {
       type: "entityField",
-      label: "Question",
+      label: msg("fields.question", "Question"),
       filter: { types: ["type.string"] },
     },
     answer: {
       type: "entityField",
-      label: "Answer",
+      label: msg("fields.answer", "Answer"),
       filter: { types: ["type.rich_text_v2"] },
     },
   },
@@ -250,9 +252,9 @@ const createCardTextStyleField = (label: string) => ({
   label,
   type: "object" as const,
   objectFields: {
-    styles: { label: "Text Styles", type: "styledText" as const },
+    styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" as const },
     fontColor: {
-      label: "Font Color",
+      label: msg("fields.fontColor", "Font Color"),
       type: "basicSelector" as const,
       options: "SITE_COLOR" as const,
     },
@@ -262,46 +264,46 @@ const createCardTextStyleField = (label: string) => ({
 const ResortAndRetreatFaqSectionFields: YextFields<ResortAndRetreatFaqSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         dividerColor: {
-          label: "Divider Color",
+          label: msg("fields.dividerColor", "Divider Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     title: {
-      label: "Title",
+      label: msg("fields.title", "Title"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.string"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
@@ -379,7 +381,7 @@ const ResortAndRetreatFaqSectionContent = ({
     >
       <div className="mx-auto flex max-w-[900px] flex-col gap-8 px-5 py-10 md:px-8">
         <EntityField
-          displayName="FAQ Title"
+          displayName={pt("faqTitle", "FAQ Title")}
           fieldId={props.title.text.field}
           constantValueEnabled={props.title.text.constantValueEnabled}
         >
@@ -399,7 +401,7 @@ const ResortAndRetreatFaqSectionContent = ({
           </h2>
         </EntityField>
         <EntityField
-          displayName="FAQ Items"
+          displayName={pt("faqItems", "FAQ Items")}
           fieldId={props.items.field}
           constantValueEnabled={props.items.constantValueEnabled}
         >
@@ -485,7 +487,7 @@ const ResortAndRetreatFaqSectionContent = ({
 
 export const ResortAndRetreatFaqSection: YextComponentConfig<ResortAndRetreatFaqSectionProps> =
   {
-    label: "Faq Section",
+    label: msg("fields.faqSection", "Faq Section"),
     fields: ResortAndRetreatFaqSectionFields,
     defaultProps: {
       title: {
