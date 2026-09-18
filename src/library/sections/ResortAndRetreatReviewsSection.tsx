@@ -3,7 +3,10 @@ import type { SectionConfig } from "@yext/visual-editor";
 import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider } from "@yext/pages-components";
+import { useTranslation } from "react-i18next";
 import {
+  pt,
+  msg,
   Background,
   EntityField,
   getAggregateRating,
@@ -104,7 +107,7 @@ const resolveReviewSectionStyles = (
   stars: resolveSharedTextStyle(value?.stars),
 });
 
-const formatDate = (value?: string) => {
+const formatDate = (value: string | undefined, locale: string) => {
   if (!value) {
     return "";
   }
@@ -114,7 +117,7 @@ const formatDate = (value?: string) => {
     return value;
   }
 
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -124,29 +127,29 @@ const formatDate = (value?: string) => {
 const ResortAndRetreatReviewsSectionFields: YextFields<ResortAndRetreatReviewsSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBackgroundColor: {
-          label: "Card Background Color",
+          label: msg("fields.cardBackgroundColor", "Card Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBorderColor: {
-          label: "Card Border Color",
+          label: msg("fields.cardBorderColor", "Card Border Color"),
           type: "basicSelector",
           options: ThemeOptions.BACKGROUND_COLOR.flatMap(
             (group) => group.options,
@@ -155,101 +158,101 @@ const ResortAndRetreatReviewsSectionFields: YextFields<ResortAndRetreatReviewsSe
       },
     },
     title: {
-      label: "Title",
+      label: msg("fields.title", "Title"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.string"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     styles: {
-      label: "Styles",
+      label: msg("fields.styles", "Styles"),
       type: "object",
       objectFields: {
         averageRatingText: {
-          label: "Average Rating Text",
+          label: msg("fields.averageRatingText", "Average Rating Text"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         reviewTitle: {
-          label: "Review Title",
+          label: msg("fields.reviewTitle", "Review Title"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         reviewDate: {
-          label: "Review Date",
+          label: msg("fields.reviewDate", "Review Date"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         reviewText: {
-          label: "Review Text",
+          label: msg("fields.reviewText", "Review Text"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         stars: {
-          label: "Stars",
+          label: msg("fields.stars", "Stars"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
@@ -276,7 +279,10 @@ export const ResortAndRetreatReviewsSectionComponent: PuckComponent<
     if (props.puck.isEditing) {
       return (
         <section className="px-5 py-10 text-center">
-          No first-party reviews found for this location.
+          {pt(
+            "noFirstPartyReviews",
+            "No first-party reviews found for this location.",
+          )}
         </section>
       );
     }
@@ -326,6 +332,7 @@ const ReviewsSectionContent = ({
   reviews: ReviewItem[];
   title: string;
 }) => {
+  const { t, i18n } = useTranslation();
   const sectionBackground = useBackground();
   const streamDocument = useDocument();
   const sectionForeground =
@@ -347,7 +354,7 @@ const ReviewsSectionContent = ({
     <div className="mx-auto flex max-w-[1360px] flex-col gap-8 px-5 py-10 md:px-8 xl:px-10">
       <div className="flex flex-col gap-2 xl:items-center xl:text-center">
         <EntityField
-          displayName="Reviews Title"
+          displayName={pt("reviewsTitle", "Reviews Title")}
           fieldId={props.title.text.field}
           constantValueEnabled={props.title.text.constantValueEnabled}
         >
@@ -378,7 +385,14 @@ const ReviewsSectionContent = ({
               "var(--fontWeight-body-fontWeight)",
             )}
           >
-            {averageRating.toFixed(1)} average rating from {reviewCount} reviews
+            {t(
+              "averageRatingFromReviews",
+              "{{rating}} average rating from {{count}} reviews",
+              {
+                rating: averageRating.toFixed(1),
+                count: reviewCount,
+              },
+            )}
           </p>
         ) : null}
       </div>
@@ -417,7 +431,7 @@ const ReviewsSectionContent = ({
                       color: reviewTitleColor ?? cardForeground,
                     }}
                   >
-                    {review.authorName || "Guest"}
+                    {review.authorName || t("guest", "Guest")}
                   </p>
                   {review.reviewDate ? (
                     <p
@@ -434,7 +448,7 @@ const ReviewsSectionContent = ({
                         color: reviewDateColor ?? cardForeground,
                       }}
                     >
-                      {formatDate(review.reviewDate)}
+                      {formatDate(review.reviewDate, i18n.language)}
                     </p>
                   ) : null}
                 </div>
@@ -453,7 +467,9 @@ const ReviewsSectionContent = ({
                   }}
                 >
                   <span>
-                    {(review.rating ?? averageRating ?? 0).toFixed(1)} Stars
+                    {t("ratingInStars", "{{rating}} Stars", {
+                      rating: (review.rating ?? averageRating ?? 0).toFixed(1),
+                    })}
                   </span>
                   <div className="flex items-center gap-1">
                     {Array.from({ length: 5 }).map((_, starIndex) => (
@@ -485,7 +501,9 @@ const ReviewsSectionContent = ({
                   className="border-t pt-4 text-sm opacity-80"
                   style={{ borderColor: cardForeground, color: cardForeground }}
                 >
-                  <p className="m-0 font-medium">Response</p>
+                  <p className="m-0 font-medium">
+                    {t("response", "Response")}
+                  </p>
                   <p className="m-0 mt-2">{review.comments[0].content}</p>
                 </div>
               ) : null}
@@ -499,7 +517,7 @@ const ReviewsSectionContent = ({
 
 export const ResortAndRetreatReviewsSection: YextComponentConfig<ResortAndRetreatReviewsSectionProps> =
   {
-    label: "Reviews Section",
+    label: msg("fields.reviewsSection", "Reviews Section"),
     fields: ResortAndRetreatReviewsSectionFields,
     defaultProps: {
       title: {

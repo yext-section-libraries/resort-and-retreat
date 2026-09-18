@@ -4,6 +4,8 @@ import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider, Link } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   EntityField,
   getAnalyticsScopeHash,
@@ -134,29 +136,29 @@ const calculateDistanceMi = (origin?: Coordinate, destination?: Coordinate) => {
 const ResortAndRetreatNearbySectionFields: YextFields<ResortAndRetreatNearbySectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBackgroundColor: {
-          label: "Card Background Color",
+          label: msg("fields.cardBackgroundColor", "Card Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBorderColor: {
-          label: "Card Border Color",
+          label: msg("fields.cardBorderColor", "Card Border Color"),
           type: "basicSelector",
           options: ThemeOptions.BACKGROUND_COLOR.flatMap(
             (group) => group.options,
@@ -165,56 +167,56 @@ const ResortAndRetreatNearbySectionFields: YextFields<ResortAndRetreatNearbySect
       },
     },
     title: {
-      label: "Title",
+      label: msg("fields.title", "Title"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.string"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     styles: {
-      label: "Styles",
+      label: msg("fields.styles", "Styles"),
       type: "object",
       objectFields: {
         cardHeader: {
-          label: "Card Header",
+          label: msg("fields.cardHeader", "Card Header"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         cardBody: {
-          label: "Card Body",
+          label: msg("fields.cardBody", "Card Body"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
@@ -223,32 +225,32 @@ const ResortAndRetreatNearbySectionFields: YextFields<ResortAndRetreatNearbySect
       },
     },
     radius: {
-      label: "Radius",
+      label: msg("fields.radius", "Radius"),
       type: "number",
     },
     limit: {
-      label: "Limit",
+      label: msg("fields.limit", "Limit"),
       type: "number",
     },
 
     map: {
-      label: "Map",
+      label: msg("fields.map", "Map"),
       type: "object",
       objectFields: {
         coordinate: {
           type: "entityField",
-          label: "Coordinates",
+          label: msg("fields.coordinates", "Coordinates"),
           filter: {
             types: ["type.coordinate"],
           },
         },
         mapStyle: {
-          label: "Mapbox Map Style",
+          label: msg("fields.mapboxMapStyle", "Mapbox Map Style"),
           type: "select",
           options: mapboxStaticMapStyleOptions,
         },
         zoom: {
-          label: "Zoom",
+          label: msg("fields.zoom", "Zoom"),
           type: "number",
           min: 0,
           max: 22,
@@ -527,7 +529,7 @@ const NearbySectionContent = ({
       `}</style>
       {props.puck.isEditing || hasNearbyLocations || mapboxApiKey ? (
         <EntityField
-          displayName="Nearby Locations Title"
+          displayName={pt("nearbyLocationsTitle", "Nearby Locations Title")}
           fieldId={props.title.text.field}
           constantValueEnabled={props.title.text.constantValueEnabled}
         >
@@ -549,7 +551,7 @@ const NearbySectionContent = ({
       ) : null}
       {props.puck.isEditing && !hasNearbyLocations ? (
         <div className="grid gap-6 xl:grid-cols-3">
-          No nearby locations found.
+          {pt("noNearbyLocationsFound", "No nearby locations found.")}
         </div>
       ) : null}
       {hasNearbyLocations ? (
@@ -557,7 +559,7 @@ const NearbySectionContent = ({
       ) : null}
       {props.puck.isEditing || mapboxApiKey ? (
         <EntityField
-          displayName="Map Location"
+          displayName={pt("mapLocation", "Map Location")}
           fieldId={props.map.coordinate.field}
           constantValueEnabled={props.map.coordinate.constantValueEnabled}
         >
@@ -579,7 +581,7 @@ const NearbySectionContent = ({
 
 export const ResortAndRetreatNearbySection: YextComponentConfig<ResortAndRetreatNearbySectionProps> =
   {
-    label: "Nearby Section",
+    label: msg("fields.nearbySection", "Nearby Section"),
     fields: ResortAndRetreatNearbySectionFields,
     defaultProps: {
       title: {

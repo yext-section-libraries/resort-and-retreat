@@ -1,9 +1,12 @@
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import type { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider, Link } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   getAnalyticsScopeHash,
   getThemeColorCssValue,
@@ -29,32 +32,32 @@ type ResortAndRetreatBreadcrumbsProps = {
 const ResortAndRetreatBreadcrumbsFields: YextFields<ResortAndRetreatBreadcrumbsProps> =
   {
     includeCurrentLocation: {
-      label: "Include Current Location",
+      label: msg("fields.includeCurrentLocation", "Include Current Location"),
       type: "radio",
       options: [
-        { label: "Yes", value: true },
-        { label: "No", value: false },
+        { label: msg("fields.yes", "Yes"), value: true },
+        { label: msg("fields.no", "No"), value: false },
       ],
     },
     styles: {
-      label: "Text Styles",
+      label: msg("fields.textStyles", "Text Styles"),
       type: "styledText",
     },
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
       },
@@ -65,6 +68,7 @@ const ResortAndRetreatBreadcrumbsFields: YextFields<ResortAndRetreatBreadcrumbsP
 const ResortAndRetreatBreadcrumbsComponent: PuckComponent<
   ResortAndRetreatBreadcrumbsProps
 > = (props) => {
+  const { t } = useTranslation();
   const streamDocument = useDocument();
   const { relativePrefixToRoot } = useTemplateProps();
   const breadcrumbs = resolveBreadcrumbs(streamDocument);
@@ -86,8 +90,10 @@ const ResortAndRetreatBreadcrumbsComponent: PuckComponent<
           padding: "18px 24px",
         }}
       >
-        No breadcrumbs available (section will be hidden on live page). Create a
-        directory to enable breadcrumbs.
+        {pt(
+          "noBreadcrumbsAvailable",
+          "No breadcrumbs available (section will be hidden on live page). Create a directory to enable breadcrumbs.",
+        )}
       </p>
     ) : (
       <></>
@@ -104,7 +110,7 @@ const ResortAndRetreatBreadcrumbsComponent: PuckComponent<
       >
         <Background as="section" background={props.section.backgroundColor}>
           <nav
-            aria-label="Breadcrumb"
+            aria-label={t("breadcrumb", "Breadcrumb")}
             className="mx-auto max-w-[1360px] px-5 py-3 md:px-8 xl:px-10"
             style={{ color: textColor }}
           >
@@ -180,7 +186,7 @@ const ResortAndRetreatBreadcrumbsComponent: PuckComponent<
 
 export const ResortAndRetreatBreadcrumbs: YextComponentConfig<ResortAndRetreatBreadcrumbsProps> =
   {
-    label: "Breadcrumbs",
+    label: msg("fields.breadcrumbs", "Breadcrumbs"),
     fields: ResortAndRetreatBreadcrumbsFields,
     defaultProps: {
       includeCurrentLocation: true,

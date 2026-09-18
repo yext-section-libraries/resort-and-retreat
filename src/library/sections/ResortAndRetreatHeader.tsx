@@ -2,6 +2,7 @@ import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
+import { useTranslation } from "react-i18next";
 import {
   AnalyticsScopeProvider,
   Link,
@@ -11,6 +12,8 @@ import {
   useAnalytics,
 } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   ComprehensiveCTA,
   EntityField,
@@ -30,7 +33,7 @@ import {
   getAnalyticsScopeHash,
   getSurfaceColorStyle,
   getThemeColorCssValue,
-  i18nComponentsInstance,
+  i18nPageInstance,
   normalizeLink,
   resolveComponentData,
   useDocument,
@@ -104,9 +107,9 @@ type ResortAndRetreatHeaderProps = {
 };
 
 const linkTypeOptions: Array<{ label: string; value: LinkType }> = [
-  { label: "URL", value: "URL" },
-  { label: "Phone", value: "PHONE" },
-  { label: "Email", value: "EMAIL" },
+  { label: msg("fields.url", "URL"), value: "URL" },
+  { label: msg("fields.phone", "Phone"), value: "PHONE" },
+  { label: msg("fields.email", "Email"), value: "EMAIL" },
 ];
 
 const defaultPrimaryCtaColor: ThemeColor = {
@@ -168,7 +171,7 @@ const getTranslatableSummary = (
   }
 
   return (
-    resolveComponentData(value, i18nComponentsInstance.language, undefined) ||
+    resolveComponentData(value, i18nPageInstance.language, undefined) ||
     value.defaultValue ||
     fallback
   );
@@ -221,82 +224,82 @@ const SharedHeaderDefaultUtilityIcon = () => (
 const ResortAndRetreatHeaderFields: YextFields<ResortAndRetreatHeaderProps> =
   {
     variant: {
-      label: "Variant",
+      label: msg("fields.variant", "Variant"),
       type: "select",
       options: [
-        { label: "Centered Logo Split Nav", value: "centerLogoSplitNav" },
-        { label: "Logo Left Inline Nav", value: "logoLeftInlineNav" },
-        { label: "Stacked Nav Below", value: "stackedNavBelow" },
-        { label: "Utility Top Row", value: "utilityTopRow" },
+        { label: msg("fields.centeredLogoSplitNav", "Centered Logo Split Nav"), value: "centerLogoSplitNav" },
+        { label: msg("fields.logoLeftInlineNav", "Logo Left Inline Nav"), value: "logoLeftInlineNav" },
+        { label: msg("fields.stackedNavBelow", "Stacked Nav Below"), value: "stackedNavBelow" },
+        { label: msg("fields.utilityTopRow", "Utility Top Row"), value: "utilityTopRow" },
       ],
     },
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         dividerColor: {
-          label: "Divider Color",
+          label: msg("fields.dividerColor", "Divider Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     navigation: {
-      label: "Navigation",
+      label: msg("fields.navigation", "Navigation"),
       type: "object",
       objectFields: {
         show: {
-          label: "Show Navigation",
+          label: msg("fields.showNavigation", "Show Navigation"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         links: {
-          label: "Links",
+          label: msg("fields.links", "Links"),
           type: "array",
           arrayFields: {
             label: {
-              label: "Label",
+              label: msg("fields.label", "Label"),
               type: "translatableString",
             },
             link: {
-              label: "Link",
+              label: msg("fields.link", "Link"),
               type: "translatableString",
             },
             linkType: {
-              label: "Link Type",
+              label: msg("fields.linkType", "Link Type"),
               type: "select",
               options: linkTypeOptions,
             },
             normalizeLink: {
-              label: "Normalize Link",
+              label: msg("fields.normalizeLink", "Normalize Link"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
             openInNewTab: {
-              label: "Open in New Tab",
+              label: msg("fields.openInNewTab", "Open in New Tab"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
           },
@@ -311,90 +314,90 @@ const ResortAndRetreatHeaderFields: YextFields<ResortAndRetreatHeaderProps> =
             getTranslatableSummary(item.label, `Link ${index ?? 0}`),
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
         styles: {
-          label: "Link Styles",
+          label: msg("fields.linkStyles", "Link Styles"),
           type: "styledLink",
           showIncludeCaretField: false,
         },
       },
     },
     utilities: {
-      label: "Utility Icons",
+      label: msg("fields.utilityIcons", "Utility Icons"),
       type: "object",
       objectFields: {
         show: {
-          label: "Show Utility Links",
+          label: msg("fields.showUtilityLinks", "Show Utility Links"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         items: {
-          label: "Items",
+          label: msg("fields.items", "Items"),
           type: "array",
           arrayFields: {
             iconImage: {
-              label: "Icon Image",
+              label: msg("fields.iconImage", "Icon Image"),
               type: "object",
               objectFields: {
                 image: {
                   type: "entityField",
-                  label: "Image",
+                  label: msg("fields.image", "Image"),
                   filter: {
                     types: ["type.image"],
                   },
                 },
                 aspectRatio: {
-                  label: "Aspect Ratio",
+                  label: msg("fields.aspectRatio", "Aspect Ratio"),
                   type: "basicSelector",
                   options: aspectRatioOptions,
                 },
                 imageConstrain: {
-                  label: "Image Constrain",
+                  label: msg("fields.imageConstrain", "Image Constrain"),
                   type: "select",
                   options: [
-                    { label: "Fixed", value: "fixed" },
-                    { label: "Filled", value: "filled" },
+                    { label: msg("fields.fixed", "Fixed"), value: "fixed" },
+                    { label: msg("fields.filled", "Filled"), value: "filled" },
                   ],
                 },
                 styles: {
-                  label: "Image Styles",
+                  label: msg("fields.imageStyles", "Image Styles"),
                   type: "styledImage",
                 },
               },
             },
             label: {
-              label: "Label",
+              label: msg("fields.label", "Label"),
               type: "translatableString",
             },
             link: {
-              label: "Link",
+              label: msg("fields.link", "Link"),
               type: "translatableString",
             },
             linkType: {
-              label: "Link Type",
+              label: msg("fields.linkType", "Link Type"),
               type: "select",
               options: linkTypeOptions,
             },
             normalizeLink: {
-              label: "Normalize Link",
+              label: msg("fields.normalizeLink", "Normalize Link"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
             openInNewTab: {
-              label: "Open in New Tab",
+              label: msg("fields.openInNewTab", "Open in New Tab"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
           },
@@ -412,23 +415,23 @@ const ResortAndRetreatHeaderFields: YextFields<ResortAndRetreatHeaderProps> =
       },
     },
     cta: {
-      label: "Call to Actions",
+      label: msg("fields.callToActions", "Call to Actions"),
       type: "object",
       objectFields: {
         show: {
-          label: "Show CTA",
+          label: msg("fields.showCta", "Show CTA"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         items: {
-          label: "Items",
+          label: msg("fields.items", "Items"),
           type: "array",
           arrayFields: {
             cta: {
-              label: "CTA",
+              label: msg("fields.cta", "CTA"),
               type: "comprehensiveCTA",
             },
           },
@@ -474,46 +477,46 @@ const ResortAndRetreatHeaderFields: YextFields<ResortAndRetreatHeaderProps> =
       },
     },
     logoImage: {
-      label: "Logo Image",
+      label: msg("fields.logoImage", "Logo Image"),
       type: "object",
       objectFields: {
         show: {
-          label: "Show Logo",
+          label: msg("fields.showLogo", "Show Logo"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         image: {
           type: "entityField",
-          label: "Image",
+          label: msg("fields.image", "Image"),
           filter: {
             types: ["type.image"],
           },
         },
         url: {
-          label: "URL",
+          label: msg("fields.url", "URL"),
           type: "entityField",
           filter: {
             types: ["type.string"],
           },
         },
         aspectRatio: {
-          label: "Aspect Ratio",
+          label: msg("fields.aspectRatio", "Aspect Ratio"),
           type: "basicSelector",
           options: aspectRatioOptions,
         },
         imageConstrain: {
-          label: "Image Constrain",
+          label: msg("fields.imageConstrain", "Image Constrain"),
           type: "select",
           options: [
-            { label: "Fixed", value: "fixed" },
-            { label: "Filled", value: "filled" },
+            { label: msg("fields.fixed", "Fixed"), value: "fixed" },
+            { label: msg("fields.filled", "Filled"), value: "filled" },
           ],
         },
         styles: {
-          label: "Image Styles",
+          label: msg("fields.imageStyles", "Image Styles"),
           type: "styledImage",
         },
       },
@@ -523,6 +526,7 @@ const ResortAndRetreatHeaderFields: YextFields<ResortAndRetreatHeaderProps> =
 const ResortAndRetreatHeaderComponent: PuckComponent<
   ResortAndRetreatHeaderProps
 > = (props) => {
+  const { t } = useTranslation();
   const analytics = useAnalytics();
   const streamDocument = useDocument<StreamDocument>();
   const locale = streamDocument.locale ?? "en";
@@ -709,7 +713,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
               }}
             >
               <EntityField
-                displayName={`${item.label} Icon`}
+                displayName={`${item.label} ${pt("icon", "Icon")}`}
                 fieldId={item.iconImageField.field}
                 constantValueEnabled={item.iconImageField.constantValueEnabled}
               >
@@ -729,7 +733,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
           {ctaItems.map((item, index) => (
             <EntityField
               key={`desktop-cta-${index}`}
-              displayName={`Header CTA ${index + 1}`}
+              displayName={`${pt("headerCta", "Header CTA")} ${index + 1}`}
               fieldId={item.cta.data.cta.field}
               constantValueEnabled={item.cta.data.cta.constantValueEnabled}
             >
@@ -758,7 +762,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
   );
 
   const renderNavigationLinks = (orientation: "row" | "column") => (
-    <nav aria-label="Primary navigation">
+    <nav aria-label={t("primaryNavigation", "Primary navigation")}>
       <ul
         className={
           orientation === "row"
@@ -796,7 +800,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
 
     const logoContent = (
       <EntityField
-        displayName="Header Logo Image"
+        displayName={pt("headerLogoImage", "Header Logo Image")}
         fieldId={props.logoImage.image.field}
         constantValueEnabled={props.logoImage.image.constantValueEnabled}
       >
@@ -815,7 +819,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
 
     return logoUrl ? (
       <EntityField
-        displayName="Header Logo Link"
+        displayName={pt("headerLogoLink", "Header Logo Link")}
         fieldId={props.logoImage.url.field}
         constantValueEnabled={props.logoImage.url.constantValueEnabled}
       >
@@ -826,7 +830,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
           }}
           eventName="headerLogo"
           className="inline-flex transition-opacity hover:opacity-80"
-          aria-label="Logo"
+          aria-label={t("logo", "Logo")}
         >
           {logoContent}
         </Link>
@@ -927,7 +931,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
           {showCta && topBarCtaItem ? (
             <div className="hidden items-center gap-3 md:flex">
               <EntityField
-                displayName="Header CTA 1"
+                displayName={pt("headerCta1", "Header CTA 1")}
                 fieldId={topBarCtaItem.cta.data.cta.field}
                 constantValueEnabled={
                   topBarCtaItem.cta.data.cta.constantValueEnabled
@@ -1012,7 +1016,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
                       {drawerCtaItems.map((item, index) => (
                         <EntityField
                           key={`tablet-cta-${index}`}
-                          displayName={`Header CTA ${index + 2}`}
+                          displayName={`${pt("headerCta", "Header CTA")} ${index + 2}`}
                           fieldId={item.cta.data.cta.field}
                           constantValueEnabled={
                             item.cta.data.cta.constantValueEnabled
@@ -1046,7 +1050,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
                       {mobileDrawerCtaItems.map((item, index) => (
                         <EntityField
                           key={`mobile-cta-${index}`}
-                          displayName={`Header CTA ${index + 1}`}
+                          displayName={`${pt("headerCta", "Header CTA")} ${index + 1}`}
                           fieldId={item.cta.data.cta.field}
                           constantValueEnabled={
                             item.cta.data.cta.constantValueEnabled
@@ -1106,7 +1110,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
                           }}
                         >
                           <EntityField
-                            displayName={`${item.label} Icon`}
+                            displayName={`${item.label} ${pt("icon", "Icon")}`}
                             fieldId={item.iconImageField.field}
                             constantValueEnabled={
                               item.iconImageField.constantValueEnabled
@@ -1135,7 +1139,7 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
 
 export const ResortAndRetreatHeader: YextComponentConfig<ResortAndRetreatHeaderProps> =
   {
-    label: "Header",
+    label: msg("fields.header", "Header"),
     fields: ResortAndRetreatHeaderFields,
     defaultProps: {
       variant: "logoLeftInlineNav",
@@ -1151,35 +1155,35 @@ export const ResortAndRetreatHeader: YextComponentConfig<ResortAndRetreatHeaderP
         show: true,
         links: [
           {
-            label: "Rooms",
+            label: msg("fields.rooms", "Rooms"),
             link: "#rooms",
             linkType: "URL",
             normalizeLink: false,
             openInNewTab: false,
           },
           {
-            label: "Amenities & Dining",
+            label: msg("fields.amenitiesDining", "Amenities & Dining"),
             link: "#amenities",
             linkType: "URL",
             normalizeLink: false,
             openInNewTab: false,
           },
           {
-            label: "Offers",
+            label: msg("fields.offers", "Offers"),
             link: "#offers",
             linkType: "URL",
             normalizeLink: false,
             openInNewTab: false,
           },
           {
-            label: "Locations",
+            label: msg("fields.locations", "Locations"),
             link: "#locations",
             linkType: "URL",
             normalizeLink: false,
             openInNewTab: false,
           },
           {
-            label: "Rewards",
+            label: msg("fields.rewards", "Rewards"),
             link: "#rewards",
             linkType: "URL",
             normalizeLink: false,
@@ -1193,7 +1197,7 @@ export const ResortAndRetreatHeader: YextComponentConfig<ResortAndRetreatHeaderP
         items: [
           {
             iconImage: defaultUtilityIconImage,
-            label: "Item 1",
+            label: msg("fields.item1", "Item 1"),
             link: "#",
             linkType: "URL",
             normalizeLink: false,
@@ -1201,7 +1205,7 @@ export const ResortAndRetreatHeader: YextComponentConfig<ResortAndRetreatHeaderP
           },
           {
             iconImage: defaultUtilityIconImage,
-            label: "Item 2",
+            label: msg("fields.item2", "Item 2"),
             link: "#",
             linkType: "URL",
             normalizeLink: false,
@@ -1209,7 +1213,7 @@ export const ResortAndRetreatHeader: YextComponentConfig<ResortAndRetreatHeaderP
           },
           {
             iconImage: defaultUtilityIconImage,
-            label: "Item 3",
+            label: msg("fields.item3", "Item 3"),
             link: "#",
             linkType: "URL",
             normalizeLink: false,

@@ -1,9 +1,13 @@
 import { useTranslation } from "react-i18next";
+import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
-import { DayOfWeekNames, HoursType } from "@yext/pages-components";
+import {
+  DayOfWeekNames,
+  HoursTable as HoursTableComponent,
+  HoursType,
+} from "@yext/pages-components";
 import "@yext/pages-components/style.css";
 import { EntityField } from "@yext/visual-editor/section-library-support";
-import { HoursTableAtom } from "@yext/visual-editor/section-library-support";
 import { resolveComponentData } from "@yext/visual-editor/section-library-support";
 import { useDocument } from "@yext/visual-editor/section-library-support";
 import { YextEntityField } from "@yext/visual-editor/section-library-support";
@@ -102,10 +106,28 @@ export const hoursTableFields: YextFields<HoursTableProps> = {
 
 const VisualEditorHoursTable: PuckComponent<HoursTableProps> = (props) => {
   const { data, styles, puck } = props;
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const streamDocument = useDocument();
   const comingSoon = !!streamDocument.comingSoon;
   const hours = resolveComponentData(data.hours, i18n.language, streamDocument);
+  const dayOfWeekNames = React.useMemo<DayOfWeekNames>(() => {
+    const formatter = new Intl.DateTimeFormat(i18n.language, {
+      timeZone: "UTC",
+      weekday: "long",
+    });
+    const formatWeekday = (day: number) =>
+      formatter.format(new Date(Date.UTC(2024, 0, day)));
+
+    return {
+      sunday: formatWeekday(7),
+      monday: formatWeekday(8),
+      tuesday: formatWeekday(9),
+      wednesday: formatWeekday(10),
+      thursday: formatWeekday(11),
+      friday: formatWeekday(12),
+      saturday: formatWeekday(13),
+    };
+  }, [i18n.language]);
 
   const { additionalHoursText } = streamDocument as {
     additionalHoursText: string;
@@ -118,11 +140,18 @@ const VisualEditorHoursTable: PuckComponent<HoursTableProps> = (props) => {
         fieldId="hours"
         constantValueEnabled={data.hours.constantValueEnabled}
       >
-        <HoursTableAtom
+        <HoursTableComponent
           hours={hours ?? {}}
           comingSoon={comingSoon}
+          dayOfWeekNames={dayOfWeekNames}
           startOfWeek={styles.startOfWeek}
           collapseDays={styles.collapseDays}
+          intervalTranslations={{
+            isClosed: t("closed", "Closed"),
+            open24Hours: t("open24Hours", "Open 24 Hours"),
+            reopenDate: t("reopenDate", "Reopen Date"),
+            timeFormatLocale: i18n.language,
+          }}
         />
       </EntityField>
       {additionalHoursText && styles.showAdditionalHoursText && (

@@ -1,9 +1,12 @@
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider, Link } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   EntityField,
   getAnalyticsScopeHash,
@@ -78,111 +81,111 @@ export type ResortAndRetreatFooterProps = {
 const ResortAndRetreatFooterFields: YextFields<ResortAndRetreatFooterProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         borderColor: {
-          label: "Border Color",
+          label: msg("fields.borderColor", "Border Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
         topBorderColor: {
-          label: "Top Border Color",
+          label: msg("fields.topBorderColor", "Top Border Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     infoPane: {
-      label: "Info Panel",
+      label: msg("fields.infoPanel", "Info Panel"),
       type: "object",
       objectFields: {
         infoPanelBackgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         brand: {
-          label: "Heading",
+          label: msg("fields.heading", "Heading"),
           type: "object",
           objectFields: {
             text: {
               type: "entityField",
-              label: "Text",
+              label: msg("fields.text", "Text"),
               filter: {
                 types: ["type.string"],
               },
             },
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
           },
         },
         address: {
-          label: "Address",
+          label: msg("fields.address", "Address"),
           type: "object",
           objectFields: {
             address: {
               type: "entityField",
-              label: "Address",
+              label: msg("fields.address", "Address"),
               filter: {
                 types: ["type.address"],
               },
             },
             showRegion: {
-              label: "Show Region",
+              label: msg("fields.showRegion", "Show Region"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
             showCountry: {
-              label: "Show Country",
+              label: msg("fields.showCountry", "Show Country"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
           },
         },
         phones: {
-          label: "Phone Numbers",
+          label: msg("fields.phoneNumbers", "Phone Numbers"),
           type: "object",
           objectFields: {
             items: {
-              label: "Numbers",
+              label: msg("fields.numbers", "Numbers"),
               type: "array",
               arrayFields: {
                 number: {
                   type: "entityField",
-                  label: "Number",
+                  label: msg("fields.number", "Number"),
                   filter: {
                     types: ["type.phone"],
                   },
                 },
                 label: {
-                  label: "Label",
+                  label: msg("fields.label", "Label"),
                   type: "entityField",
                   filter: {
                     types: ["type.string"],
@@ -207,33 +210,33 @@ const ResortAndRetreatFooterFields: YextFields<ResortAndRetreatFooterProps> =
               getItemSummary: (_, i) => `Phone ${(i ?? 0) + 1}`,
             },
             phoneFormat: {
-              label: "Phone Format",
+              label: msg("fields.phoneFormat", "Phone Format"),
               type: "radio",
               options: [
-                { label: "Domestic", value: "domestic" },
-                { label: "International", value: "international" },
+                { label: msg("fields.domestic", "Domestic"), value: "domestic" },
+                { label: msg("fields.international", "International"), value: "international" },
               ],
             },
             includeHyperlink: {
-              label: "Include Hyperlink",
+              label: msg("fields.includeHyperlink", "Include Hyperlink"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
           },
         },
         bodyStyles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "object",
           objectFields: {
             styles: {
-              label: "Text Styles",
+              label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
             },
             fontColor: {
-              label: "Font Color",
+              label: msg("fields.fontColor", "Font Color"),
               type: "basicSelector",
               options: "SITE_COLOR",
             },
@@ -242,43 +245,43 @@ const ResortAndRetreatFooterFields: YextFields<ResortAndRetreatFooterProps> =
       },
     },
     linkPane: {
-      label: "Link Panel",
+      label: msg("fields.linkPanel", "Link Panel"),
       type: "object",
       objectFields: {
         linkPanelBackgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         linkColor: {
-          label: "Link Color",
+          label: msg("fields.linkColor", "Link Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
         quickLinks: {
-          label: "Quick Links",
+          label: msg("fields.quickLinks", "Quick Links"),
           type: "array",
           arrayFields: {
             label: {
-              label: "Label",
+              label: msg("fields.label", "Label"),
               type: "entityField",
               filter: {
                 types: ["type.string"],
               },
             },
             link: {
-              label: "Link",
+              label: msg("fields.link", "Link"),
               type: "entityField",
               filter: {
                 types: ["type.string"],
               },
             },
             openInNewTab: {
-              label: "Open in New Tab",
+              label: msg("fields.openInNewTab", "Open in New Tab"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
           },
@@ -304,29 +307,29 @@ const ResortAndRetreatFooterFields: YextFields<ResortAndRetreatFooterProps> =
           getItemSummary: (_, i) => `Link ${(i ?? 0) + 1}`,
         },
         socialLinks: {
-          label: "Social Links",
+          label: msg("fields.socialLinks", "Social Links"),
           type: "array",
           arrayFields: {
             label: {
-              label: "Label",
+              label: msg("fields.label", "Label"),
               type: "entityField",
               filter: {
                 types: ["type.string"],
               },
             },
             link: {
-              label: "Link",
+              label: msg("fields.link", "Link"),
               type: "entityField",
               filter: {
                 types: ["type.string"],
               },
             },
             openInNewTab: {
-              label: "Open in New Tab",
+              label: msg("fields.openInNewTab", "Open in New Tab"),
               type: "radio",
               options: [
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: msg("fields.yes", "Yes"), value: true },
+                { label: msg("fields.no", "No"), value: false },
               ],
             },
           },
@@ -358,6 +361,7 @@ const ResortAndRetreatFooterFields: YextFields<ResortAndRetreatFooterProps> =
 export const ResortAndRetreatFooterComponent: PuckComponent<
   ResortAndRetreatFooterProps
 > = (props) => {
+  const { t } = useTranslation();
   const streamDocument = useDocument();
   const locale = streamDocument.locale ?? "en";
   const brandText =
@@ -472,7 +476,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
               }}
             >
               <EntityField
-                displayName="Footer Brand"
+                displayName={pt("footerBrand", "Footer Brand")}
                 fieldId={props.infoPane.brand.text.field}
                 constantValueEnabled={
                   props.infoPane.brand.text.constantValueEnabled
@@ -495,7 +499,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
               </EntityField>
               {resolvedAddress ? (
                 <EntityField
-                  displayName="Footer Address"
+                  displayName={pt("footerAddress", "Footer Address")}
                   fieldId={props.infoPane.address.address.field}
                   constantValueEnabled={
                     props.infoPane.address.address.constantValueEnabled
@@ -514,7 +518,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                 props.infoPane.phones.includeHyperlink ? (
                   <EntityField
                     key={`${item.originalNumber}-${index}`}
-                    displayName={`Footer Phone ${index + 1}`}
+                    displayName={`${pt("footerPhone", "Footer Phone")} ${index + 1}`}
                     fieldId={item.numberField.field}
                     constantValueEnabled={item.numberField.constantValueEnabled}
                   >
@@ -528,7 +532,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                     >
                       {item.label && item.labelField ? (
                         <EntityField
-                          displayName={`Footer Phone ${index + 1} Label`}
+                          displayName={`${pt("footerPhone", "Footer Phone")} ${index + 1} ${pt("label", "Label")}`}
                           fieldId={item.labelField.field}
                           constantValueEnabled={
                             item.labelField.constantValueEnabled
@@ -543,14 +547,14 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                 ) : (
                   <EntityField
                     key={`${item.originalNumber}-${index}`}
-                    displayName={`Footer Phone ${index + 1}`}
+                    displayName={`${pt("footerPhone", "Footer Phone")} ${index + 1}`}
                     fieldId={item.numberField.field}
                     constantValueEnabled={item.numberField.constantValueEnabled}
                   >
                     <p className="m-0" style={bodyTextStyle}>
                       {item.label && item.labelField ? (
                         <EntityField
-                          displayName={`Footer Phone ${index + 1} Label`}
+                          displayName={`${pt("footerPhone", "Footer Phone")} ${index + 1} ${pt("label", "Label")}`}
                           fieldId={item.labelField.field}
                           constantValueEnabled={
                             item.labelField.constantValueEnabled
@@ -577,7 +581,9 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
               }}
             >
               <div className="flex-1">
-                <p className="mb-3 mt-0 font-bold">Quick Links</p>
+                <p className="mb-3 mt-0 font-bold">
+                  {t("quickLinks", "Quick Links")}
+                </p>
                 <div className="flex flex-col gap-2">
                   {(props.linkPane.quickLinks ?? []).map((item, index) => {
                     const itemLabel =
@@ -593,7 +599,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                     return (
                       <EntityField
                         key={`${itemLabel}-${index}`}
-                        displayName={`Quick Link ${index + 1} URL`}
+                        displayName={`${pt("quickLink", "Quick Link")} ${index + 1} URL`}
                         fieldId={item.link.field}
                         constantValueEnabled={item.link.constantValueEnabled}
                       >
@@ -613,7 +619,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                           }
                         >
                           <EntityField
-                            displayName={`Quick Link ${index + 1} Label`}
+                            displayName={`${pt("quickLink", "Quick Link")} ${index + 1} ${pt("label", "Label")}`}
                             fieldId={item.label.field}
                             constantValueEnabled={
                               item.label.constantValueEnabled
@@ -628,7 +634,9 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                 </div>
               </div>
               <div className="flex-1">
-                <p className="mb-3 mt-0 font-bold">Social Links</p>
+                <p className="mb-3 mt-0 font-bold">
+                  {t("socialLinks", "Social Links")}
+                </p>
                 <div className="flex flex-col gap-2">
                   {(props.linkPane.socialLinks ?? []).map((item, index) => {
                     const itemLabel =
@@ -644,7 +652,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                     return (
                       <EntityField
                         key={`${itemLabel}-${index}`}
-                        displayName={`Social Link ${index + 1} URL`}
+                        displayName={`${pt("socialLink", "Social Link")} ${index + 1} URL`}
                         fieldId={item.link.field}
                         constantValueEnabled={item.link.constantValueEnabled}
                       >
@@ -664,7 +672,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                           }
                         >
                           <EntityField
-                            displayName={`Social Link ${index + 1} Label`}
+                            displayName={`${pt("socialLink", "Social Link")} ${index + 1} ${pt("label", "Label")}`}
                             fieldId={item.label.field}
                             constantValueEnabled={
                               item.label.constantValueEnabled
@@ -688,7 +696,7 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
 
 export const ResortAndRetreatFooter: YextComponentConfig<ResortAndRetreatFooterProps> =
   {
-    label: "Footer",
+    label: msg("fields.footer", "Footer"),
     fields: ResortAndRetreatFooterFields,
     defaultProps: {
       section: {

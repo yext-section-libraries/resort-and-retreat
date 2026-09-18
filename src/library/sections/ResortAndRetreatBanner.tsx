@@ -4,6 +4,8 @@ import { PuckComponent } from "@puckeditor/core";
 import { CircleSlash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
+  pt,
+  msg,
   Body,
   EntityField,
   PageSection,
@@ -40,57 +42,57 @@ type ResortAndRetreatBannerProps = {
 
 const ResortAndRetreatBannerFields: YextFields<ResortAndRetreatBannerProps> = {
   data: {
-    label: "Banner Text",
+    label: msg("fields.bannerText", "Banner Text"),
     type: "object",
     objectFields: {
       text: {
-        label: "Text",
+        label: msg("fields.text", "Text"),
         type: "entityField",
         filter: {
           types: ["type.rich_text_v2"],
         },
       },
       styles: {
-        label: "Text Styles",
+        label: msg("fields.textStyles", "Text Styles"),
         type: "styledText",
       },
       fontColor: {
-        label: "Text Color",
+        label: msg("fields.textColor", "Text Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
     },
   },
   styles: {
-    label: "Styles",
+    label: msg("fields.styles", "Styles"),
     type: "object",
     objectFields: {
       textAlignment: {
-        label: "Text Alignment",
+        label: msg("fields.textAlignment", "Text Alignment"),
         type: "radio",
         options: [
-          { label: "Left", value: "left" },
-          { label: "Center", value: "center" },
-          { label: "Right", value: "right" },
+          { label: msg("fields.left", "Left"), value: "left" },
+          { label: msg("fields.center", "Center"), value: "center" },
+          { label: msg("fields.right", "Right"), value: "right" },
         ],
       },
     },
   },
   section: {
-    label: "Section",
+    label: msg("fields.section", "Section"),
     type: "object",
     objectFields: {
       backgroundColor: {
-        label: "Background Color",
+        label: msg("fields.backgroundColor", "Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
       visibleOnLivePage: {
-        label: "Visible on Live Page",
+        label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.yes", "Yes"), value: true },
+          { label: msg("fields.no", "No"), value: false },
         ],
       },
     },
@@ -167,7 +169,7 @@ const ResortAndRetreatBannerComponent: PuckComponent<ResortAndRetreatBannerProps
     >
       <EntityField
         constantValueEnabled={data.text.constantValueEnabled}
-        displayName="Banner Text"
+        displayName={pt("bannerText", "Banner Text")}
         fieldId={data.text.field}
       >
         {renderRichText(resolvedText, richTextStyleOverrides)}
@@ -180,7 +182,7 @@ const ResortAndRetreatBannerComponent: PuckComponent<ResortAndRetreatBannerProps
  * Displays a full-width, editor-configurable rich-text banner.
  */
 export const ResortAndRetreatBanner: YextComponentConfig<ResortAndRetreatBannerProps> = {
-  label: "Banner",
+  label: msg("fields.banner", "Banner"),
   fields: toPuckFields<ResortAndRetreatBannerProps>(
     ResortAndRetreatBannerFields,
   ),

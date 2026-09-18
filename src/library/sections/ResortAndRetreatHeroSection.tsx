@@ -3,7 +3,10 @@ import type { SectionConfig } from "@yext/visual-editor";
 import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider } from "@yext/pages-components";
+import { useTranslation } from "react-i18next";
 import {
+  pt,
+  msg,
   ComprehensiveCTA,
   EntityField,
   getAggregateRating,
@@ -77,148 +80,148 @@ export type ResortAndRetreatHeroSectionProps = {
 const ResortAndRetreatHeroSectionFields: YextFields<ResortAndRetreatHeroSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
       },
     },
     availabilityBadge: {
-      label: "Availability Badge",
+      label: msg("fields.availabilityBadge", "Availability Badge"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.string"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Pill Color",
+          label: msg("fields.pillColor", "Pill Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     heading: {
-      label: "Heading",
+      label: msg("fields.heading", "Heading"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.string"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     subheading: {
-      label: "Subheading",
+      label: msg("fields.subheading", "Subheading"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.string"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     body: {
-      label: "Body",
+      label: msg("fields.body", "Body"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: {
             types: ["type.rich_text_v2"],
           },
         },
         styles: {
-          label: "Text Styles",
+          label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
         },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
       },
     },
     heroImage: {
-      label: "Hero Image",
+      label: msg("fields.heroImage", "Hero Image"),
       type: "object",
       objectFields: {
         image: {
           type: "entityField",
-          label: "Image",
+          label: msg("fields.image", "Image"),
           filter: {
             types: ["type.image"],
           },
         },
         aspectRatio: {
-          label: "Aspect Ratio",
+          label: msg("fields.aspectRatio", "Aspect Ratio"),
           type: "basicSelector",
           options: aspectRatioOptions,
         },
         imageConstrain: {
-          label: "Image Constrain",
+          label: msg("fields.imageConstrain", "Image Constrain"),
           type: "select",
           options: [
-            { label: "Fixed", value: "fixed" },
-            { label: "Filled", value: "filled" },
+            { label: msg("fields.fixed", "Fixed"), value: "fixed" },
+            { label: msg("fields.filled", "Filled"), value: "filled" },
           ],
         },
         styles: {
-          label: "Image Styles",
+          label: msg("fields.imageStyles", "Image Styles"),
           type: "styledImage",
         },
       },
     },
     primaryCta: {
-      label: "Primary Call to Action",
+      label: msg("fields.primaryCallToAction", "Primary Call to Action"),
       type: "comprehensiveCTA",
     },
     secondaryCta: {
-      label: "Secondary Call to Action",
+      label: msg("fields.secondaryCallToAction", "Secondary Call to Action"),
       type: "comprehensiveCTA",
     },
   };
@@ -344,6 +347,7 @@ const HeroSectionContent = ({
   secondaryCtaValue: Partial<ComprehensiveCTAValue>;
   subheading: string;
 }) => {
+  const { t } = useTranslation();
   const streamBackground = useBackground();
   const sectionForeground =
     getThemeColorCssValue(streamBackground?.contrastingColor) ?? "currentColor";
@@ -363,7 +367,7 @@ const HeroSectionContent = ({
     <div className="mx-auto flex max-w-[1360px] flex-col items-start px-5 pb-0 pt-10 text-left md:px-8 md:pt-14 xl:items-center xl:px-10 xl:pt-20 xl:text-center">
       <div className="flex max-w-[900px] flex-col items-start gap-8 xl:items-center">
         <EntityField
-          displayName="Availability Badge"
+          displayName={pt("availabilityBadge", "Availability Badge")}
           fieldId={props.availabilityBadge.text.field}
           constantValueEnabled={
             props.availabilityBadge.text.constantValueEnabled
@@ -398,7 +402,7 @@ const HeroSectionContent = ({
         </EntityField>
         <div className="flex flex-col gap-3 xl:items-center">
           <EntityField
-            displayName="Hero Subheading"
+            displayName={pt("heroSubheading", "Hero Subheading")}
             fieldId={props.subheading.text.field}
             constantValueEnabled={props.subheading.text.constantValueEnabled}
           >
@@ -418,7 +422,7 @@ const HeroSectionContent = ({
             </p>
           </EntityField>
           <EntityField
-            displayName="Hero Heading"
+            displayName={pt("heroHeading", "Hero Heading")}
             fieldId={props.heading.text.field}
             constantValueEnabled={props.heading.text.constantValueEnabled}
           >
@@ -438,7 +442,7 @@ const HeroSectionContent = ({
             </h1>
           </EntityField>
           <EntityField
-            displayName="Hero Description"
+            displayName={pt("heroDescription", "Hero Description")}
             fieldId={props.body.text.field}
             constantValueEnabled={props.body.text.constantValueEnabled}
           >
@@ -461,19 +465,27 @@ const HeroSectionContent = ({
                 ...bodyTypographyVariables,
               }}
             >
-              <span>{averageRating?.toFixed(1)} Stars</span>
+              <span>
+                {t("ratingInStars", "{{rating}} Stars", {
+                  rating: averageRating?.toFixed(1),
+                })}
+              </span>
               <div className="flex items-center gap-1" aria-hidden="true">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <Star key={index} active={index < roundedRating} />
                 ))}
               </div>
-              <span>from {reviewCount.toLocaleString()} guest reviews</span>
+              <span>
+                {t("fromGuestReviews", "from {{count}} guest reviews", {
+                  count: reviewCount,
+                })}
+              </span>
             </div>
           ) : null}
         </div>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <EntityField
-            displayName="Primary CTA"
+            displayName={pt("primaryCta", "Primary CTA")}
             fieldId={props.primaryCta.data.cta.field}
             constantValueEnabled={
               props.primaryCta.data.cta.constantValueEnabled
@@ -499,7 +511,7 @@ const HeroSectionContent = ({
             />
           </EntityField>
           <EntityField
-            displayName="Secondary CTA"
+            displayName={pt("secondaryCta", "Secondary CTA")}
             fieldId={props.secondaryCta.data.cta.field}
             constantValueEnabled={
               props.secondaryCta.data.cta.constantValueEnabled
@@ -529,7 +541,7 @@ const HeroSectionContent = ({
 
       {hasImageSource(heroImage) ? (
         <EntityField
-          displayName="Hero Image"
+          displayName={pt("heroImage", "Hero Image")}
           fieldId={props.heroImage.image.field}
           constantValueEnabled={props.heroImage.image.constantValueEnabled}
         >
@@ -551,7 +563,7 @@ const HeroSectionContent = ({
 
 export const ResortAndRetreatHeroSection: YextComponentConfig<ResortAndRetreatHeroSectionProps> =
   {
-    label: "Hero Section",
+    label: msg("fields.heroSection", "Hero Section"),
     fields: ResortAndRetreatHeroSectionFields,
     defaultProps: {
       availabilityBadge: {

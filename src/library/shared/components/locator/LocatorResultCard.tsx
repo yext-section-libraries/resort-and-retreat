@@ -21,7 +21,6 @@ import { PhoneAtom } from "@yext/visual-editor/section-library-support";
 import { useTemplateProps } from "@yext/visual-editor/section-library-support";
 import { resolveComponentData } from "@yext/visual-editor/section-library-support";
 import { HoursStatusAtom } from "@yext/visual-editor/section-library-support";
-import { HoursTableAtom } from "@yext/visual-editor/section-library-support";
 import { type BasicSelectorField } from "@yext/visual-editor/section-library-support";
 import type {
   YextCustomFieldRenderProps,
@@ -38,6 +37,7 @@ import { TranslatableAssetImage } from "@yext/visual-editor/section-library-supp
 import {
   Address,
   AddressType,
+  HoursTable as HoursTableComponent,
   getDirections,
   HoursType,
   ListingType,
@@ -1309,6 +1309,7 @@ const HoursSection = (props: {
   accentColor?: ThemeColor;
 }) => {
   const { location, result, hoursProps, showIcons, accentColor } = props;
+  const { t, i18n } = useTranslation();
   const [isExpanded, setIsExpanded] = React.useState(false);
   const triggerId = React.useId();
   const contentId = React.useId();
@@ -1317,6 +1318,24 @@ const HoursSection = (props: {
   const comingSoon = location["comingSoon"];
   const showHoursSection =
     (hoursData || comingSoon) && hoursProps.liveVisibility;
+  const dayOfWeekNames = React.useMemo(() => {
+    const formatter = new Intl.DateTimeFormat(i18n.language, {
+      timeZone: "UTC",
+      weekday: "long",
+    });
+    const formatWeekday = (day: number) =>
+      formatter.format(new Date(Date.UTC(2024, 0, day)));
+
+    return {
+      sunday: formatWeekday(7),
+      monday: formatWeekday(8),
+      tuesday: formatWeekday(9),
+      wednesday: formatWeekday(10),
+      thursday: formatWeekday(11),
+      friday: formatWeekday(12),
+      saturday: formatWeekday(13),
+    };
+  }, [i18n.language]);
   const hoursStatusRow = (
     <div className="flex flex-row items-center gap-2">
       {showIcons && (
@@ -1362,11 +1381,18 @@ const HoursSection = (props: {
                 role="region"
               >
                 <div className="flex flex-col gap-2">
-                  <HoursTableAtom
+                  <HoursTableComponent
                     hours={hoursData ?? {}}
                     comingSoon={comingSoon}
+                    dayOfWeekNames={dayOfWeekNames}
                     startOfWeek={hoursProps.table.startOfWeek}
                     collapseDays={hoursProps.table.collapseDays}
+                    intervalTranslations={{
+                      isClosed: t("closed", "Closed"),
+                      open24Hours: t("open24Hours", "Open 24 Hours"),
+                      reopenDate: t("reopenDate", "Reopen Date"),
+                      timeFormatLocale: i18n.language,
+                    }}
                     className="[&_.HoursTable-row]:w-fit"
                   />
                   {location.additionalHoursText &&

@@ -4,6 +4,8 @@ import * as React from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider } from "@yext/pages-components";
 import {
+  pt,
+  msg,
   Background,
   ComprehensiveCTA,
   createItemSource,
@@ -96,31 +98,31 @@ const createBlogCta = (): ComprehensiveCTAValue =>
   }) satisfies ComprehensiveCTAValue;
 
 const blogCardSource = createItemSource<BlogCardItem>({
-  label: "Blog Cards",
+  label: msg("fields.blogCards", "Blog Cards"),
   mappingFields: {
     title: {
       type: "entityField",
-      label: "Title",
+      label: msg("fields.title", "Title"),
       filter: { types: ["type.string"] },
     },
     description: {
       type: "entityField",
-      label: "Description",
+      label: msg("fields.description", "Description"),
       filter: { types: ["type.rich_text_v2"] },
     },
     image: {
       type: "entityField",
-      label: "Image",
+      label: msg("fields.image", "Image"),
       filter: { types: ["type.image"] },
     },
     ctaLabel: {
       type: "entityField",
-      label: "CTA Label",
+      label: msg("fields.ctaLabel", "CTA Label"),
       filter: { types: ["type.string"] },
     },
     ctaLink: {
       type: "entityField",
-      label: "CTA Link",
+      label: msg("fields.ctaLink", "CTA Link"),
       filter: { types: ["type.string"] },
     },
   },
@@ -249,9 +251,9 @@ const createCardTextStyleField = (label: string) => ({
   label,
   type: "object" as const,
   objectFields: {
-    styles: { label: "Text Styles", type: "styledText" as const },
+    styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" as const },
     fontColor: {
-      label: "Font Color",
+      label: msg("fields.fontColor", "Font Color"),
       type: "basicSelector" as const,
       options: "SITE_COLOR" as const,
     },
@@ -264,29 +266,29 @@ const createCardTextStyleField = (label: string) => ({
 const ResortAndRetreatBlogSectionFields: YextFields<ResortAndRetreatBlogSectionProps> =
   {
     section: {
-      label: "Section",
+      label: msg("fields.section", "Section"),
       type: "object",
       objectFields: {
         visibleOnLivePage: {
-          label: "Visible on Live Page",
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.yes", "Yes"), value: true },
+            { label: msg("fields.no", "No"), value: false },
           ],
         },
         backgroundColor: {
-          label: "Background Color",
+          label: msg("fields.backgroundColor", "Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBackgroundColor: {
-          label: "Card Background Color",
+          label: msg("fields.cardBackgroundColor", "Card Background Color"),
           type: "basicSelector",
           options: "BACKGROUND_COLOR",
         },
         cardBorderColor: {
-          label: "Card Border Color",
+          label: msg("fields.cardBorderColor", "Card Border Color"),
           type: "basicSelector",
           options: ThemeOptions.BACKGROUND_COLOR.flatMap(
             (group) => group.options,
@@ -295,17 +297,17 @@ const ResortAndRetreatBlogSectionFields: YextFields<ResortAndRetreatBlogSectionP
       },
     },
     title: {
-      label: "Title",
+      label: msg("fields.title", "Title"),
       type: "object",
       objectFields: {
         text: {
           type: "entityField",
-          label: "Text",
+          label: msg("fields.text", "Text"),
           filter: { types: ["type.string"] },
         },
-        styles: { label: "Text Styles", type: "styledText" },
+        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
         fontColor: {
-          label: "Font Color",
+          label: msg("fields.fontColor", "Font Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
         },
@@ -314,7 +316,7 @@ const ResortAndRetreatBlogSectionFields: YextFields<ResortAndRetreatBlogSectionP
     entries: blogCardSource.field,
     // Shared ctas styling is merged into each rendered cta below.
     entryAction: {
-      label: "Entry Action",
+      label: msg("fields.entryAction", "Entry Action"),
       type: "comprehensiveCTA",
     },
     entryTitleStyles: createCardTextStyleField("Entry Title Styles"),
@@ -359,7 +361,7 @@ export const ResortAndRetreatBlogSectionComponent: PuckComponent<
         >
           <div className="mx-auto flex max-w-[1360px] flex-col gap-8 px-5 py-10 md:px-8 xl:px-10">
             <EntityField
-              displayName="Blog Title"
+              displayName={pt("blogTitle", "Blog Title")}
               fieldId={props.title.text.field}
               constantValueEnabled={props.title.text.constantValueEnabled}
             >
@@ -379,7 +381,7 @@ export const ResortAndRetreatBlogSectionComponent: PuckComponent<
               </h2>
             </EntityField>
             <EntityField
-              displayName="Blog Cards"
+              displayName={pt("blogCards", "Blog Cards")}
               fieldId={props.entries.field}
               constantValueEnabled={props.entries.constantValueEnabled}
             >
@@ -537,7 +539,7 @@ export const ResortAndRetreatBlogSectionComponent: PuckComponent<
 
 export const ResortAndRetreatBlogSection: YextComponentConfig<ResortAndRetreatBlogSectionProps> =
   {
-    label: "Blog Section",
+    label: msg("fields.blogSection", "Blog Section"),
     fields: ResortAndRetreatBlogSectionFields,
     defaultProps: {
       title: createStyledTextDefault(
