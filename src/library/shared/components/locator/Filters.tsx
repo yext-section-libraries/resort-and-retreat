@@ -6,6 +6,7 @@ import {
   SelectableStaticFilter,
 } from "@yext/search-headless-react";
 import { AppliedFilters, Facets } from "@yext/search-ui-react";
+import * as Dialog from "@radix-ui/react-dialog";
 import React from "react";
 import { type MultiSelectorOption } from "@yext/visual-editor/section-library-support";
 import { useCollapse } from "react-collapsed";
@@ -22,12 +23,10 @@ export const COUNTRY_CODE_FIELD = "address.countryCode";
 export const HOURS_FIELD = "builtin.hours";
 
 interface FilterModalProps {
-  showFilterModal: boolean;
   showOpenNowOption: boolean; // whether to show the Open Now filter option
   isOpenNowSelected: boolean; // whether the Open Now filter is currently selected by the user
   showDistanceOptions: boolean; // whether to show the Distance filter option
   selectedDistanceOption: number | null;
-  handleCloseModalClick: () => void;
   handleOpenNowClick: (selected: boolean) => void;
   handleDistanceClick: (
     distance: number,
@@ -35,51 +34,51 @@ interface FilterModalProps {
   ) => void;
   handleClearFiltersClick: () => void;
   accentColorCssValue: string;
-  closeButtonRef: React.Ref<HTMLButtonElement>;
 }
 
 export const FilterModal = ({
-  showFilterModal,
   showOpenNowOption,
   isOpenNowSelected,
   showDistanceOptions,
   selectedDistanceOption,
-  handleCloseModalClick,
   handleOpenNowClick,
   handleDistanceClick,
   handleClearFiltersClick,
   accentColorCssValue,
-  closeButtonRef,
 }: FilterModalProps) => {
   const { t } = useTranslation();
-  const popupRef = React.useRef<HTMLDivElement>(null);
+  const closeButtonRef = React.useRef<HTMLButtonElement>(null);
 
-  return showFilterModal ? (
-    <div
-      id="locator-filter-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="locator-filter-modal-title"
+  return (
+    <Dialog.Content
+      aria-describedby={undefined}
+      onOpenAutoFocus={(event) => {
+        event.preventDefault();
+        closeButtonRef.current?.focus();
+      }}
+      onPointerDownOutside={(event) => event.preventDefault()}
       className="absolute md:top-4 -top-20 z-50 md:w-80 w-full flex flex-col bg-white md:left-full md:ml-2 rounded-md shadow-lg max-h-[calc(100%-2rem)]"
       style={
         {
           "--locator-filter-accent-color": accentColorCssValue,
         } as React.CSSProperties
       }
-      ref={popupRef}
     >
       <div className="inline-flex justify-between items-center px-6 py-4 gap-4">
-        <Body className="font-bold" id="locator-filter-modal-title">
-          {t("refineYourSearch", "Refine Your Search")}
-        </Body>
-        <button
-          ref={closeButtonRef}
-          style={{ color: accentColorCssValue }}
-          onClick={handleCloseModalClick}
-          aria-label={t("close", "Close")}
-        >
-          <FaTimes />
-        </button>
+        <Dialog.Title asChild>
+          <Body className="font-bold">
+            {t("refineYourSearch", "Refine Your Search")}
+          </Body>
+        </Dialog.Title>
+        <Dialog.Close asChild>
+          <button
+            ref={closeButtonRef}
+            style={{ color: accentColorCssValue }}
+            aria-label={t("close", "Close")}
+          >
+            <FaTimes />
+          </button>
+        </Dialog.Close>
       </div>
       <div className="px-6 border-b border-gray-300">
         <AppliedFilters
@@ -126,8 +125,8 @@ export const FilterModal = ({
           {t("clearAll", "Clear All")}
         </button>
       </div>
-    </div>
-  ) : null;
+    </Dialog.Content>
+  );
 };
 
 interface OpenNowFilterProps {

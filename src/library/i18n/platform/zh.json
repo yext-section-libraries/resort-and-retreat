@@ -44,11 +44,13 @@
     "locator": "定位器",
     "phone": "电话"
   },
+  "currentLocation": "当前位置",
   "customSearchArea": "自定义搜索区域",
   "distance": "距离",
   "distanceLineFromSearch": "来自搜索的 <strong>{{distance}}</strong>",
   "distanceLineFromSearchLocation": "<strong>{{distance}}</strong> 来自 {{searchLocation}}",
   "distanceLineFromYou": "来自您的 <strong>{{distance}}</strong>",
+  "email": "电子邮件",
   "enableCookies": "启用 Cookie",
   "eventsBackgroundImage": "活动 背景图片",
   "eventsCta": "活动 CTA",

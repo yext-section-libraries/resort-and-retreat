@@ -48,12 +48,6 @@ import {
 } from "../contentBlocks/HoursTable";
 import { getImageUrl } from "../contentBlocks/image/Image";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@yext/visual-editor/section-library-support";
-import {
   FaAngleRight,
   FaMapMarkerAlt,
   FaRegClock,
@@ -98,7 +92,7 @@ export interface LocatorResultCardProps {
     trueDisplayText?: TranslatableString;
     /** Static text to display when the selected boolean field is false */
     falseDisplayText?: TranslatableString;
-    /** The heading level for the primary heading */
+    /** The heading level used to visually style the primary heading */
     headingLevel: HeadingLevel;
     /**
      * The color applied to the primary heading text
@@ -1001,7 +995,6 @@ export const LocatorResultCard = React.memo(
             <div className="flex flex-col gap-4 md:pl-10">
               <HoursSection
                 location={location}
-                result={result}
                 hoursProps={props.hours}
                 showIcons={props.icons}
                 accentColor={resolvedAccentBackgroundColor}
@@ -1017,7 +1010,11 @@ export const LocatorResultCard = React.memo(
                         <CardIcon
                           backgroundColor={resolvedAccentBackgroundColor}
                         >
-                          <FaMapMarkerAlt className="w-4 h-4" />
+                          <FaMapMarkerAlt
+                            role="img"
+                            aria-label={t("address", "Address")}
+                            className="w-4 h-4"
+                          />
                         </CardIcon>
                       )}
                       <div className="flex flex-col gap-1 w-full">
@@ -1044,7 +1041,7 @@ export const LocatorResultCard = React.memo(
                               style={getTextColorStyle(resolvedAccentLinkColor)}
                             >
                               {t("getDirections", "Get Directions")}
-                              <FaAngleRight size={"12px"} />
+                              <FaAngleRight aria-hidden="true" size={"12px"} />
                             </a>
                           )}
                       </div>
@@ -1286,6 +1283,7 @@ const HeadingTextSection = (props: {
         color={primaryHeading?.color}
         className={`font-bold ${primaryHeading?.color ? "" : "text-palette-primary-dark"}`}
         level={primaryHeading.headingLevel}
+        semanticLevelOverride={2}
       >
         {primaryHeadingText}
       </Heading>
@@ -1303,12 +1301,11 @@ const HeadingTextSection = (props: {
 
 const HoursSection = (props: {
   location: Location;
-  result: CardProps<Location>["result"];
   hoursProps: LocatorResultCardProps["hours"];
   showIcons: boolean;
   accentColor?: ThemeColor;
 }) => {
-  const { location, result, hoursProps, showIcons, accentColor } = props;
+  const { location, hoursProps, showIcons, accentColor } = props;
   const { t, i18n } = useTranslation();
   const [isExpanded, setIsExpanded] = React.useState(false);
   const triggerId = React.useId();
@@ -1340,7 +1337,11 @@ const HoursSection = (props: {
     <div className="flex flex-row items-center gap-2">
       {showIcons && (
         <CardIcon backgroundColor={accentColor}>
-          <FaRegClock className="w-4 h-4" />
+          <FaRegClock
+            role="img"
+            aria-label={t("hours", "Hours")}
+            className="w-4 h-4"
+          />
         </CardIcon>
       )}
       <HoursStatusAtom
@@ -1360,51 +1361,67 @@ const HoursSection = (props: {
         {comingSoon ? (
           hoursStatusRow
         ) : (
-          <Accordion>
-            <AccordionItem
-              key={`result-${result.index}-hours`}
-              className="py-0"
-              onToggle={(event) => setIsExpanded(event.currentTarget.open)}
-            >
-              <AccordionTrigger
+          <div>
+            <h3>
+              <button
+                type="button"
                 id={triggerId}
                 aria-controls={contentId}
                 aria-expanded={isExpanded}
-                className="justify-start"
-                role="button"
+                className="flex cursor-pointer items-center justify-start"
+                onClick={() => setIsExpanded((expanded) => !expanded)}
               >
-                {hoursStatusRow}
-              </AccordionTrigger>
-              <AccordionContent
-                id={contentId}
-                aria-labelledby={triggerId}
-                role="region"
-              >
-                <div className="flex flex-col gap-2">
-                  <HoursTableComponent
-                    hours={hoursData ?? {}}
-                    comingSoon={comingSoon}
-                    dayOfWeekNames={dayOfWeekNames}
-                    startOfWeek={hoursProps.table.startOfWeek}
-                    collapseDays={hoursProps.table.collapseDays}
-                    intervalTranslations={{
-                      isClosed: t("closed", "Closed"),
-                      open24Hours: t("open24Hours", "Open 24 Hours"),
-                      reopenDate: t("reopenDate", "Reopen Date"),
-                      timeFormatLocale: i18n.language,
-                    }}
-                    className="[&_.HoursTable-row]:w-fit"
+                <span>{hoursStatusRow}</span>
+                <svg
+                  className={themeManagerCn(
+                    "ml-4 h-5 w-5 flex-shrink-0 transition-transform duration-300",
+                    isExpanded && "rotate-180"
+                  )}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
                   />
-                  {location.additionalHoursText &&
-                    hoursProps.table.showAdditionalHoursText && (
-                      <div className="text-body-sm-fontSize">
-                        {location.additionalHoursText}
-                      </div>
-                    )}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+                </svg>
+              </button>
+            </h3>
+            <div
+              id={contentId}
+              aria-labelledby={triggerId}
+              role="region"
+              className="pt-4"
+              hidden={!isExpanded}
+            >
+              <div className="flex flex-col gap-2">
+                <HoursTableComponent
+                  hours={hoursData ?? {}}
+                  comingSoon={comingSoon}
+                  dayOfWeekNames={dayOfWeekNames}
+                  startOfWeek={hoursProps.table.startOfWeek}
+                  collapseDays={hoursProps.table.collapseDays}
+                  intervalTranslations={{
+                    isClosed: t("closed", "Closed"),
+                    open24Hours: t("open24Hours", "Open 24 Hours"),
+                    reopenDate: t("reopenDate", "Reopen Date"),
+                    timeFormatLocale: i18n.language,
+                  }}
+                  className="[&_.HoursTable-row]:w-fit"
+                />
+                {location.additionalHoursText &&
+                  hoursProps.table.showAdditionalHoursText && (
+                    <div className="text-body-sm-fontSize">
+                      {location.additionalHoursText}
+                    </div>
+                  )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
     )
@@ -1460,6 +1477,7 @@ const EmailSection = (props: {
 }) => {
   const { email, location, index, icons, iconBackgroundColor, linkColor } =
     props;
+  const { t } = useTranslation();
 
   const emailAddresses = parseArrayFromLocation(location, email.field);
   const showEmailSection =
@@ -1472,7 +1490,11 @@ const EmailSection = (props: {
       <div className="flex flex-row items-center gap-2">
         {icons && (
           <CardIcon backgroundColor={iconBackgroundColor}>
-            <FaRegEnvelope className="w-4 h-4" />
+            <FaRegEnvelope
+              role="img"
+              aria-label={t("email", "Email")}
+              className="w-4 h-4"
+            />
           </CardIcon>
         )}
         <CTA

@@ -47,11 +47,13 @@
     "locator": "Lokátor",
     "phone": "Telefon"
   },
+  "currentLocation": "Aktuální poloha",
   "customSearchArea": "Vlastní vyhledávací oblast",
   "distance": "Vzdálenost",
   "distanceLineFromSearch": "<strong>{{distance}}</strong> z vyhledávání",
   "distanceLineFromSearchLocation": "<strong>{{distance}}</strong> od {{searchLocation}}",
   "distanceLineFromYou": "<strong>{{distance}}</strong> od vás",
+  "email": "E-mail",
   "enableCookies": "Povolit soubory cookie",
   "eventsBackgroundImage": "Události Obrázek na pozadí",
   "eventsCta": "Události CTA",

@@ -44,11 +44,13 @@
     "locator": "定位器",
     "phone": "電話"
   },
+  "currentLocation": "目前位置",
   "customSearchArea": "自定義搜索區域",
   "distance": "距離",
   "distanceLineFromSearch": "來自搜尋的 <strong>{{distance}}</strong>",
   "distanceLineFromSearchLocation": "<strong>{{distance}}</strong> 來自 {{searchLocation}}",
   "distanceLineFromYou": "來自您的 <strong>{{distance}}</strong>",
+  "email": "電子郵件",
   "enableCookies": "啟用 Cookie",
   "eventsBackgroundImage": "活動 背景圖片",
   "eventsCta": "活動 CTA",
