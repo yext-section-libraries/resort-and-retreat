@@ -45,11 +45,13 @@
     "locator": "Lokator",
     "phone": "Telefon"
   },
+  "currentLocation": "Nåværende plassering",
   "customSearchArea": "Tilpasset søkeområde",
   "distance": "Avstand",
   "distanceLineFromSearch": "<strong>{{distance}}</strong> fra søk",
   "distanceLineFromSearchLocation": "<strong>{{distance}}</strong> fra {{searchLocation}}",
   "distanceLineFromYou": "<strong>{{distance}}</strong> fra deg",
+  "email": "E-post",
   "enableCookies": "Aktiver informasjonskapsler",
   "eventsBackgroundImage": "Arrangementer Bakgrunnsbilde",
   "eventsCta": "Arrangementer CTA",

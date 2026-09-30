@@ -11,6 +11,7 @@ import {
   useSearchState,
 } from "@yext/search-headless-react";
 import { useAnalytics } from "@yext/pages-components";
+import * as Dialog from "@radix-ui/react-dialog";
 import {
   AnalyticsProvider,
   AppliedFilters,
@@ -45,7 +46,6 @@ import {
   createSearchHeadlessConfig,
 } from "@yext/visual-editor/section-library-support";
 import { getThemeColorCssValue } from "@yext/visual-editor/section-library-support";
-import { getValueFromQueryString } from "@yext/visual-editor/section-library-support";
 import { Button } from "@yext/visual-editor/section-library-support";
 import { Body } from "@yext/visual-editor/section-library-support";
 import { Heading } from "@yext/visual-editor/section-library-support";
@@ -89,6 +89,37 @@ import {
 } from "./Results";
 
 export const INITIAL_LOCATION_KEY = "initialLocation";
+const LOCATION_QUERY_KEY = "q";
+
+const formatCoordinateQuery = (lat: number, lng: number, radius: number) =>
+  `${lat},${lng},${radius}`;
+
+const parseCoordinateQuery = (query: string) => {
+  const parts = query.split(",");
+  if (parts.length !== 3 || parts.some((part) => part.trim() === "")) {
+    return;
+  }
+  const [lat, lng, radius] = parts.map(Number);
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    !Number.isFinite(radius) ||
+    !areValidCoordinates(lat, lng) ||
+    radius <= 0
+  ) {
+    return;
+  }
+  return { lat, lng, radius };
+};
+
+const updateLocationQuery = (location: string) => {
+  const nextUrl = new URL(window.location.href);
+  nextUrl.searchParams.set(LOCATION_QUERY_KEY, location);
+  nextUrl.searchParams.delete(INITIAL_LOCATION_KEY);
+  if (nextUrl.href !== window.location.href) {
+    window.history.pushState(window.history.state, "", nextUrl);
+  }
+};
 
 export const LocatorWrapper = (props: WithPuckProps<LocatorProps>) => {
   const streamDocument = useDocument();
@@ -171,12 +202,24 @@ const LocatorInternal = ({
   const searchResults = useSearchState(
     (state) => (state.vertical.results || []) as Result<Location>[]
   );
-  const queryParamString =
-    typeof window === "undefined" ? "" : window.location.search;
-  const initialLocationParam = getValueFromQueryString(
-    INITIAL_LOCATION_KEY,
-    queryParamString
-  );
+  // Manage browser forward/back button for location searches
+  const [urlNavigationVersion, setUrlNavigationVersion] = React.useState(0);
+  const [showCurrentLocationButton, setShowCurrentLocationButton] =
+    React.useState(false);
+  React.useEffect(() => {
+    const handlePopState = () =>
+      setUrlNavigationVersion((version) => version + 1);
+    const controller = new AbortController();
+    window.addEventListener("popstate", handlePopState, {
+      signal: controller.signal,
+    });
+    return () => controller.abort();
+  }, []);
+  React.useEffect(() => {
+    if (new URLSearchParams(window.location.search).has(LOCATION_QUERY_KEY)) {
+      setShowCurrentLocationButton(true);
+    }
+  }, [urlNavigationVersion]);
 
   const iframe =
     typeof document === "undefined"
@@ -202,7 +245,7 @@ const LocatorInternal = ({
   const [selectedDistanceOption, setSelectedDistanceOption] = React.useState<
     number | null
   >(null);
-  /** Radius of last location near filter returned by the filter search API */
+  /** Radius of the current location filter before a distance option is applied */
   const apiFilterRadius = React.useRef<number | null>(null);
 
   const handleDrag: OnDragHandler = (center, bounds) => {
@@ -230,6 +273,7 @@ const LocatorInternal = ({
   );
 
   const searchActions = useSearchActions();
+  const searchFilters = useSearchState((state) => state.filters);
 
   const handleSearchAreaClick = () => {
     if (mapCenter && mapRadius) {
@@ -249,11 +293,45 @@ const LocatorInternal = ({
           matcher: Matcher.Near,
         },
       };
+      apiFilterRadius.current = mapRadius;
       searchActions.setStaticFilters([locationFilter, openNowFilter]);
       searchActions.executeVerticalQuery();
       setSearchState("loading");
       setShowSearchAreaButton(false);
+      updateLocationQuery(
+        formatCoordinateQuery(
+          mapCenter.latitude,
+          mapCenter.longitude,
+          mapRadius
+        )
+      );
+      setShowCurrentLocationButton(true);
     }
+  };
+
+  const handleCurrentLocationClick = (position: GeolocationPosition) => {
+    const { latitude, longitude, accuracy } = position.coords;
+    const radius = Math.max(accuracy, toMeters(DEFAULT_RADIUS, preferredUnit));
+    const locationFilter = buildNearLocationFilterFromCoords(
+      latitude,
+      longitude,
+      radius,
+      t("currentLocation", "Current Location")
+    );
+    apiFilterRadius.current = radius;
+    const nonLocationFilters = (searchFilters.static || []).filter(
+      (staticFilter) =>
+        staticFilter.filter.kind !== "fieldValue" ||
+        ![LOCATION_FIELD, "builtin.region", COUNTRY_CODE_FIELD].includes(
+          staticFilter.filter.fieldId
+        )
+    );
+    searchActions.setOffset(0);
+    searchActions.setStaticFilters([...nonLocationFilters, locationFilter]);
+    searchActions.executeVerticalQuery();
+    setSearchState("loading");
+    updateLocationQuery(formatCoordinateQuery(latitude, longitude, radius));
+    setShowCurrentLocationButton(true);
   };
 
   const selectedFacets: string[] = React.useMemo(
@@ -313,6 +391,8 @@ const LocatorInternal = ({
     searchActions.setStaticFilters([locationFilter, openNowFilter]);
     searchActions.executeVerticalQuery();
     setSearchState("loading");
+    updateLocationQuery(newDisplayName);
+    setShowCurrentLocationButton(true);
     if (
       nearFilterValue?.lat &&
       nearFilterValue?.lng &&
@@ -445,9 +525,6 @@ const LocatorInternal = ({
     ]
   );
 
-  const [userLocationRetrieved, setUserLocationRetrieved] =
-    React.useState<boolean>(false);
-
   const locationStylesConfig = React.useMemo(() => {
     const config: LocationStyleConfig = {};
     (locationStyles ?? []).forEach((locationStyle) => {
@@ -513,6 +590,10 @@ const LocatorInternal = ({
 
   React.useEffect(() => {
     let isCancelled = false;
+    const queryParams = new URLSearchParams(window.location.search);
+    const initialLocationParam = queryParams.has(LOCATION_QUERY_KEY)
+      ? queryParams.get(LOCATION_QUERY_KEY)
+      : queryParams.get(INITIAL_LOCATION_KEY);
 
     const resolveLocationAndSearch = async () => {
       setIsInitialMapLocationResolved(false);
@@ -530,9 +611,16 @@ const LocatorInternal = ({
         radius
       );
       const doSearch = () => {
+        if (isCancelled) {
+          return;
+        }
         searchActions.setVerticalLimit(RESULTS_LIMIT);
         searchActions.setOffset(0);
-        searchActions.setStaticFilters([initialLocationFilter]);
+        searchActions.setStaticFilters(
+          urlNavigationVersion === 0
+            ? [initialLocationFilter]
+            : [initialLocationFilter, openNowFilter]
+        );
         searchActions.executeVerticalQuery();
         setSearchState("loading");
         if (
@@ -541,6 +629,7 @@ const LocatorInternal = ({
         ) {
           const filterValue = initialLocationFilter.filter
             .value as NearFilterValue;
+          apiFilterRadius.current = filterValue.radius;
           const nextCenterCoords: Coordinate = {
             longitude: filterValue.lng,
             latitude: filterValue.lat,
@@ -574,6 +663,9 @@ const LocatorInternal = ({
             },
           ])
           .then((response: FilterSearchResponse | undefined) => {
+            if (isCancelled) {
+              return false;
+            }
             const firstResult = response?.sections[0]?.results[0];
             const resultFilter = firstResult?.filter;
             if (!firstResult || !resultFilter) {
@@ -609,7 +701,21 @@ const LocatorInternal = ({
           });
       };
 
-      // 1. Check if a location could be determined from the initialLocation query parameter
+      // 1. Resolve coordinates directly, or search for a named location.
+      //    q always takes precedence over initialLocation
+      const coordinates = initialLocationParam
+        ? parseCoordinateQuery(initialLocationParam)
+        : undefined;
+      if (coordinates) {
+        initialLocationFilter = buildNearLocationFilterFromCoords(
+          coordinates.lat,
+          coordinates.lng,
+          coordinates.radius,
+          t("customSearchArea", "Custom Search Area")
+        );
+        doSearch();
+        return;
+      }
       if (
         initialLocationParam &&
         (await foundStartingLocationFromQueryParam(initialLocationParam))
@@ -618,12 +724,19 @@ const LocatorInternal = ({
         return;
       }
 
+      if (isCancelled) {
+        return;
+      }
+
       try {
         // 2. Try to get user location via Geolocation API
         const location = await getUserLocation();
+        if (isCancelled) {
+          return;
+        }
         const lat = location.coords.latitude;
         const lng = location.coords.longitude;
-        setUserLocationRetrieved(true);
+        setShowCurrentLocationButton(true);
 
         // Try to reverse-geocode the coordinates to a human-readable place name using Mapbox
         let displayName: string | undefined;
@@ -672,7 +785,7 @@ const LocatorInternal = ({
     return () => {
       isCancelled = true;
     };
-  }, [initialLocationParam, initialMapCenter, searchActions]);
+  }, [urlNavigationVersion, initialMapCenter, searchActions]);
 
   const handleOpenNowClick = (selected: boolean) => {
     if (selected === isOpenNowSelected) {
@@ -694,7 +807,6 @@ const LocatorInternal = ({
     executeSearch(searchActions);
   };
 
-  const searchFilters = useSearchState((state) => state.filters);
   const currentOffset = useSearchState((state) => state.vertical.offset);
   const previousOffset = React.useRef<number | undefined>(undefined);
   const prevIsMobile = React.useRef(isMobile);
@@ -822,10 +934,6 @@ const LocatorInternal = ({
   const filterAccentColorCssVariable =
     getThemeColorCssValue(accentColor?.selectedColor) ??
     "var(--colors-palette-primary-dark)";
-  const [showFilterModal, setShowFilterModal] = React.useState(false);
-  const filterToggleButtonRef = React.useRef<HTMLButtonElement>(null);
-  const filterModalCloseButtonRef = React.useRef<HTMLButtonElement>(null);
-  const hasOpenedFilterModalRef = React.useRef(false);
   const resolvedHeading =
     (pageHeading?.title &&
       resolveComponentData(pageHeading.title, i18n.language, streamDocument)) ||
@@ -847,149 +955,141 @@ const LocatorInternal = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (showFilterModal) {
-      hasOpenedFilterModalRef.current = true;
-      filterModalCloseButtonRef.current?.focus();
-      return;
-    }
-
-    if (hasOpenedFilterModalRef.current) {
-      filterToggleButtonRef.current?.focus();
-    }
-  }, [showFilterModal]);
-
   return (
     <div className="components flex h-screen w-full mx-auto">
-      {/* Left Section: FilterSearch + Results. Full width for small screens */}
-      <div
-        className="relative h-screen w-full md:w-2/5 lg:w-[40rem] flex flex-col md:min-w-[24rem]"
-        id="locatorLeftDiv"
-      >
-        <div className="px-8 py-6 gap-4 flex flex-col">
-          <Heading level={1} color={pageHeading?.color}>
-            {resolvedHeading}
-          </Heading>
-          <FilterSearch
-            searchFields={[
-              {
-                fieldApiName: LOCATION_FIELD,
-                entityType: entityTypes[0] ?? DEFAULT_ENTITY_TYPE,
-              },
-            ]}
-            onSelect={handleFilterSelect}
-            placeholder={t("searchHere", "Search here...")}
-            ariaLabel={t("findALocation", "Find a Location")}
-            customCssClasses={{
-              filterSearchContainer: "font-body-fontFamily",
-              focusedOption: "bg-gray-200 hover:bg-gray-200 block",
-              option: "hover:bg-gray-100 px-4 py-3",
-              inputElement:
-                "rounded-md p-4 h-11 font-body-fontFamily font-body-fontWeight text-body-fontSize placeholder:text-gray-700",
-              currentLocationButton:
-                "h-7 w-7 font-body-fontFamily font-body-fontWeight text-body-fontSize text-palette-primary-dark",
-              label:
-                "font-body-fontFamily font-body-fontWeight text-body-fontSize text-palette-primary-dark",
-            }}
-            showCurrentLocationButton={userLocationRetrieved}
-            geolocationProps={{
-              radius:
-                preferredUnit === "mile"
-                  ? DEFAULT_RADIUS
-                  : toMiles(DEFAULT_RADIUS), // this component uses miles, not meters
-            }}
-          />
-        </div>
-        <div className="relative flex-1 flex flex-col min-h-0">
-          <div className="px-8 py-4 text-body-fontSize border-y border-gray-300 inline-block">
-            <div className="flex flex-row justify-between" id="levelWithModal">
-              <ResultsCountSummary
-                searchState={searchState}
-                resultCount={resultCount}
-                selectedDistanceOption={selectedDistanceOption}
-                filterDisplayName={filterDisplayName}
-              />
-              {hasFilterModalToggle && (
-                <button
-                  ref={filterToggleButtonRef}
-                  className="inline-flex justify-between items-center gap-2 bg-white font-bold font-body-fontFamily text-body-sm-fontSize"
-                  style={{ color: filterAccentColorCssVariable }}
-                  onClick={() => setShowFilterModal((prev) => !prev)}
-                  aria-haspopup="dialog"
-                  aria-expanded={showFilterModal}
-                  aria-controls="locator-filter-modal"
-                >
-                  {t("filter", "Filter")}
-                  <FaSlidersH />
-                </button>
-              )}
-            </div>
-            <div className="flex flex-row justify-between">
-              <AppliedFilters
-                hiddenFields={[LOCATION_FIELD, COUNTRY_CODE_FIELD]}
-                customCssClasses={{
-                  removableFilter:
-                    "text-md font-normal mt-2 mb-0 font-body-fontFamily",
-                  clearAllButton: "hidden",
-                  appliedFiltersContainer: "mt-0 mb-0",
-                }}
-              />
-            </div>
+      <Dialog.Root>
+        {/* Left Section: FilterSearch + Results. Full width for small screens */}
+        <div
+          className="relative h-screen w-full md:w-2/5 lg:w-[40rem] flex flex-col md:min-w-[24rem]"
+          id="locatorLeftDiv"
+        >
+          <div className="px-8 py-6 gap-4 flex flex-col">
+            <Heading level={1} color={pageHeading?.color}>
+              {resolvedHeading}
+            </Heading>
+            <FilterSearch
+              searchFields={[
+                {
+                  fieldApiName: LOCATION_FIELD,
+                  entityType: entityTypes[0] ?? DEFAULT_ENTITY_TYPE,
+                },
+              ]}
+              onSelect={handleFilterSelect}
+              placeholder={t("searchHere", "Search here...")}
+              ariaLabel={t("findALocation", "Find a Location")}
+              customCssClasses={{
+                filterSearchContainer:
+                  "font-body-fontFamily ve-locator-filter-search",
+                focusedOption: "bg-gray-200 hover:bg-gray-200 block",
+                option: "hover:bg-gray-100 px-4 py-3",
+                inputElement:
+                  "rounded-md p-4 h-11 font-body-fontFamily font-body-fontWeight text-body-fontSize placeholder:text-gray-700",
+                currentLocationButton:
+                  "h-7 w-7 font-body-fontFamily font-body-fontWeight text-body-fontSize text-palette-primary-dark",
+                label:
+                  "font-body-fontFamily font-body-fontWeight text-body-fontSize text-palette-primary-dark",
+              }}
+              showCurrentLocationButton={showCurrentLocationButton}
+              geolocationProps={{
+                handleClick: handleCurrentLocationClick,
+                radius:
+                  preferredUnit === "mile"
+                    ? DEFAULT_RADIUS
+                    : toMiles(DEFAULT_RADIUS), // this component uses miles, not meters
+              }}
+            />
           </div>
-          {resultCount > 0 && (
-            <div
-              id="innerDiv"
-              className="md:flex-1 md:overflow-y-auto"
-              ref={resultsContainer}
-            >
-              {isMobile ? (
-                <MobileLocatorResultsSection
-                  CardComponent={CardComponent}
-                  results={mobileResults}
-                  hasMoreResults={canShowMoreMobileResults}
-                  handleShowMoreResults={() => {
-                    if (searchLoading || mobileResults.length >= resultCount) {
-                      return;
-                    }
-
-                    searchActions.setOffset(mobileResults.length);
-                    executeSearch(searchActions);
-                    setSearchState("loading");
+          <div className="relative flex-1 flex flex-col min-h-0">
+            <div className="px-8 py-4 text-body-fontSize border-y border-gray-300 inline-block">
+              <div
+                className="flex flex-row justify-between"
+                id="levelWithModal"
+              >
+                <ResultsCountSummary
+                  searchState={searchState}
+                  resultCount={resultCount}
+                  selectedDistanceOption={selectedDistanceOption}
+                  filterDisplayName={filterDisplayName}
+                />
+                {hasFilterModalToggle && (
+                  <Dialog.Trigger asChild>
+                    <button
+                      className="inline-flex justify-between items-center gap-2 bg-white font-bold font-body-fontFamily text-body-sm-fontSize"
+                      style={{ color: filterAccentColorCssVariable }}
+                    >
+                      {t("filter", "Filter")}
+                      <FaSlidersH />
+                    </button>
+                  </Dialog.Trigger>
+                )}
+              </div>
+              <div className="flex flex-row justify-between">
+                <AppliedFilters
+                  hiddenFields={[LOCATION_FIELD, COUNTRY_CODE_FIELD]}
+                  customCssClasses={{
+                    removableFilter:
+                      "text-md font-normal mt-2 mb-0 font-body-fontFamily",
+                    clearAllButton: "hidden",
+                    appliedFiltersContainer: "mt-0 mb-0",
                   }}
                 />
-              ) : (
-                <VerticalResults
-                  CardComponent={CardComponent}
-                  setResultsRef={setResultsRef}
+              </div>
+            </div>
+            {resultCount > 0 && (
+              <div
+                id="innerDiv"
+                className="md:flex-1 md:overflow-y-auto"
+                ref={resultsContainer}
+              >
+                {isMobile ? (
+                  <MobileLocatorResultsSection
+                    CardComponent={CardComponent}
+                    results={mobileResults}
+                    hasMoreResults={canShowMoreMobileResults}
+                    handleShowMoreResults={() => {
+                      if (
+                        searchLoading ||
+                        mobileResults.length >= resultCount
+                      ) {
+                        return;
+                      }
+
+                      searchActions.setOffset(mobileResults.length);
+                      executeSearch(searchActions);
+                      setSearchState("loading");
+                    }}
+                  />
+                ) : (
+                  <VerticalResults
+                    CardComponent={CardComponent}
+                    setResultsRef={setResultsRef}
+                  />
+                )}
+              </div>
+            )}
+            {!isMobile && resultCount > RESULTS_LIMIT && (
+              <div className="border-t border-gray-300 pt-4">
+                <Pagination
+                  customCssClasses={{
+                    selectedLabel:
+                      "bg-palette-primary text-palette-primary-contrast border-palette-primary",
+                  }}
                 />
-              )}
-            </div>
-          )}
-          {!isMobile && resultCount > RESULTS_LIMIT && (
-            <div className="border-t border-gray-300 pt-4">
-              <Pagination
-                customCssClasses={{
-                  selectedLabel:
-                    "bg-palette-primary text-palette-primary-contrast border-palette-primary",
-                }}
-              />
-            </div>
-          )}
-          <FilterModal
-            showFilterModal={showFilterModal}
-            showOpenNowOption={openNowButton}
-            isOpenNowSelected={isOpenNowSelected}
-            handleOpenNowClick={handleOpenNowClick}
-            showDistanceOptions={showDistanceOptions}
-            selectedDistanceOption={selectedDistanceOption}
-            handleDistanceClick={handleDistanceClick}
-            handleCloseModalClick={() => setShowFilterModal(false)}
-            handleClearFiltersClick={handleClearFiltersClick}
-            accentColorCssValue={filterAccentColorCssVariable}
-            closeButtonRef={filterModalCloseButtonRef}
-          />
+              </div>
+            )}
+            <FilterModal
+              showOpenNowOption={openNowButton}
+              isOpenNowSelected={isOpenNowSelected}
+              handleOpenNowClick={handleOpenNowClick}
+              showDistanceOptions={showDistanceOptions}
+              selectedDistanceOption={selectedDistanceOption}
+              handleDistanceClick={handleDistanceClick}
+              handleClearFiltersClick={handleClearFiltersClick}
+              accentColorCssValue={filterAccentColorCssVariable}
+            />
+          </div>
         </div>
-      </div>
+      </Dialog.Root>
 
       {/* Right Section: Map. Hidden for small screens */}
       <div id="locatorMapDiv" className="md:flex-1 md:flex hidden relative">

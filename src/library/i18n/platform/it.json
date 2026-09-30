@@ -46,11 +46,13 @@
     "locator": "Localizzatore",
     "phone": "Telefono"
   },
+  "currentLocation": "Posizione attuale",
   "customSearchArea": "Area di ricerca personalizzata",
   "distance": "Distanza",
   "distanceLineFromSearch": "<strong>{{distance}}</strong> dalla ricerca",
   "distanceLineFromSearchLocation": "<strong>{{distance}}</strong> da {{searchLocation}}",
   "distanceLineFromYou": "<strong>{{distance}}</strong> da te",
+  "email": "E-mail",
   "enableCookies": "Abilita i cookie",
   "eventsBackgroundImage": "Eventi Immagine di sfondo",
   "eventsCta": "Eventi CTA",

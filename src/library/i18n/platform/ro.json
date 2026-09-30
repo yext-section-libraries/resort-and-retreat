@@ -46,11 +46,13 @@
     "locator": "Localizator",
     "phone": "Telefon"
   },
+  "currentLocation": "Locația curentă",
   "customSearchArea": "Zona de căutare personalizată",
   "distance": "Distanţă",
   "distanceLineFromSearch": "<strong>{{distance}}</strong> din căutare",
   "distanceLineFromSearchLocation": "<strong>{{distance}}</strong> din {{searchLocation}}",
   "distanceLineFromYou": "<strong>{{distance}}</strong> de la tine",
+  "email": "E-mail",
   "enableCookies": "Activați cookie-urile",
   "eventsBackgroundImage": "Evenimente Imagine de fundal",
   "eventsCta": "Evenimente CTA",

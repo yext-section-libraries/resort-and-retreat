@@ -45,11 +45,13 @@
     "locator": "Lokaator",
     "phone": "Telefon"
   },
+  "currentLocation": "Praegune asukoht",
   "customSearchArea": "Kohandatud otsinguala",
   "distance": "Kaugus",
   "distanceLineFromSearch": "<strong>{{distance}}</strong> otsingust",
   "distanceLineFromSearchLocation": "<strong>{{distance}}</strong> alates {{searchLocation}}",
   "distanceLineFromYou": "<strong>{{distance}}</strong> teilt",
+  "email": "Meil",
   "enableCookies": "Luba küpsised",
   "eventsBackgroundImage": "Sündmused Taustapilt",
   "eventsCta": "Sündmused CTA",
