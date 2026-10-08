@@ -3,81 +3,72 @@ import {
   MaybeRTF,
   getThemeColorCssValue,
   normalizeThemeColorToken,
-  type MaybeRTFProps,
+  renderStyledRichText,
   type RichText,
   type StyledLinkValue,
   type StyledTextValue,
   type ThemeColor,
 } from "@yext/visual-editor";
 
-export type RichTextStyleOverrides = NonNullable<
-  MaybeRTFProps["richTextStyleOverrides"]
->;
+export type RichTextStyleOverrides = StyledTextValue;
 
 const isRichText = (value: unknown): value is RichText =>
   Boolean(
     value &&
-      typeof value === "object" &&
-      (("html" in value && typeof value.html === "string") ||
-        ("json" in value && typeof value.json === "string")),
+    typeof value === "object" &&
+    (("html" in value && typeof value.html === "string") ||
+      ("json" in value && typeof value.json === "string")),
   );
-
-export const renderResolvedRichText = (
-  value: unknown,
-  className?: string,
-  style?: React.CSSProperties,
-): React.ReactNode => {
-  if (React.isValidElement(value)) {
-    const element = value as React.ReactElement<{
-      className?: string;
-      style?: React.CSSProperties;
-    }>;
-    return React.cloneElement(element, {
-      className: [element.props.className, className].filter(Boolean).join(" "),
-      style: { ...element.props.style, ...style },
-    });
-  }
-
-  return isRichText(value) || typeof value === "string" ? (
-    <MaybeRTF data={value} className={className} style={style} />
-  ) : null;
-};
 
 export const renderRichText = (
   value: unknown,
-  richTextStyleOverrides?: MaybeRTFProps["richTextStyleOverrides"],
+  text: StyledTextValue,
   className?: string,
 ): React.ReactNode => {
-  if (React.isValidElement(value)) {
-    if (!richTextStyleOverrides && !className) {
-      return value;
-    }
+  const content = isRichText(value) ? (
+    <MaybeRTF data={value} />
+  ) : React.isValidElement(value) || typeof value === "string" ? (
+    value
+  ) : null;
 
-    const element = value as React.ReactElement<{
-      className?: string;
-      style?: React.CSSProperties;
-    }>;
-    return React.cloneElement(element, {
-      className: [element.props.className, className].filter(Boolean).join(" "),
-      style: {
-        ...element.props.style,
-        ...richTextStyleOverrides,
-        color:
-          typeof richTextStyleOverrides?.color === "object"
-            ? getThemeColorCssValue(richTextStyleOverrides.color)
-            : richTextStyleOverrides?.color,
-      } as React.CSSProperties,
-    });
+  const rendered = renderStyledRichText({ content, text, className });
+  if (!React.isValidElement<{ className?: string }>(rendered)) {
+    return rendered;
   }
 
-  return isRichText(value) || typeof value === "string" ? (
-    <MaybeRTF
-      data={value}
-      className={className}
-      richTextStyleOverrides={richTextStyleOverrides}
-    />
-  ) : null;
+  // A new .components scope resets these variables to !important editor theme
+  // defaults. Inherit the section's theme so the selected typography can apply.
+  return React.cloneElement(rendered, {
+    className: rendered.props.className
+      ?.split(/\s+/)
+      .filter((name) => name !== "components")
+      .join(" "),
+  });
 };
+
+/** Use the selected text color, otherwise the section's contrasting color. */
+export const resolveTextColor = (
+  styles: Pick<StyledTextValue, "color">,
+  fallbackColor?: ThemeColor | string,
+): ThemeColor | undefined => {
+  if (normalizeThemeColorToken(styles.color)) {
+    return styles.color;
+  }
+  const fallbackToken = normalizeThemeColorToken(fallbackColor);
+  return fallbackToken
+    ? typeof fallbackColor === "string"
+      ? { selectedColor: fallbackToken, contrastingColor: "default" }
+      : fallbackColor
+    : undefined;
+};
+
+export const resolveRichTextStyles = (
+  styles: StyledTextValue,
+  fallbackColor?: ThemeColor | string,
+): StyledTextValue => ({
+  ...styles,
+  color: resolveTextColor(styles, fallbackColor),
+});
 
 export const isRichTextEmpty = (value: unknown): boolean => {
   if (!value) {
@@ -94,14 +85,13 @@ export const isRichTextEmpty = (value: unknown): boolean => {
 
 export const resolveStyledTextStyles = (
   styles: StyledTextValue,
-  fontColor: ThemeColor | undefined,
   fallbackColor: string,
   fallbackFontFamily: string,
   fallbackFontSize: string,
   fallbackFontWeight: React.CSSProperties["fontWeight"],
   fallbackTextTransform?: React.CSSProperties["textTransform"],
 ): React.CSSProperties => ({
-  color: getThemeColorCssValue(fontColor) ?? fallbackColor,
+  color: getThemeColorCssValue(resolveTextColor(styles)) ?? fallbackColor,
   fontFamily:
     styles.fontFamily === "default" ? fallbackFontFamily : styles.fontFamily,
   fontSize: styles.fontSize === "default" ? fallbackFontSize : styles.fontSize,

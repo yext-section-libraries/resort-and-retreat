@@ -29,7 +29,6 @@ import { resolveStyledTextStyles } from "../shared/sectionStyles";
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type FooterLink = {
@@ -49,9 +48,6 @@ type PhoneFieldProps = {
   includeHyperlink?: boolean;
 };
 
-// Audit wiring note: filter.fontColor is a scanner false positive here.
-// The brand fontColor is applied in render and links inherit the footer color.
-
 export type ResortAndRetreatFooterProps = {
   infoPane: {
     infoPanelBackgroundColor: ThemeColor;
@@ -62,7 +58,7 @@ export type ResortAndRetreatFooterProps = {
       showCountry: boolean;
     };
     phones: PhoneFieldProps;
-    bodyStyles: { styles: StyledTextValue; fontColor?: ThemeColor };
+    bodyStyles: { styles: StyledTextValue };
   };
   linkPane: {
     linkPanelBackgroundColor: ThemeColor;
@@ -132,11 +128,7 @@ const ResortAndRetreatFooterFields: YextFields<ResortAndRetreatFooterProps> =
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -234,11 +226,7 @@ const ResortAndRetreatFooterFields: YextFields<ResortAndRetreatFooterProps> =
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -441,7 +429,6 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
     "currentColor";
   const bodyTextStyle = resolveStyledTextStyles(
     props.infoPane.bodyStyles.styles,
-    props.infoPane.bodyStyles.fontColor,
     "currentColor",
     "var(--fontFamily-body-fontFamily)",
     "1rem",
@@ -486,7 +473,6 @@ export const ResortAndRetreatFooterComponent: PuckComponent<
                   className="m-0"
                   style={resolveStyledTextStyles(
                     props.infoPane.brand.styles,
-                    props.infoPane.brand.fontColor,
                     "currentColor",
                     "var(--fontFamily-h4-fontFamily), Georgia, serif",
                     "var(--fontSize-h4-fontSize)",
@@ -735,7 +721,6 @@ export const ResortAndRetreatFooter: YextComponentConfig<ResortAndRetreatFooterP
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
         address: {
           address: {
@@ -781,7 +766,6 @@ export const ResortAndRetreatFooter: YextComponentConfig<ResortAndRetreatFooterP
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
       },
       linkPane: {

@@ -1,6 +1,7 @@
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
+import { resolveTextColor } from "../shared/sectionStyles";
 import { useTranslation } from "react-i18next";
 import type { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider, Link } from "@yext/pages-components";
@@ -42,6 +43,7 @@ const ResortAndRetreatBreadcrumbsFields: YextFields<ResortAndRetreatBreadcrumbsP
     styles: {
       label: msg("fields.textStyles", "Text Styles"),
       type: "styledText",
+      includeColor: true,
     },
     section: {
       label: msg("fields.section", "Section"),
@@ -74,13 +76,17 @@ const ResortAndRetreatBreadcrumbsComponent: PuckComponent<
   const breadcrumbs = resolveBreadcrumbs(streamDocument);
   const visibleBreadcrumbs =
     props.includeCurrentLocation || breadcrumbs.length <= 1
-    ? breadcrumbs
-    : breadcrumbs.slice(0, -1);
+      ? breadcrumbs
+      : breadcrumbs.slice(0, -1);
   const currentPageIndex = breadcrumbs.length - 1;
   const currentPageLabel = streamDocument.name ?? "";
   const textColor =
-    getThemeColorCssValue(props.section.backgroundColor.contrastingColor) ??
-    "currentColor";
+    getThemeColorCssValue(
+      resolveTextColor(
+        props.styles,
+        props.section.backgroundColor.contrastingColor,
+      ),
+    ) ?? "currentColor";
 
   if (!visibleBreadcrumbs.length) {
     return props.puck.isEditing ? (

@@ -14,3 +14,4 @@ functions/functionMetadata.json
 *.local
 .idea/*
 .DS_Store
+stream.config.*

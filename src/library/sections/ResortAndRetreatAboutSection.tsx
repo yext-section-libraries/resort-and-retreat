@@ -29,31 +29,25 @@ import {
   VisibilityWrapper,
 } from "@yext/visual-editor";
 import {
-  renderResolvedRichText,
-  resolveBodyTypographyVariables,
+  renderRichText,
   resolveStyledTextStyles,
+  resolveRichTextStyles,
 } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type StyledRtfProps = {
   text: YextEntityField<TranslatableRichText>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type ImageFieldProps = {
   image: YextEntityField<TranslatableAssetImage>;
   imageConstrain: "fixed" | "filled";
 };
-
-// Audit wiring note: filter.fontColor is a scanner false positive here.
-// title.fontColor and body.fontColor are applied in render, and CTA color/link
-// are consumed by the shared ComprehensiveCTA runtime below.
 
 export type ResortAndRetreatAboutSectionProps = {
   title: StyledTextProps;
@@ -103,11 +97,7 @@ const ResortAndRetreatAboutSectionFields: YextFields<ResortAndRetreatAboutSectio
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -125,11 +115,7 @@ const ResortAndRetreatAboutSectionFields: YextFields<ResortAndRetreatAboutSectio
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -252,7 +238,6 @@ export const ResortAndRetreatAboutSectionComponent: PuckComponent<
                     className="m-0"
                     style={resolveStyledTextStyles(
                       props.title.styles,
-                      props.title.fontColor,
                       "currentColor",
                       "var(--fontFamily-h2-fontFamily)",
                       "var(--fontSize-h2-fontSize)",
@@ -268,22 +253,12 @@ export const ResortAndRetreatAboutSectionComponent: PuckComponent<
                   fieldId={props.body.text.field}
                   constantValueEnabled={props.body.text.constantValueEnabled}
                 >
-                  {renderResolvedRichText(
+                  {renderRichText(
                     body,
+                    resolveRichTextStyles(props.body.styles),
                     themeManagerCn(
                       "components rtf-theme rtf-wrapper m-0 whitespace-pre-line font-body-fontFamily font-body-fontWeight",
                     ),
-                    {
-                      ...resolveStyledTextStyles(
-                        props.body.styles,
-                        props.body.fontColor,
-                        "currentColor",
-                        "var(--fontFamily-body-fontFamily)",
-                        "1rem",
-                        "var(--fontWeight-body-fontWeight)",
-                      ),
-                      ...resolveBodyTypographyVariables(props.body.styles),
-                    },
                   )}
                 </EntityField>
                 <div>
@@ -325,7 +300,7 @@ export const ResortAndRetreatAboutSectionComponent: PuckComponent<
 
 export const ResortAndRetreatAboutSection: YextComponentConfig<ResortAndRetreatAboutSectionProps> =
   {
-    label: msg("fields.aboutSection", "About Section"),
+    label: msg("fields.aboutSection", "About"),
     fields: ResortAndRetreatAboutSectionFields,
     defaultProps: {
       title: {
@@ -344,7 +319,6 @@ export const ResortAndRetreatAboutSection: YextComponentConfig<ResortAndRetreatA
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       body: {
         text: {
@@ -411,7 +385,6 @@ export const ResortAndRetreatAboutSection: YextComponentConfig<ResortAndRetreatA
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       image: {
         image: {
@@ -482,7 +455,7 @@ export const ResortAndRetreatAboutSection: YextComponentConfig<ResortAndRetreatA
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatAboutSection",
-  displayName: "About Section",
+  displayName: "About",
   description: "About Section",
   pageSetTypes: ["ENTITY"],
 };

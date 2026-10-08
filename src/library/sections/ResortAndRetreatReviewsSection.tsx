@@ -25,18 +25,20 @@ import {
   useBackground,
   VisibilityWrapper,
 } from "@yext/visual-editor";
+import { formatRating, getLocalizedCountOptions } from "../shared/localization";
 import { RatingStar as Star } from "../shared/icons";
-import { resolveStyledTextStyles } from "../shared/sectionStyles";
+import {
+  resolveStyledTextStyles,
+  resolveTextColor,
+} from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type SharedTextStyleProps = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type ReviewComment = {
@@ -87,14 +89,12 @@ const defaultSharedTextStyles: SharedTextStyleProps = {
     fontStyle: "default",
     textTransform: "default",
   },
-  fontColor: undefined,
 };
 
 const resolveSharedTextStyle = (
   value?: SharedTextStyleProps,
 ): SharedTextStyleProps => ({
   styles: value?.styles ?? defaultSharedTextStyles.styles,
-  fontColor: value?.fontColor,
 });
 
 const resolveReviewSectionStyles = (
@@ -171,11 +171,7 @@ const ResortAndRetreatReviewsSectionFields: YextFields<ResortAndRetreatReviewsSe
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -190,11 +186,7 @@ const ResortAndRetreatReviewsSectionFields: YextFields<ResortAndRetreatReviewsSe
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -205,11 +197,7 @@ const ResortAndRetreatReviewsSectionFields: YextFields<ResortAndRetreatReviewsSe
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -220,11 +208,7 @@ const ResortAndRetreatReviewsSectionFields: YextFields<ResortAndRetreatReviewsSe
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -235,11 +219,7 @@ const ResortAndRetreatReviewsSectionFields: YextFields<ResortAndRetreatReviewsSe
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -250,11 +230,7 @@ const ResortAndRetreatReviewsSectionFields: YextFields<ResortAndRetreatReviewsSe
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -346,10 +322,22 @@ const ReviewsSectionContent = ({
     getThemeColorCssValue(props.section.cardBackgroundColor.contrastingColor) ??
     sectionForeground;
   const styles = resolveReviewSectionStyles(props.styles);
-  const reviewTitleColor = getThemeColorCssValue(styles.reviewTitle.fontColor);
-  const reviewDateColor = getThemeColorCssValue(styles.reviewDate.fontColor);
-  const reviewTextColor = getThemeColorCssValue(styles.reviewText.fontColor);
-  const starsColor = getThemeColorCssValue(styles.stars.fontColor);
+  const reviewTitleColor = getThemeColorCssValue(
+    resolveTextColor(styles.reviewTitle.styles),
+  );
+  const reviewDateColor = getThemeColorCssValue(
+    resolveTextColor(styles.reviewDate.styles),
+  );
+  const reviewTextColor = getThemeColorCssValue(
+    resolveTextColor(styles.reviewText.styles),
+  );
+  const starsColor = getThemeColorCssValue(
+    resolveTextColor(styles.stars.styles),
+  );
+  const formattedAverageRating =
+    typeof averageRating === "number"
+      ? formatRating(averageRating, i18n.language)
+      : "";
   return (
     <div className="mx-auto flex max-w-[1360px] flex-col gap-8 px-5 py-10 md:px-8 xl:px-10">
       <div className="flex flex-col gap-2 xl:items-center xl:text-center">
@@ -362,7 +350,6 @@ const ReviewsSectionContent = ({
             className="m-0"
             style={resolveStyledTextStyles(
               props.title.styles,
-              props.title.fontColor,
               sectionForeground,
               "var(--fontFamily-h2-fontFamily)",
               "var(--fontSize-h2-fontSize)",
@@ -378,7 +365,6 @@ const ReviewsSectionContent = ({
             className="m-0"
             style={resolveStyledTextStyles(
               styles.averageRatingText.styles,
-              styles.averageRatingText.fontColor,
               sectionForeground,
               "var(--fontFamily-body-fontFamily)",
               "0.875rem",
@@ -389,8 +375,12 @@ const ReviewsSectionContent = ({
               "averageRatingFromReviews",
               "{{rating}} average rating from {{count}} reviews",
               {
-                rating: averageRating.toFixed(1),
+                ...getLocalizedCountOptions(reviewCount, i18n.language, {
+                  rating: formattedAverageRating,
+                }),
+                // Keep interpolation parameters visible to the catalog extractor.
                 count: reviewCount,
+                rating: formattedAverageRating,
               },
             )}
           </p>
@@ -421,7 +411,6 @@ const ReviewsSectionContent = ({
                     style={{
                       ...resolveStyledTextStyles(
                         styles.reviewTitle.styles,
-                        styles.reviewTitle.fontColor,
                         cardForeground,
                         "var(--fontFamily-h4-fontFamily)",
                         "var(--fontSize-h4-fontSize)",
@@ -439,7 +428,6 @@ const ReviewsSectionContent = ({
                       style={{
                         ...resolveStyledTextStyles(
                           styles.reviewDate.styles,
-                          styles.reviewDate.fontColor,
                           cardForeground,
                           "var(--fontFamily-body-fontFamily)",
                           "0.875rem",
@@ -457,7 +445,6 @@ const ReviewsSectionContent = ({
                   style={{
                     ...resolveStyledTextStyles(
                       styles.stars.styles,
-                      styles.stars.fontColor,
                       cardForeground,
                       "var(--fontFamily-body-fontFamily)",
                       "1rem",
@@ -468,7 +455,10 @@ const ReviewsSectionContent = ({
                 >
                   <span>
                     {t("ratingInStars", "{{rating}} Stars", {
-                      rating: (review.rating ?? averageRating ?? 0).toFixed(1),
+                      rating: formatRating(
+                        review.rating ?? averageRating ?? 0,
+                        i18n.language,
+                      ),
                     })}
                   </span>
                   <div className="flex items-center gap-1">
@@ -484,7 +474,6 @@ const ReviewsSectionContent = ({
                   style={{
                     ...resolveStyledTextStyles(
                       styles.reviewText.styles,
-                      styles.reviewText.fontColor,
                       cardForeground,
                       "var(--fontFamily-body-fontFamily)",
                       "1rem",
@@ -501,9 +490,7 @@ const ReviewsSectionContent = ({
                   className="border-t pt-4 text-sm opacity-80"
                   style={{ borderColor: cardForeground, color: cardForeground }}
                 >
-                  <p className="m-0 font-medium">
-                    {t("response", "Response")}
-                  </p>
+                  <p className="m-0 font-medium">{t("response", "Response")}</p>
                   <p className="m-0 mt-2">{review.comments[0].content}</p>
                 </div>
               ) : null}
@@ -517,7 +504,7 @@ const ReviewsSectionContent = ({
 
 export const ResortAndRetreatReviewsSection: YextComponentConfig<ResortAndRetreatReviewsSectionProps> =
   {
-    label: msg("fields.reviewsSection", "Reviews Section"),
+    label: msg("fields.reviewsSection", "Reviews"),
     fields: ResortAndRetreatReviewsSectionFields,
     defaultProps: {
       title: {
@@ -536,7 +523,6 @@ export const ResortAndRetreatReviewsSection: YextComponentConfig<ResortAndRetrea
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       styles: {
         averageRatingText: defaultSharedTextStyles,
@@ -545,7 +531,6 @@ export const ResortAndRetreatReviewsSection: YextComponentConfig<ResortAndRetrea
         reviewText: defaultSharedTextStyles,
         stars: {
           ...defaultSharedTextStyles,
-          fontColor: undefined,
         },
       },
       section: {
@@ -564,14 +549,12 @@ export const ResortAndRetreatReviewsSection: YextComponentConfig<ResortAndRetrea
         },
       },
     },
-    render: (props) => (
-      <ResortAndRetreatReviewsSectionComponent {...props} />
-    ),
+    render: (props) => <ResortAndRetreatReviewsSectionComponent {...props} />,
   };
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatReviewsSection",
-  displayName: "Reviews Section",
+  displayName: "Reviews",
   description: "Reviews Section",
   pageSetTypes: ["ENTITY"],
 };
