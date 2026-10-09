@@ -40,24 +40,22 @@ import {
 import {
   renderRichText,
   resolveStyledTextStyles,
-  type RichTextStyleOverrides,
+  resolveRichTextStyles,
+  resolveTextColor,
 } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type StyledRtfProps = {
   text: YextEntityField<TranslatableRichText>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type SharedTextStylesProps = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type SharedCardAction = Pick<
@@ -148,7 +146,6 @@ const createSharedTextStylesDefault = (): SharedTextStylesProps => ({
     fontStyle: "default",
     textTransform: "default",
   },
-  fontColor: undefined,
 });
 
 const defaultAccommodationCta = createAccommodationCta();
@@ -233,7 +230,6 @@ const resolveSharedTextStyles = (
   value: SharedTextStylesProps | undefined,
 ): SharedTextStylesProps => ({
   styles: value?.styles ?? defaultSharedTextStyles.styles,
-  fontColor: value?.fontColor,
 });
 
 const ResortAndRetreatAccommodationsSectionFields: YextFields<ResortAndRetreatAccommodationsSectionProps> =
@@ -278,11 +274,10 @@ const ResortAndRetreatAccommodationsSectionFields: YextFields<ResortAndRetreatAc
           label: msg("fields.text", "Text"),
           filter: { types: ["type.string"] },
         },
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -295,11 +290,10 @@ const ResortAndRetreatAccommodationsSectionFields: YextFields<ResortAndRetreatAc
           label: msg("fields.text", "Text"),
           filter: { types: ["type.rich_text_v2"] },
         },
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -307,11 +301,10 @@ const ResortAndRetreatAccommodationsSectionFields: YextFields<ResortAndRetreatAc
       label: msg("fields.cardTitle", "Card Title"),
       type: "object",
       objectFields: {
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -319,11 +312,10 @@ const ResortAndRetreatAccommodationsSectionFields: YextFields<ResortAndRetreatAc
       label: msg("fields.cardDescription", "Card Description"),
       type: "object",
       objectFields: {
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -363,13 +355,11 @@ const AccommodationCardView = ({
   const title = card.title
     ? (resolveComponentData(card.title, locale, streamDocument) ?? "")
     : "";
-  const cardDescriptionRichTextStyleOverrides: RichTextStyleOverrides = {
-    ...resolvedCardDescription.styles,
-    color:
-      getThemeColorCssValue(resolvedCardDescription.fontColor) ??
-      getThemeColorCssValue(cardBackgroundColor.contrastingColor) ??
-      "currentColor",
-  };
+  const cardDescriptionRichTextStyleOverrides: StyledTextValue =
+    resolveRichTextStyles(
+      resolvedCardDescription.styles,
+      cardBackgroundColor.contrastingColor,
+    );
   const description = card.description
     ? resolveComponentData(card.description, locale, streamDocument)
     : undefined;
@@ -425,7 +415,6 @@ const AccommodationCardView = ({
             className="m-0"
             style={resolveStyledTextStyles(
               resolvedCardTitle.styles,
-              resolvedCardTitle.fontColor,
               cardForeground,
               "var(--fontFamily-h4-fontFamily)",
               "var(--fontSize-h4-fontSize)",
@@ -490,13 +479,11 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
   const locale = streamDocument.locale ?? "en";
   const title =
     resolveComponentData(props.title.text, locale, streamDocument) || "";
-  const sectionDescriptionRichTextStyleOverrides: RichTextStyleOverrides = {
-    ...props.description.styles,
-    color:
-      getThemeColorCssValue(props.description.fontColor) ??
-      getThemeColorCssValue(props.section.backgroundColor.contrastingColor) ??
-      "currentColor",
-  };
+  const sectionDescriptionRichTextStyleOverrides: StyledTextValue =
+    resolveRichTextStyles(
+      props.description.styles,
+      props.section.backgroundColor.contrastingColor,
+    );
   const description = resolveComponentData(
     props.description.text,
     locale,
@@ -515,7 +502,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
     getThemeColorCssValue(props.section.backgroundColor.contrastingColor) ??
     "currentColor";
   const titleColor =
-    getThemeColorCssValue(props.title.fontColor) ??
+    getThemeColorCssValue(resolveTextColor(props.title.styles)) ??
     "var(--colors-palette-primary)";
 
   React.useEffect(() => {
@@ -627,7 +614,10 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div className="max-w-[900px]">
                 <EntityField
-                  displayName={pt("accommodationsTitle", "Accommodations Title")}
+                  displayName={pt(
+                    "accommodationsTitle",
+                    "Accommodations Title",
+                  )}
                   fieldId={props.title.text.field}
                   constantValueEnabled={props.title.text.constantValueEnabled}
                 >
@@ -635,7 +625,6 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
                     className="m-0"
                     style={resolveStyledTextStyles(
                       props.title.styles,
-                      props.title.fontColor,
                       sectionForeground,
                       "var(--fontFamily-h2-fontFamily)",
                       "var(--fontSize-h2-fontSize)",
@@ -647,7 +636,10 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
                   </h2>
                 </EntityField>
                 <EntityField
-                  displayName={pt("accommodationsDescription", "Accommodations Description")}
+                  displayName={pt(
+                    "accommodationsDescription",
+                    "Accommodations Description",
+                  )}
                   fieldId={props.description.text.field}
                   constantValueEnabled={
                     props.description.text.constantValueEnabled
@@ -763,7 +755,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
 
 export const ResortAndRetreatAccommodationsSection: YextComponentConfig<ResortAndRetreatAccommodationsSectionProps> =
   {
-    label: msg("fields.accommodationsSection", "Accommodations Section"),
+    label: msg("fields.accommodationsSection", "Accommodations"),
     fields: ResortAndRetreatAccommodationsSectionFields,
     defaultProps: {
       title: {
@@ -782,13 +774,11 @@ export const ResortAndRetreatAccommodationsSection: YextComponentConfig<ResortAn
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       description: {
         ...createStyledRtfDefault(
           "Explore our beautifully appointed guest rooms and suites, designed with custom furnishings and plush bedding for ultimate relaxation.",
         ),
-        fontColor: undefined,
       },
       cardTitle: createSharedTextStylesDefault(),
       cardDescription: createSharedTextStylesDefault(),
@@ -817,7 +807,7 @@ export const ResortAndRetreatAccommodationsSection: YextComponentConfig<ResortAn
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatAccommodationsSection",
-  displayName: "Accommodations Section",
+  displayName: "Accommodations",
   description: "Accommodations Section",
   pageSetTypes: ["ENTITY"],
 };

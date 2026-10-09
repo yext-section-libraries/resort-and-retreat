@@ -31,21 +31,19 @@ import {
 import { aspectRatioOptions } from "../shared/fieldOptions";
 import { hasImageSource } from "../shared/imageUtils";
 import {
-  renderResolvedRichText,
-  resolveBodyTypographyVariables,
+  renderRichText,
   resolveStyledTextStyles,
+  resolveRichTextStyles,
 } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type StyledRtfProps = {
   text: YextEntityField<TranslatableRichText>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type ImageFieldProps = {
@@ -53,10 +51,6 @@ type ImageFieldProps = {
   aspectRatio: number;
   imageConstrain: "fixed" | "filled";
 };
-
-// Audit wiring note: filter.fontColor is a scanner false positive here.
-// body/title fontColor wiring is applied in render, and shared ctas plus
-// link/color, cta styling, and cta behavior are owned by the shared runtime.
 
 export type ResortAndRetreatEventsSectionProps = {
   title: StyledTextProps;
@@ -100,11 +94,7 @@ const ResortAndRetreatEventsSectionFields: YextFields<ResortAndRetreatEventsSect
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -122,11 +112,7 @@ const ResortAndRetreatEventsSectionFields: YextFields<ResortAndRetreatEventsSect
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -204,7 +190,10 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
           {hasImageSource(backgroundImage) ? (
             <div className="absolute inset-0">
               <EntityField
-                displayName={pt("eventsBackgroundImage", "Events Background Image")}
+                displayName={pt(
+                  "eventsBackgroundImage",
+                  "Events Background Image",
+                )}
                 fieldId={props.backgroundImage.image.field}
                 constantValueEnabled={
                   props.backgroundImage.image.constantValueEnabled
@@ -248,7 +237,6 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
                   className="m-0"
                   style={resolveStyledTextStyles(
                     props.title.styles,
-                    props.title.fontColor,
                     "currentColor",
                     "var(--fontFamily-h2-fontFamily)",
                     "var(--fontSize-h2-fontSize)",
@@ -264,22 +252,12 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
                 fieldId={props.body.text.field}
                 constantValueEnabled={props.body.text.constantValueEnabled}
               >
-                {renderResolvedRichText(
+                {renderRichText(
                   body,
+                  resolveRichTextStyles(props.body.styles),
                   themeManagerCn(
                     "components rtf-theme rtf-wrapper m-0 whitespace-pre-line font-body-fontFamily font-body-fontWeight",
                   ),
-                  {
-                    ...resolveStyledTextStyles(
-                      props.body.styles,
-                      props.body.fontColor,
-                      "currentColor",
-                      "var(--fontFamily-body-fontFamily)",
-                      "1rem",
-                      "var(--fontWeight-body-fontWeight)",
-                    ),
-                    ...resolveBodyTypographyVariables(props.body.styles),
-                  },
                 )}
               </EntityField>
               <div>
@@ -318,7 +296,7 @@ export const ResortAndRetreatEventsSectionComponent: PuckComponent<
 
 export const ResortAndRetreatEventsSection: YextComponentConfig<ResortAndRetreatEventsSectionProps> =
   {
-    label: msg("fields.eventsSection", "Events Section"),
+    label: msg("fields.eventsSection", "Events"),
     fields: ResortAndRetreatEventsSectionFields,
     defaultProps: {
       title: {
@@ -337,7 +315,6 @@ export const ResortAndRetreatEventsSection: YextComponentConfig<ResortAndRetreat
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       body: {
         text: {
@@ -404,7 +381,6 @@ export const ResortAndRetreatEventsSection: YextComponentConfig<ResortAndRetreat
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       backgroundImage: {
         image: {
@@ -464,14 +440,12 @@ export const ResortAndRetreatEventsSection: YextComponentConfig<ResortAndRetreat
         visibleOnLivePage: true,
       },
     },
-    render: (props) => (
-      <ResortAndRetreatEventsSectionComponent {...props} />
-    ),
+    render: (props) => <ResortAndRetreatEventsSectionComponent {...props} />,
   };
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatEventsSection",
-  displayName: "Events Section",
+  displayName: "Events",
   description: "Events Section",
   pageSetTypes: ["ENTITY"],
 };

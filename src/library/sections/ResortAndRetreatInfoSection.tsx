@@ -37,9 +37,9 @@ import {
 } from "@yext/visual-editor";
 import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
 import {
-  renderRichText as renderResolvedRichText,
+  renderRichText,
   resolveStyledTextStyles,
-  type RichTextStyleOverrides,
+  resolveRichTextStyles,
 } from "../shared/sectionStyles";
 
 type PhoneItemProps = {
@@ -62,7 +62,6 @@ type HoursStyles = {
 
 type SharedTextStyles = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 const defaultSharedTextStyles: SharedTextStyles = {
@@ -73,14 +72,12 @@ const defaultSharedTextStyles: SharedTextStyles = {
     fontStyle: "default",
     textTransform: "default",
   },
-  fontColor: undefined,
 };
 
 const resolveSharedTextStyles = (
   value: SharedTextStyles | undefined,
 ): SharedTextStyles => ({
   styles: value?.styles ?? defaultSharedTextStyles.styles,
-  fontColor: value?.fontColor,
 });
 
 const resolveInfoSectionStyles = (
@@ -268,8 +265,14 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
                   label: msg("fields.phoneFormat", "Phone Format"),
                   type: "radio",
                   options: [
-                    { label: msg("fields.domestic", "Domestic"), value: "domestic" },
-                    { label: msg("fields.international", "International"), value: "international" },
+                    {
+                      label: msg("fields.domestic", "Domestic"),
+                      value: "domestic",
+                    },
+                    {
+                      label: msg("fields.international", "International"),
+                      value: "international",
+                    },
                   ],
                 },
                 includeHyperlink: {
@@ -329,7 +332,10 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
           type: "comprehensiveCTA",
         },
         secondaryCta: {
-          label: msg("fields.secondaryCallToAction", "Secondary Call to Action"),
+          label: msg(
+            "fields.secondaryCallToAction",
+            "Secondary Call to Action",
+          ),
           type: "comprehensiveCTA",
         },
       },
@@ -363,10 +369,19 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
               options: [
                 { label: msg("fields.monday", "Monday"), value: "monday" },
                 { label: msg("fields.tuesday", "Tuesday"), value: "tuesday" },
-                { label: msg("fields.wednesday", "Wednesday"), value: "wednesday" },
-                { label: msg("fields.thursday", "Thursday"), value: "thursday" },
+                {
+                  label: msg("fields.wednesday", "Wednesday"),
+                  value: "wednesday",
+                },
+                {
+                  label: msg("fields.thursday", "Thursday"),
+                  value: "thursday",
+                },
                 { label: msg("fields.friday", "Friday"), value: "friday" },
-                { label: msg("fields.saturday", "Saturday"), value: "saturday" },
+                {
+                  label: msg("fields.saturday", "Saturday"),
+                  value: "saturday",
+                },
                 { label: msg("fields.sunday", "Sunday"), value: "sunday" },
                 { label: msg("fields.today", "Today"), value: "today" },
               ],
@@ -380,7 +395,10 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
               ],
             },
             showAdditionalHoursText: {
-              label: msg("fields.showAdditionalHoursText", "Show Additional Hours Text"),
+              label: msg(
+                "fields.showAdditionalHoursText",
+                "Show Additional Hours Text",
+              ),
               type: "radio",
               options: [
                 { label: msg("fields.yes", "Yes"), value: true },
@@ -392,7 +410,10 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
               type: "select",
               options: [
                 { label: msg("fields.start", "Start"), value: "items-start" },
-                { label: msg("fields.center", "Center"), value: "items-center" },
+                {
+                  label: msg("fields.center", "Center"),
+                  value: "items-center",
+                },
                 { label: msg("fields.end", "End"), value: "items-end" },
               ],
             },
@@ -432,11 +453,7 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -447,11 +464,7 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -462,11 +475,7 @@ const ResortAndRetreatInfoSectionFields: YextFields<ResortAndRetreatInfoSectionP
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -480,13 +489,11 @@ export const ResortAndRetreatInfoSectionComponent: PuckComponent<
   const streamDocument = useDocument();
   const locale = streamDocument.locale ?? "en";
   const styles = resolveInfoSectionStyles(props.styles);
-  const bodyRichTextStyleOverrides: RichTextStyleOverrides = {
-    ...styles.body.styles,
-    color:
-      getThemeColorCssValue(styles.body.fontColor) ??
-      getThemeColorCssValue(props.section.backgroundColor.contrastingColor) ??
-      "currentColor",
-  };
+  const bodyRichTextStyleOverrides: StyledTextValue =
+    resolveRichTextStyles(
+      styles.body.styles,
+      props.section.backgroundColor.contrastingColor,
+    );
   const summaryHeading =
     resolveComponentData(
       props.summaryCard.summaryHeading,
@@ -701,7 +708,7 @@ const ResortAndRetreatInfoSectionContent = ({
   additionalHoursText: string;
   accessibilityText: unknown;
   addressSubheading: string;
-  bodyRichTextStyleOverrides: RichTextStyleOverrides;
+  bodyRichTextStyleOverrides: StyledTextValue;
   checkInOutText: unknown;
   checkInSubheading: string;
   cardBorderColor: ThemeColor;
@@ -775,7 +782,6 @@ const ResortAndRetreatInfoSectionContent = ({
   }, [i18n.language]);
   const headingTextStyles = resolveStyledTextStyles(
     styles.headings.styles,
-    styles.headings.fontColor,
     sectionForeground,
     "var(--fontFamily-h2-fontFamily)",
     "var(--fontSize-h2-fontSize)",
@@ -784,7 +790,6 @@ const ResortAndRetreatInfoSectionContent = ({
   );
   const subheadingTextStyles = resolveStyledTextStyles(
     styles.subheadings.styles,
-    styles.subheadings.fontColor,
     sectionForeground,
     "var(--fontFamily-body-fontFamily)",
     "1rem",
@@ -792,7 +797,6 @@ const ResortAndRetreatInfoSectionContent = ({
   );
   const bodyTextStyles = resolveStyledTextStyles(
     styles.body.styles,
-    styles.body.fontColor,
     sectionForeground,
     "var(--fontFamily-body-fontFamily)",
     "0.98rem",
@@ -946,7 +950,10 @@ const ResortAndRetreatInfoSectionContent = ({
               </p>
             </EntityField>
             <EntityField
-              displayName={pt("checkInAndCheckOutDetails", "Check-In and Check-Out Details")}
+              displayName={pt(
+                "checkInAndCheckOutDetails",
+                "Check-In and Check-Out Details",
+              )}
               fieldId={
                 entityFieldProps.summaryCard.checkIn.checkInOutText.field
               }
@@ -955,15 +962,15 @@ const ResortAndRetreatInfoSectionContent = ({
                   .constantValueEnabled
               }
             >
-              {renderResolvedRichText(
-                checkInOutText,
-                bodyRichTextStyleOverrides,
-              )}
+              {renderRichText(checkInOutText, bodyRichTextStyleOverrides)}
             </EntityField>
           </div>
           <div className="flex flex-col gap-1">
             <EntityField
-              displayName={pt("additionalInformationHeading", "Additional Information Heading")}
+              displayName={pt(
+                "additionalInformationHeading",
+                "Additional Information Heading",
+              )}
               fieldId={entityFieldProps.summaryCard.other.subheading.field}
               constantValueEnabled={
                 entityFieldProps.summaryCard.other.subheading
@@ -975,7 +982,10 @@ const ResortAndRetreatInfoSectionContent = ({
               </p>
             </EntityField>
             <EntityField
-              displayName={pt("accessibilityInformation", "Accessibility Information")}
+              displayName={pt(
+                "accessibilityInformation",
+                "Accessibility Information",
+              )}
               fieldId={
                 entityFieldProps.summaryCard.other.accessibilityText.field
               }
@@ -984,10 +994,7 @@ const ResortAndRetreatInfoSectionContent = ({
                   .constantValueEnabled
               }
             >
-              {renderResolvedRichText(
-                accessibilityText,
-                bodyRichTextStyleOverrides,
-              )}
+              {renderRichText(accessibilityText, bodyRichTextStyleOverrides)}
             </EntityField>
           </div>
         </div>
@@ -1100,7 +1107,10 @@ const ResortAndRetreatInfoSectionContent = ({
         style={cardStyle}
       >
         <EntityField
-          displayName={pt("complimentaryServicesHeading", "Complimentary Services Heading")}
+          displayName={pt(
+            "complimentaryServicesHeading",
+            "Complimentary Services Heading",
+          )}
           fieldId={entityFieldProps.servicesCard.complimentaryHeading.field}
           constantValueEnabled={
             entityFieldProps.servicesCard.complimentaryHeading
@@ -1132,7 +1142,7 @@ const ResortAndRetreatInfoSectionContent = ({
 
 export const ResortAndRetreatInfoSection: YextComponentConfig<ResortAndRetreatInfoSectionProps> =
   {
-    label: msg("fields.infoSection", "Info Section"),
+    label: msg("fields.infoSection", "Info"),
     fields: ResortAndRetreatInfoSectionFields,
     defaultProps: {
       section: {
@@ -1374,7 +1384,6 @@ export const ResortAndRetreatInfoSection: YextComponentConfig<ResortAndRetreatIn
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
         subheadings: {
           styles: {
@@ -1384,7 +1393,6 @@ export const ResortAndRetreatInfoSection: YextComponentConfig<ResortAndRetreatIn
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
         body: {
           styles: {
@@ -1394,7 +1402,6 @@ export const ResortAndRetreatInfoSection: YextComponentConfig<ResortAndRetreatIn
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
       },
     },
@@ -1403,7 +1410,7 @@ export const ResortAndRetreatInfoSection: YextComponentConfig<ResortAndRetreatIn
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatInfoSection",
-  displayName: "Info Section",
+  displayName: "Info",
   description: "Info Section",
   pageSetTypes: ["ENTITY"],
 };

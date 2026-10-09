@@ -28,29 +28,24 @@ import {
   useBackground,
 } from "@yext/visual-editor";
 import {
-  renderResolvedRichText,
-  resolveBodyTypographyVariables,
+  renderRichText,
   resolveStyledTextStyles,
+  resolveRichTextStyles,
 } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type CardTextStyleProps = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type FaqItemDataProps = {
   question: YextEntityField<TranslatableString>;
   answer: YextEntityField<TranslatableRichText>;
 };
-
-// Audit wiring note: answer.fontColor and style.fontColor are applied through
-// resolveStyledTextStyles in the expanded answer render path below.
 
 const faqItemSource = createItemSource<FaqItemDataProps>({
   label: msg("fields.faqItems", "FAQ Items"),
@@ -245,18 +240,16 @@ const createCardTextStyleDefault = (): CardTextStyleProps => ({
     fontStyle: "default",
     textTransform: "default",
   },
-  fontColor: undefined,
 });
 
 const createCardTextStyleField = (label: string) => ({
   label,
   type: "object" as const,
   objectFields: {
-    styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" as const },
-    fontColor: {
-      label: msg("fields.fontColor", "Font Color"),
-      type: "basicSelector" as const,
-      options: "SITE_COLOR" as const,
+    styles: {
+      label: msg("fields.textStyles", "Text Styles"),
+      type: "styledText" as const,
+      includeColor: true,
     },
   },
 });
@@ -301,11 +294,7 @@ const ResortAndRetreatFaqSectionFields: YextFields<ResortAndRetreatFaqSectionPro
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -389,7 +378,6 @@ const ResortAndRetreatFaqSectionContent = ({
             className="m-0 text-left xl:text-center"
             style={resolveStyledTextStyles(
               props.title.styles,
-              props.title.fontColor,
               sectionForeground,
               "var(--fontFamily-h2-fontFamily)",
               "var(--fontSize-h2-fontSize)",
@@ -440,7 +428,6 @@ const ResortAndRetreatFaqSectionContent = ({
                       <span
                         style={resolveStyledTextStyles(
                           props.questionStyles.styles,
-                          props.questionStyles.fontColor,
                           sectionForeground,
                           "var(--fontFamily-h4-fontFamily)",
                           "var(--fontSize-h4-fontSize)",
@@ -455,24 +442,16 @@ const ResortAndRetreatFaqSectionContent = ({
                       />
                     </button>
                     {isOpen
-                      ? renderResolvedRichText(
+                      ? renderRichText(
                           answer,
+                          resolveRichTextStyles(
+                            props.answerStyles.styles,
+                            sectionBackground?.contrastingColor ??
+                              "palette-quaternary",
+                          ),
                           themeManagerCn(
                             "components rtf-theme rtf-wrapper pt-4 font-body-fontFamily font-body-fontWeight",
                           ),
-                          {
-                            ...resolveStyledTextStyles(
-                              props.answerStyles.styles,
-                              props.answerStyles.fontColor,
-                              sectionForeground,
-                              "var(--fontFamily-body-fontFamily)",
-                              "1rem",
-                              "var(--fontWeight-body-fontWeight)",
-                            ),
-                            ...resolveBodyTypographyVariables(
-                              props.answerStyles.styles,
-                            ),
-                          },
                         )
                       : null}
                   </div>
@@ -487,7 +466,7 @@ const ResortAndRetreatFaqSectionContent = ({
 
 export const ResortAndRetreatFaqSection: YextComponentConfig<ResortAndRetreatFaqSectionProps> =
   {
-    label: msg("fields.faqSection", "Faq Section"),
+    label: msg("fields.faqSection", "FAQ"),
     fields: ResortAndRetreatFaqSectionFields,
     defaultProps: {
       title: {
@@ -506,7 +485,6 @@ export const ResortAndRetreatFaqSection: YextComponentConfig<ResortAndRetreatFaq
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       items: faqItemSource.defaultValue,
       questionStyles: createCardTextStyleDefault(),
@@ -528,7 +506,7 @@ export const ResortAndRetreatFaqSection: YextComponentConfig<ResortAndRetreatFaq
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatFaqSection",
-  displayName: "Faq Section",
+  displayName: "FAQ",
   description: "Faq Section",
   pageSetTypes: ["ENTITY"],
 };

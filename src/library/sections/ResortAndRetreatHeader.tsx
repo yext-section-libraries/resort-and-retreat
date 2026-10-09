@@ -970,7 +970,9 @@ const ResortAndRetreatHeaderComponent: PuckComponent<
             }}
             aria-expanded={menuOpen}
             aria-label={
-              menuOpen ? "Close navigation menu" : "Open navigation menu"
+              menuOpen
+                ? t("closeNavigationMenu", "Close navigation menu")
+                : t("openNavigationMenu", "Open navigation menu")
             }
             className="inline-flex h-10 w-10 items-center justify-center rounded-full"
             style={{
