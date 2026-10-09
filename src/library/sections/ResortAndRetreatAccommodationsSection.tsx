@@ -40,7 +40,6 @@ import {
 import {
   renderRichText,
   resolveStyledTextStyles,
-  type RichTextStyleOverrides,
   resolveRichTextStyles,
   resolveTextColor,
 } from "../shared/sectionStyles";
@@ -356,7 +355,7 @@ const AccommodationCardView = ({
   const title = card.title
     ? (resolveComponentData(card.title, locale, streamDocument) ?? "")
     : "";
-  const cardDescriptionRichTextStyleOverrides: RichTextStyleOverrides =
+  const cardDescriptionRichTextStyleOverrides: StyledTextValue =
     resolveRichTextStyles(
       resolvedCardDescription.styles,
       cardBackgroundColor.contrastingColor,
@@ -480,7 +479,7 @@ export const ResortAndRetreatAccommodationsSectionComponent: PuckComponent<
   const locale = streamDocument.locale ?? "en";
   const title =
     resolveComponentData(props.title.text, locale, streamDocument) || "";
-  const sectionDescriptionRichTextStyleOverrides: RichTextStyleOverrides =
+  const sectionDescriptionRichTextStyleOverrides: StyledTextValue =
     resolveRichTextStyles(
       props.description.styles,
       props.section.backgroundColor.contrastingColor,

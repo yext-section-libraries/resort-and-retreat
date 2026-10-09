@@ -10,8 +10,6 @@ import {
   type ThemeColor,
 } from "@yext/visual-editor";
 
-export type RichTextStyleOverrides = StyledTextValue;
-
 const isRichText = (value: unknown): value is RichText =>
   Boolean(
     value &&

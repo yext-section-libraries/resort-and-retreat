@@ -39,7 +39,6 @@ import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
 import {
   renderRichText,
   resolveStyledTextStyles,
-  type RichTextStyleOverrides,
   resolveRichTextStyles,
 } from "../shared/sectionStyles";
 
@@ -490,7 +489,7 @@ export const ResortAndRetreatInfoSectionComponent: PuckComponent<
   const streamDocument = useDocument();
   const locale = streamDocument.locale ?? "en";
   const styles = resolveInfoSectionStyles(props.styles);
-  const bodyRichTextStyleOverrides: RichTextStyleOverrides =
+  const bodyRichTextStyleOverrides: StyledTextValue =
     resolveRichTextStyles(
       styles.body.styles,
       props.section.backgroundColor.contrastingColor,
@@ -709,7 +708,7 @@ const ResortAndRetreatInfoSectionContent = ({
   additionalHoursText: string;
   accessibilityText: unknown;
   addressSubheading: string;
-  bodyRichTextStyleOverrides: RichTextStyleOverrides;
+  bodyRichTextStyleOverrides: StyledTextValue;
   checkInOutText: unknown;
   checkInSubheading: string;
   cardBorderColor: ThemeColor;
