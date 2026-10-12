@@ -35,20 +35,18 @@ import {
   defaultTextStyles,
 } from "../shared/sectionDefaults";
 import {
-  renderResolvedRichText,
-  resolveBodyTypographyVariables,
+  renderRichText,
   resolveStyledTextStyles,
+  resolveRichTextStyles,
 } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type CardTextStyleProps = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type BlogCardItem = {
@@ -239,29 +237,23 @@ export type ResortAndRetreatBlogSectionProps = {
 const createStyledTextDefault = (defaultValue: string): StyledTextProps => ({
   text: createStringFieldDefault(defaultValue),
   styles: defaultTextStyles,
-  fontColor: undefined,
 });
 
 const createCardTextStyleDefault = (): CardTextStyleProps => ({
   styles: defaultTextStyles,
-  fontColor: undefined,
 });
 
 const createCardTextStyleField = (label: string) => ({
   label,
   type: "object" as const,
   objectFields: {
-    styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" as const },
-    fontColor: {
-      label: msg("fields.fontColor", "Font Color"),
-      type: "basicSelector" as const,
-      options: "SITE_COLOR" as const,
+    styles: {
+      label: msg("fields.textStyles", "Text Styles"),
+      type: "styledText" as const,
+      includeColor: true,
     },
   },
 });
-
-// Audit wiring note: style.fontColor is applied through the shared entry style
-// groups in render, and shared ctas styling is merged into each entry cta.
 
 const ResortAndRetreatBlogSectionFields: YextFields<ResortAndRetreatBlogSectionProps> =
   {
@@ -305,11 +297,10 @@ const ResortAndRetreatBlogSectionFields: YextFields<ResortAndRetreatBlogSectionP
           label: msg("fields.text", "Text"),
           filter: { types: ["type.string"] },
         },
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -369,7 +360,6 @@ export const ResortAndRetreatBlogSectionComponent: PuckComponent<
                 className="m-0 text-left xl:text-center"
                 style={resolveStyledTextStyles(
                   props.title.styles,
-                  props.title.fontColor,
                   sectionForeground,
                   "var(--fontFamily-h2-fontFamily)",
                   "var(--fontSize-h2-fontSize)",
@@ -472,7 +462,6 @@ export const ResortAndRetreatBlogSectionComponent: PuckComponent<
                             className="m-0"
                             style={resolveStyledTextStyles(
                               props.entryTitleStyles.styles,
-                              props.entryTitleStyles.fontColor,
                               cardForeground,
                               "var(--fontFamily-h4-fontFamily)",
                               "var(--fontSize-h4-fontSize)",
@@ -482,24 +471,16 @@ export const ResortAndRetreatBlogSectionComponent: PuckComponent<
                           >
                             {cardTitle}
                           </h3>
-                          {renderResolvedRichText(
+                          {renderRichText(
                             description,
+                            resolveRichTextStyles(
+                              props.entryDescriptionStyles.styles,
+                              props.section.cardBackgroundColor
+                                .contrastingColor,
+                            ),
                             themeManagerCn(
                               "components rtf-theme rtf-wrapper m-0 flex-1 font-body-fontFamily font-body-fontWeight",
                             ),
-                            {
-                              ...resolveStyledTextStyles(
-                                props.entryDescriptionStyles.styles,
-                                props.entryDescriptionStyles.fontColor,
-                                cardForeground,
-                                "var(--fontFamily-body-fontFamily)",
-                                "1rem",
-                                "var(--fontWeight-body-fontWeight)",
-                              ),
-                              ...resolveBodyTypographyVariables(
-                                props.entryDescriptionStyles.styles,
-                              ),
-                            },
                           )}
                           {ctaLabel ? (
                             <div>
@@ -539,7 +520,7 @@ export const ResortAndRetreatBlogSectionComponent: PuckComponent<
 
 export const ResortAndRetreatBlogSection: YextComponentConfig<ResortAndRetreatBlogSectionProps> =
   {
-    label: msg("fields.blogSection", "Blog Section"),
+    label: msg("fields.blogSection", "Blog"),
     fields: ResortAndRetreatBlogSectionFields,
     defaultProps: {
       title: createStyledTextDefault(
@@ -570,7 +551,7 @@ export const ResortAndRetreatBlogSection: YextComponentConfig<ResortAndRetreatBl
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatBlogSection",
-  displayName: "Blog Section",
+  displayName: "Blog",
   description: "Blog Section",
   pageSetTypes: ["ENTITY"],
 };

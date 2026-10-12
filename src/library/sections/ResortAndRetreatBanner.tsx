@@ -23,13 +23,16 @@ import {
   toPuckFields,
   useDocument,
 } from "@yext/visual-editor";
-import { isRichTextEmpty, renderRichText } from "../shared/sectionStyles";
+import {
+  isRichTextEmpty,
+  renderRichText,
+  resolveRichTextStyles,
+} from "../shared/sectionStyles";
 
 type ResortAndRetreatBannerProps = {
   data: {
     text: YextEntityField<TranslatableRichText>;
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   styles: {
     textAlignment: "left" | "center" | "right";
@@ -55,11 +58,7 @@ const ResortAndRetreatBannerFields: YextFields<ResortAndRetreatBannerProps> = {
       styles: {
         label: msg("fields.textStyles", "Text Styles"),
         type: "styledText",
-      },
-      fontColor: {
-        label: msg("fields.textColor", "Text Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+        includeColor: true,
       },
     },
   },
@@ -99,12 +98,9 @@ const ResortAndRetreatBannerFields: YextFields<ResortAndRetreatBannerProps> = {
   },
 };
 
-const ResortAndRetreatBannerComponent: PuckComponent<ResortAndRetreatBannerProps> = ({
-  data,
-  styles,
-  section,
-  puck,
-}) => {
+const ResortAndRetreatBannerComponent: PuckComponent<
+  ResortAndRetreatBannerProps
+> = ({ data, styles, section, puck }) => {
   const { i18n } = useTranslation();
   const streamDocument = useDocument();
   const isMappedField =
@@ -130,10 +126,10 @@ const ResortAndRetreatBannerComponent: PuckComponent<ResortAndRetreatBannerProps
           <CircleSlash2 className="h-10 w-10 flex-shrink-0 text-gray-400" />
           <div className="flex flex-col items-start">
             <Body className="font-medium text-gray-500" variant="sm">
-              Section hidden for this page
+              {pt("sectionHiddenForPage", "Section hidden for this page")}
             </Body>
             <Body className="font-normal text-gray-500" variant="sm">
-              The mapped banner field is empty
+              {pt("mappedBannerFieldEmpty", "The mapped banner field is empty")}
             </Body>
           </div>
         </div>
@@ -141,10 +137,10 @@ const ResortAndRetreatBannerComponent: PuckComponent<ResortAndRetreatBannerProps
     );
   }
 
-  const richTextStyleOverrides = {
-    ...data.styles,
-    color: data.fontColor ?? section.backgroundColor.contrastingColor,
-  };
+  const richTextStyleOverrides = resolveRichTextStyles(
+    data.styles,
+    section.backgroundColor.contrastingColor,
+  );
   const resolvedText = resolveComponentData(
     data.text,
     i18n.language,
@@ -181,45 +177,46 @@ const ResortAndRetreatBannerComponent: PuckComponent<ResortAndRetreatBannerProps
 /**
  * Displays a full-width, editor-configurable rich-text banner.
  */
-export const ResortAndRetreatBanner: YextComponentConfig<ResortAndRetreatBannerProps> = {
-  label: msg("fields.banner", "Banner"),
-  fields: toPuckFields<ResortAndRetreatBannerProps>(
-    ResortAndRetreatBannerFields,
-  ),
-  defaultProps: {
-    data: {
-      text: {
-        field: "",
-        constantValue: {
-          defaultValue: getDefaultRTF("Banner Text"),
+export const ResortAndRetreatBanner: YextComponentConfig<ResortAndRetreatBannerProps> =
+  {
+    label: msg("fields.banner", "Banner"),
+    fields: toPuckFields<ResortAndRetreatBannerProps>(
+      ResortAndRetreatBannerFields,
+    ),
+    defaultProps: {
+      data: {
+        text: {
+          field: "",
+          constantValue: {
+            defaultValue: getDefaultRTF("Banner Text"),
+          },
+          constantValueEnabled: true,
         },
-        constantValueEnabled: true,
+        styles: {
+          fontFamily: "default",
+          fontSize: "default",
+          fontWeight: "default",
+          fontStyle: "default",
+          textTransform: "default",
+        },
       },
       styles: {
-        fontFamily: "default",
-        fontSize: "default",
-        fontWeight: "default",
-        fontStyle: "default",
-        textTransform: "default",
+        textAlignment: "center",
+      },
+      section: {
+        backgroundColor: backgroundColors.color1.value,
+        visibleOnLivePage: true,
       },
     },
-    styles: {
-      textAlignment: "center",
-    },
-    section: {
-      backgroundColor: backgroundColors.color1.value,
-      visibleOnLivePage: true,
-    },
-  },
-  render: (props) => (
-    <VisibilityWrapper
-      isEditing={props.puck.isEditing}
-      liveVisibility={props.section.visibleOnLivePage}
-    >
-      <ResortAndRetreatBannerComponent {...props} />
-    </VisibilityWrapper>
-  ),
-};
+    render: (props) => (
+      <VisibilityWrapper
+        isEditing={props.puck.isEditing}
+        liveVisibility={props.section.visibleOnLivePage}
+      >
+        <ResortAndRetreatBannerComponent {...props} />
+      </VisibilityWrapper>
+    ),
+  };
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatBanner",

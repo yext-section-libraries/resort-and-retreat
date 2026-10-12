@@ -40,21 +40,20 @@ import {
   defaultTextStyles,
 } from "../shared/sectionDefaults";
 import {
-  renderResolvedRichText,
-  resolveBodyTypographyVariables,
+  renderRichText,
   resolveBorderRadius,
   resolveStyledTextStyles,
+  resolveTextColor,
+  resolveRichTextStyles,
 } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type SharedTextStyleProps = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type SharedCardAction = Pick<
@@ -115,7 +114,6 @@ const defaultSharedTextStyles: SharedTextStyleProps = {
     fontStyle: "default",
     textTransform: "default",
   },
-  fontColor: undefined,
 };
 
 const defaultIconBorderColor: ThemeColor = {
@@ -138,7 +136,6 @@ const resolveSharedTextStyle = (
   value?: SharedTextStyleProps,
 ): SharedTextStyleProps => ({
   styles: value?.styles ?? defaultSharedTextStyles.styles,
-  fontColor: value?.fontColor ?? defaultSharedTextStyles.fontColor,
 });
 
 const resolveAmenitiesStyles = (
@@ -166,7 +163,6 @@ const resolveAmenityIconImage = (
 const createStyledTextDefault = (defaultValue: string): StyledTextProps => ({
   text: createStringFieldDefault(defaultValue),
   styles: defaultTextStyles,
-  fontColor: undefined,
 });
 
 const createTextCta = (label: string): ComprehensiveCTAValue =>
@@ -345,11 +341,10 @@ const ResortAndRetreatAmenitiesSectionFields: YextFields<ResortAndRetreatAmeniti
           label: msg("fields.text", "Text"),
           filter: { types: ["type.string"] },
         },
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -362,11 +357,10 @@ const ResortAndRetreatAmenitiesSectionFields: YextFields<ResortAndRetreatAmeniti
           label: msg("fields.itemTitle", "Item Title"),
           type: "object",
           objectFields: {
-            styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+            styles: {
+              label: msg("fields.textStyles", "Text Styles"),
+              type: "styledText",
+              includeColor: true,
             },
           },
         },
@@ -374,11 +368,10 @@ const ResortAndRetreatAmenitiesSectionFields: YextFields<ResortAndRetreatAmeniti
           label: msg("fields.itemDescription", "Item Description"),
           type: "object",
           objectFields: {
-            styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+            styles: {
+              label: msg("fields.textStyles", "Text Styles"),
+              type: "styledText",
+              includeColor: true,
             },
           },
         },
@@ -535,11 +528,12 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
   const title =
     resolveComponentData(props.title.text, locale, streamDocument) || "";
   const image = resolveComponentData(props.image.image, locale, streamDocument);
-  const titleColor = getThemeColorCssValue(props.title.fontColor);
+  const titleColor = getThemeColorCssValue(
+    resolveTextColor(props.title.styles),
+  );
   const imageBorderColor = getThemeColorCssValue(props.image.borderColor);
-  const itemTitleColor = getThemeColorCssValue(styles.itemTitle.fontColor);
-  const itemDescriptionColor = getThemeColorCssValue(
-    styles.itemDescription.fontColor,
+  const itemTitleColor = getThemeColorCssValue(
+    resolveTextColor(styles.itemTitle.styles),
   );
   const iconBorderColor = getThemeColorCssValue(styles.iconBorderColor);
   const iconBackgroundColor = getThemeColorCssValue(styles.iconBackgroundColor);
@@ -602,7 +596,6 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
                   className="m-0"
                   style={resolveStyledTextStyles(
                     props.title.styles,
-                    props.title.fontColor,
                     sectionForeground,
                     "var(--fontFamily-h2-fontFamily)",
                     "var(--fontSize-h2-fontSize)",
@@ -715,7 +708,6 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
                               style={{
                                 ...resolveStyledTextStyles(
                                   styles.itemTitle.styles,
-                                  styles.itemTitle.fontColor,
                                   sectionForeground,
                                   "var(--fontFamily-h4-fontFamily)",
                                   "var(--fontSize-h4-fontSize)",
@@ -727,26 +719,15 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
                             >
                               {itemTitle}
                             </h3>
-                            {renderResolvedRichText(
+                            {renderRichText(
                               description,
+                              resolveRichTextStyles(
+                                styles.itemDescription.styles,
+                                props.section.backgroundColor.contrastingColor,
+                              ),
                               themeManagerCn(
                                 "components rtf-theme rtf-wrapper m-0 font-body-fontFamily font-body-fontWeight",
                               ),
-                              {
-                                ...resolveStyledTextStyles(
-                                  styles.itemDescription.styles,
-                                  styles.itemDescription.fontColor,
-                                  sectionForeground,
-                                  "var(--fontFamily-body-fontFamily)",
-                                  "1rem",
-                                  "var(--fontWeight-body-fontWeight)",
-                                ),
-                                ...resolveBodyTypographyVariables(
-                                  styles.itemDescription.styles,
-                                ),
-                                color:
-                                  itemDescriptionColor ?? sectionForeground,
-                              },
                             )}
                             <ComprehensiveCTA
                               value={ctaValue}
@@ -812,7 +793,7 @@ export const ResortAndRetreatAmenitiesSectionComponent: PuckComponent<
 
 export const ResortAndRetreatAmenitiesSection: YextComponentConfig<ResortAndRetreatAmenitiesSectionProps> =
   {
-    label: msg("fields.amenitiesSection", "Amenities Section"),
+    label: msg("fields.amenitiesSection", "Amenities"),
     fields: ResortAndRetreatAmenitiesSectionFields,
     defaultProps: {
       title: createStyledTextDefault("Resort Amenities"),
@@ -849,14 +830,12 @@ export const ResortAndRetreatAmenitiesSection: YextComponentConfig<ResortAndRetr
         },
       },
     },
-    render: (props) => (
-      <ResortAndRetreatAmenitiesSectionComponent {...props} />
-    ),
+    render: (props) => <ResortAndRetreatAmenitiesSectionComponent {...props} />,
   };
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatAmenitiesSection",
-  displayName: "Amenities Section",
+  displayName: "Amenities",
   description: "Amenities Section",
   pageSetTypes: ["ENTITY"],
 };

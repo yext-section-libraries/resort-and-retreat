@@ -32,24 +32,24 @@ import {
 } from "@yext/visual-editor";
 import { getDefaultRTF } from "@yext/visual-editor";
 import { aspectRatioOptions } from "../shared/fieldOptions";
+import { formatRating, getLocalizedCountOptions } from "../shared/localization";
 import { RatingStar as Star } from "../shared/icons";
 import { hasImageSource } from "../shared/imageUtils";
 import {
-  renderResolvedRichText,
+  renderRichText,
   resolveBodyTypographyVariables,
   resolveStyledTextStyles,
+  resolveRichTextStyles,
 } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type StyledRtfProps = {
   text: YextEntityField<TranslatableRichText>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type ImageFieldProps = {
@@ -59,12 +59,8 @@ type ImageFieldProps = {
   styles?: StyledImageValue;
 };
 
-// Audit wiring note: filter.fontColor is a scanner false positive here.
-// Each heading/body fontColor is applied in render, and cta behavior is handled
-// by the shared ComprehensiveCTA runtime below.
-
 export type ResortAndRetreatHeroSectionProps = {
-  availabilityBadge: StyledTextProps;
+  availabilityBadge: StyledTextProps & { backgroundColor?: ThemeColor };
   heading: StyledTextProps;
   subheading: StyledTextProps;
   body: StyledRtfProps;
@@ -112,8 +108,9 @@ const ResortAndRetreatHeroSectionFields: YextFields<ResortAndRetreatHeroSectionP
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
+          includeColor: true,
         },
-        fontColor: {
+        backgroundColor: {
           label: msg("fields.pillColor", "Pill Color"),
           type: "basicSelector",
           options: "SITE_COLOR",
@@ -134,11 +131,7 @@ const ResortAndRetreatHeroSectionFields: YextFields<ResortAndRetreatHeroSectionP
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -156,11 +149,7 @@ const ResortAndRetreatHeroSectionFields: YextFields<ResortAndRetreatHeroSectionP
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -178,11 +167,7 @@ const ResortAndRetreatHeroSectionFields: YextFields<ResortAndRetreatHeroSectionP
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -347,13 +332,12 @@ const HeroSectionContent = ({
   secondaryCtaValue: Partial<ComprehensiveCTAValue>;
   subheading: string;
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const streamBackground = useBackground();
   const sectionForeground =
     getThemeColorCssValue(streamBackground?.contrastingColor) ?? "currentColor";
   const bodyStyles = resolveStyledTextStyles(
     props.body.styles,
-    props.body.fontColor,
     sectionForeground,
     "var(--fontFamily-body-fontFamily), Inter, sans-serif",
     "1rem",
@@ -378,21 +362,15 @@ const HeroSectionContent = ({
             style={{
               ...resolveStyledTextStyles(
                 props.availabilityBadge.styles,
-                props.availabilityBadge.fontColor?.contrastingColor
-                  ? {
-                      selectedColor:
-                        props.availabilityBadge.fontColor.contrastingColor,
-                      contrastingColor:
-                        props.availabilityBadge.fontColor.selectedColor,
-                    }
-                  : undefined,
-                sectionForeground,
+                getThemeColorCssValue(
+                  props.availabilityBadge.backgroundColor?.contrastingColor,
+                ) ?? sectionForeground,
                 "var(--fontFamily-body-fontFamily), Inter, sans-serif",
                 "0.95rem",
                 500,
               ),
               backgroundColor: getThemeColorCssValue(
-                props.availabilityBadge.fontColor?.selectedColor,
+                props.availabilityBadge.backgroundColor?.selectedColor,
               ),
               lineHeight: 1.25,
             }}
@@ -410,7 +388,6 @@ const HeroSectionContent = ({
               className="m-0"
               style={resolveStyledTextStyles(
                 props.subheading.styles,
-                props.subheading.fontColor,
                 sectionForeground,
                 "var(--fontFamily-h3-fontFamily), Georgia, serif",
                 "var(--fontSize-h3-fontSize)",
@@ -430,7 +407,6 @@ const HeroSectionContent = ({
               className="m-0"
               style={resolveStyledTextStyles(
                 props.heading.styles,
-                props.heading.fontColor,
                 sectionForeground,
                 "var(--fontFamily-h1-fontFamily), Georgia, serif",
                 "var(--fontSize-h1-fontSize)",
@@ -446,15 +422,15 @@ const HeroSectionContent = ({
             fieldId={props.body.text.field}
             constantValueEnabled={props.body.text.constantValueEnabled}
           >
-            {renderResolvedRichText(
+            {renderRichText(
               bodyValue,
+              resolveRichTextStyles(
+                props.body.styles,
+                streamBackground?.contrastingColor,
+              ),
               themeManagerCn(
                 "components rtf-theme rtf-wrapper max-w-[720px] text-[0.98rem] leading-6 font-body-fontFamily font-body-fontWeight xl:mx-auto",
               ),
-              {
-                ...bodyStyles,
-                ...bodyTypographyVariables,
-              },
             )}
           </EntityField>
           {reviewCount ? (
@@ -467,7 +443,10 @@ const HeroSectionContent = ({
             >
               <span>
                 {t("ratingInStars", "{{rating}} Stars", {
-                  rating: averageRating?.toFixed(1),
+                  rating:
+                    averageRating === undefined
+                      ? ""
+                      : formatRating(averageRating, i18n.language),
                 })}
               </span>
               <div className="flex items-center gap-1" aria-hidden="true">
@@ -477,6 +456,8 @@ const HeroSectionContent = ({
               </div>
               <span>
                 {t("fromGuestReviews", "from {{count}} guest reviews", {
+                  ...getLocalizedCountOptions(reviewCount, i18n.language),
+                  // Keep count visible to the catalog extractor.
                   count: reviewCount,
                 })}
               </span>
@@ -563,7 +544,7 @@ const HeroSectionContent = ({
 
 export const ResortAndRetreatHeroSection: YextComponentConfig<ResortAndRetreatHeroSectionProps> =
   {
-    label: msg("fields.heroSection", "Hero Section"),
+    label: msg("fields.heroSection", "Hero"),
     fields: ResortAndRetreatHeroSectionFields,
     defaultProps: {
       availabilityBadge: {
@@ -582,7 +563,7 @@ export const ResortAndRetreatHeroSection: YextComponentConfig<ResortAndRetreatHe
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: {
+        backgroundColor: {
           selectedColor: "palette-primary",
           contrastingColor: "palette-primary-contrast",
         },
@@ -603,7 +584,6 @@ export const ResortAndRetreatHeroSection: YextComponentConfig<ResortAndRetreatHe
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       subheading: {
         text: {
@@ -621,7 +601,6 @@ export const ResortAndRetreatHeroSection: YextComponentConfig<ResortAndRetreatHe
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       body: {
         text: {
@@ -641,7 +620,6 @@ export const ResortAndRetreatHeroSection: YextComponentConfig<ResortAndRetreatHe
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       heroImage: {
         image: {
@@ -750,7 +728,7 @@ export const ResortAndRetreatHeroSection: YextComponentConfig<ResortAndRetreatHe
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatHeroSection",
-  displayName: "Hero Section",
+  displayName: "Hero",
   description: "Hero Section",
   pageSetTypes: ["ENTITY"],
 };

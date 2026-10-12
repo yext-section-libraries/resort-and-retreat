@@ -1,6 +1,11 @@
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
+import { useTranslation } from "react-i18next";
+import {
+  calculateDistanceMeters,
+  formatDistanceAway,
+} from "../shared/localization";
 import { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider, Link } from "@yext/pages-components";
 import {
@@ -30,17 +35,18 @@ import {
   VisibilityWrapper,
 } from "@yext/visual-editor";
 import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
-import { resolveStyledTextStyles } from "../shared/sectionStyles";
+import {
+  resolveStyledTextStyles,
+  resolveTextColor,
+} from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type SharedTextStyleProps = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor | undefined;
 };
 
 type Coordinate = {
@@ -60,9 +66,6 @@ type MapFieldProps = {
   zoom?: number;
 };
 
-// Audit wiring note: filter.fontColor is a scanner false positive here.
-// title.fontColor is applied in render and nearby links inherit surface color.
-
 const defaultSharedTextStyles: SharedTextStyleProps = {
   styles: {
     fontFamily: "default",
@@ -71,7 +74,6 @@ const defaultSharedTextStyles: SharedTextStyleProps = {
     fontStyle: "default",
     textTransform: "default",
   },
-  fontColor: undefined,
 };
 
 type StreamDocumentWithCoordinate = {
@@ -101,37 +103,7 @@ const resolveSharedTextStyle = (
   value?: SharedTextStyleProps,
 ): SharedTextStyleProps => ({
   styles: value?.styles ?? defaultSharedTextStyles.styles,
-  fontColor: value?.fontColor,
 });
-
-const calculateDistanceMi = (origin?: Coordinate, destination?: Coordinate) => {
-  if (
-    !origin ||
-    !destination ||
-    origin.latitude === undefined ||
-    origin.longitude === undefined ||
-    destination.latitude === undefined ||
-    destination.longitude === undefined
-  ) {
-    return "";
-  }
-
-  const earthRadiusMi = 3958.8;
-  const toRadians = (value: number) => (value * Math.PI) / 180;
-  const latDelta = toRadians(destination.latitude - origin.latitude);
-  const lngDelta = toRadians(destination.longitude - origin.longitude);
-  const latOne = toRadians(origin.latitude);
-  const latTwo = toRadians(destination.latitude);
-  const a =
-    Math.sin(latDelta / 2) * Math.sin(latDelta / 2) +
-    Math.cos(latOne) *
-      Math.cos(latTwo) *
-      Math.sin(lngDelta / 2) *
-      Math.sin(lngDelta / 2);
-  const distance =
-    2 * earthRadiusMi * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return `${Math.round(distance * 10) / 10} miles away`;
-};
 
 const ResortAndRetreatNearbySectionFields: YextFields<ResortAndRetreatNearbySectionProps> =
   {
@@ -180,11 +152,7 @@ const ResortAndRetreatNearbySectionFields: YextFields<ResortAndRetreatNearbySect
         styles: {
           label: msg("fields.textStyles", "Text Styles"),
           type: "styledText",
-        },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+          includeColor: true,
         },
       },
     },
@@ -199,11 +167,7 @@ const ResortAndRetreatNearbySectionFields: YextFields<ResortAndRetreatNearbySect
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -214,11 +178,7 @@ const ResortAndRetreatNearbySectionFields: YextFields<ResortAndRetreatNearbySect
             styles: {
               label: msg("fields.textStyles", "Text Styles"),
               type: "styledText",
-            },
-            fontColor: {
-              label: msg("fields.fontColor", "Font Color"),
-              type: "basicSelector",
-              options: "SITE_COLOR",
+              includeColor: true,
             },
           },
         },
@@ -262,6 +222,7 @@ const ResortAndRetreatNearbySectionFields: YextFields<ResortAndRetreatNearbySect
 export const ResortAndRetreatNearbySectionComponent: PuckComponent<
   ResortAndRetreatNearbySectionProps
 > = (props) => {
+  const { t, i18n } = useTranslation();
   const streamDocument = useDocument<StreamDocumentWithCoordinate>();
   const locale = streamDocument?.locale ?? "en";
   const title =
@@ -270,7 +231,7 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
     relativePrefixToRoot?: string;
   }>();
   const titleColor =
-    getThemeColorCssValue(props.title.fontColor) ??
+    getThemeColorCssValue(resolveTextColor(props.title.styles)) ??
     "var(--colors-palette-primary)";
   const cardHeaderStyles = resolveSharedTextStyle(props.styles?.cardHeader);
   const cardBodyStyles = resolveSharedTextStyle(props.styles?.cardBody);
@@ -313,6 +274,10 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
         relativePrefixToRoot ?? "",
       );
       const locationCoordinate = locationData.yextDisplayCoordinate;
+      const distanceMeters = calculateDistanceMeters(
+        coordinate,
+        locationCoordinate,
+      );
       const directionsUrl =
         locationCoordinate?.latitude !== undefined &&
         locationCoordinate?.longitude !== undefined
@@ -348,7 +313,6 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
               className="hover:underline"
               style={resolveStyledTextStyles(
                 cardHeaderStyles.styles,
-                cardHeaderStyles.fontColor,
                 "currentColor",
                 "var(--fontFamily-h4-fontFamily)",
                 "var(--fontSize-h4-fontSize)",
@@ -356,14 +320,13 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
                 "var(--textTransform-h4-textTransform)",
               )}
             >
-              {locationData.name || "Nearby Location"}
+              {locationData.name || t("nearbyLocation", "Nearby Location")}
             </Link>
           ) : (
             <h3
               className="m-0"
               style={resolveStyledTextStyles(
                 cardHeaderStyles.styles,
-                cardHeaderStyles.fontColor,
                 "currentColor",
                 "var(--fontFamily-h4-fontFamily)",
                 "var(--fontSize-h4-fontSize)",
@@ -371,7 +334,7 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
                 "var(--textTransform-h4-textTransform)",
               )}
             >
-              {locationData.name || "Nearby Location"}
+              {locationData.name || t("nearbyLocation", "Nearby Location")}
             </h3>
           )}
           {addressParts.length ? (
@@ -379,7 +342,6 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
               className="m-0 leading-6"
               style={resolveStyledTextStyles(
                 cardBodyStyles.styles,
-                cardBodyStyles.fontColor,
                 "currentColor",
                 "var(--fontFamily-body-fontFamily)",
                 "1rem",
@@ -394,7 +356,6 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
               className="m-0 leading-6"
               style={resolveStyledTextStyles(
                 cardBodyStyles.styles,
-                cardBodyStyles.fontColor,
                 "currentColor",
                 "var(--fontFamily-body-fontFamily)",
                 "1rem",
@@ -408,14 +369,15 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
             className="m-0 leading-6"
             style={resolveStyledTextStyles(
               cardBodyStyles.styles,
-              cardBodyStyles.fontColor,
               "currentColor",
               "var(--fontFamily-body-fontFamily)",
               "1rem",
               "var(--fontWeight-body-fontWeight)",
             )}
           >
-            {calculateDistanceMi(coordinate, locationCoordinate)}
+            {distanceMeters === undefined
+              ? ""
+              : formatDistanceAway(distanceMeters, i18n.language, t)}
           </p>
           <div>
             <Link
@@ -427,14 +389,13 @@ export const ResortAndRetreatNearbySectionComponent: PuckComponent<
               className="underline underline-offset-4 hover:no-underline"
               style={resolveStyledTextStyles(
                 cardBodyStyles.styles,
-                cardBodyStyles.fontColor,
                 "currentColor",
                 "var(--fontFamily-body-fontFamily)",
                 "1rem",
                 500,
               )}
             >
-              Get Directions
+              {t("getDirections", "Get Directions")}
             </Link>
           </div>
         </Background>
@@ -537,7 +498,6 @@ const NearbySectionContent = ({
             className="m-0 text-left xl:text-center"
             style={resolveStyledTextStyles(
               props.title.styles,
-              props.title.fontColor,
               sectionForeground,
               "var(--fontFamily-h2-fontFamily)",
               "var(--fontSize-h2-fontSize)",
@@ -581,7 +541,7 @@ const NearbySectionContent = ({
 
 export const ResortAndRetreatNearbySection: YextComponentConfig<ResortAndRetreatNearbySectionProps> =
   {
-    label: msg("fields.nearbySection", "Nearby Section"),
+    label: msg("fields.nearbySection", "Nearby"),
     fields: ResortAndRetreatNearbySectionFields,
     defaultProps: {
       title: {
@@ -600,7 +560,6 @@ export const ResortAndRetreatNearbySection: YextComponentConfig<ResortAndRetreat
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       styles: {
         cardHeader: defaultSharedTextStyles,
@@ -638,14 +597,12 @@ export const ResortAndRetreatNearbySection: YextComponentConfig<ResortAndRetreat
         },
       },
     },
-    render: (props) => (
-      <ResortAndRetreatNearbySectionComponent {...props} />
-    ),
+    render: (props) => <ResortAndRetreatNearbySectionComponent {...props} />,
   };
 
 export const config: SectionConfig = {
   id: "ResortAndRetreatNearbySection",
-  displayName: "Nearby Section",
+  displayName: "Nearby",
   description: "Nearby Section",
   pageSetTypes: ["ENTITY"],
 };
