@@ -15,3 +15,4 @@ functions/functionMetadata.json
 .idea/*
 .DS_Store
 stream.config.*
+stream.config.ts
