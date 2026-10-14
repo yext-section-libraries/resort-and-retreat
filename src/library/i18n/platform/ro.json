@@ -449,5 +449,6 @@
   "temporarilyClosed": "Închis temporar",
   "useOurLocatorToFindALocationNearYou": "Folosiți localizatorul nostru pentru a găsi o locație lângă dvs.",
   "visitPage": "Vizitați pagina",
-  "visitPageForName": "Vizitați pagina pentru {{name}}"
+  "visitPageForName": "Vizitați pagina pentru {{name}}",
+  "mapRequiresWebGL": "Harta nu este disponibilă deoarece WebGL nu este disponibil."
 }

@@ -435,5 +435,6 @@
   "temporarilyClosed": "一時休業",
   "useOurLocatorToFindALocationNearYou": "ロケーターを使用して、お近くの場所を見つけてください",
   "visitPage": "ページにアクセスしてください",
-  "visitPageForName": "{{name}} のページにアクセスしてください"
+  "visitPageForName": "{{name}} のページにアクセスしてください",
+  "mapRequiresWebGL": "WebGL が利用できないため、地図を表示できません。"
 }

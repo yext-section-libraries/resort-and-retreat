@@ -444,5 +444,6 @@
   "temporarilyClosed": "Īslaicīgi slēgts",
   "useOurLocatorToFindALocationNearYou": "Izmantojiet mūsu lokatoru, lai atrastu atrašanās vietu netālu no jums",
   "visitPage": "Apmeklējuma lapa",
-  "visitPageForName": "Apmeklējiet lapu {{name}}"
+  "visitPageForName": "Apmeklējiet lapu {{name}}",
+  "mapRequiresWebGL": "Karte nav pieejama, jo WebGL nav pieejams."
 }

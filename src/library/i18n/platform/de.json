@@ -442,5 +442,6 @@
   "temporarilyClosed": "Vorübergehend geschlossen",
   "useOurLocatorToFindALocationNearYou": "Nutze unseren Locator, um einen Ort in deine Nähe zu finden",
   "visitPage": "Standortseite aufrufen",
-  "visitPageForName": "Besuchsseite für {{name}}"
+  "visitPageForName": "Besuchsseite für {{name}}",
+  "mapRequiresWebGL": "Die Karte ist nicht verfügbar, weil WebGL nicht verfügbar ist."
 }

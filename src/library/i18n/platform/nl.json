@@ -442,5 +442,6 @@
   "temporarilyClosed": "Tijdelijk gesloten",
   "useOurLocatorToFindALocationNearYou": "Gebruik onze locator om een ​​locatie bij u in de buurt te vinden",
   "visitPage": "Bezoek pagina",
-  "visitPageForName": "Bezoek pagina voor {{name}}"
+  "visitPageForName": "Bezoek pagina voor {{name}}",
+  "mapRequiresWebGL": "De kaart is niet beschikbaar omdat WebGL niet beschikbaar is."
 }

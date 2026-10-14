@@ -449,5 +449,6 @@
   "temporarilyClosed": "Temporaneamente chiuso",
   "useOurLocatorToFindALocationNearYou": "Usa il nostro localizzatore per trovare una posizione vicino a te",
   "visitPage": "Visita pagina",
-  "visitPageForName": "Visita la pagina per {{name}}"
+  "visitPageForName": "Visita la pagina per {{name}}",
+  "mapRequiresWebGL": "La mappa non è disponibile perché WebGL non è disponibile."
 }

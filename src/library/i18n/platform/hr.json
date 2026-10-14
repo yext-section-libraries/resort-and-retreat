@@ -449,5 +449,6 @@
   "temporarilyClosed": "Privremeno zatvoreno",
   "useOurLocatorToFindALocationNearYou": "Upotrijebite naš lokator da biste pronašli lokaciju u vašoj blizini",
   "visitPage": "Stranica za posjetu",
-  "visitPageForName": "Posjetite stranicu za {{name}}"
+  "visitPageForName": "Posjetite stranicu za {{name}}",
+  "mapRequiresWebGL": "Karta nije dostupna jer WebGL nije dostupan."
 }
