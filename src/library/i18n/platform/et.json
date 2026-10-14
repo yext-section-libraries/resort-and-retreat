@@ -442,5 +442,6 @@
   "temporarilyClosed": "Ajutiselt suletud",
   "useOurLocatorToFindALocationNearYou": "Kasutage meie asukoha leidmiseks meie asukohta",
   "visitPage": "Külastage leht",
-  "visitPageForName": "Külastage lehte {{name}} jaoks"
+  "visitPageForName": "Külastage lehte {{name}} jaoks",
+  "mapRequiresWebGL": "Kaart pole saadaval, sest WebGL pole saadaval."
 }

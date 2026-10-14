@@ -442,5 +442,6 @@
   "temporarilyClosed": "Tilapäisesti suljettu",
   "useOurLocatorToFindALocationNearYou": "Löydä lähelläsi sijaintipaikka",
   "visitPage": "Vieraile sivussa",
-  "visitPageForName": "Siirry sivulle {{name}}"
+  "visitPageForName": "Siirry sivulle {{name}}",
+  "mapRequiresWebGL": "Kartta ei ole käytettävissä, koska WebGL ei ole käytettävissä."
 }

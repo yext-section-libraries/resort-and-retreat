@@ -442,5 +442,6 @@
   "temporarilyClosed": "Midlertidig stengt",
   "useOurLocatorToFindALocationNearYou": "Bruk vår lokaliserer for å finne et sted i nærheten",
   "visitPage": "Besøk side",
-  "visitPageForName": "Besøk siden for {{name}}"
+  "visitPageForName": "Besøk siden for {{name}}",
+  "mapRequiresWebGL": "Kartet er ikke tilgjengelig fordi WebGL ikke er tilgjengelig."
 }

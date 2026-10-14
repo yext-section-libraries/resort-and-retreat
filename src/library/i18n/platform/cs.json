@@ -456,5 +456,6 @@
   "temporarilyClosed": "Dočasně zavřeno",
   "useOurLocatorToFindALocationNearYou": "Pomocí našeho lokátoru najdete místo ve vašem okolí",
   "visitPage": "Navštivte stránku",
-  "visitPageForName": "Navštivte stránku pro {{name}}"
+  "visitPageForName": "Navštivte stránku pro {{name}}",
+  "mapRequiresWebGL": "Mapa není dostupná, protože WebGL není k dispozici."
 }
