@@ -185,6 +185,7 @@
     "logoLeftInlineNav": "Logo Left Inline Nav",
     "longitude": "Longitude",
     "map": "Map",
+    "mapStartingZoom": "Map Starting Zoom",
     "mapboxMapStyle": "Mapbox Map Style",
     "mapStyle": "Map Style",
     "monday": "Monday",

@@ -186,6 +186,7 @@
     "logoLeftInlineNav": "Logotip lijevo s navigacijom u retku",
     "longitude": "Dužina",
     "map": "Karta",
+    "mapStartingZoom": "Početna razina zumiranja karte",
     "mapboxMapStyle": "Stil karte Mapbox",
     "mapStyle": "Stil karte",
     "monday": "ponedjeljak",

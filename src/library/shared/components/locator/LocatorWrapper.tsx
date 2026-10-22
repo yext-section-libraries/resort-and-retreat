@@ -163,6 +163,7 @@ const LocatorInternal = ({
   locationStyles,
   filters: { openNowButton, showDistanceOptions, accentColor, facetFields },
   mapStartingLocation,
+  mapStartingZoom,
   resultCard: resultCardConfigs,
   distanceDisplay,
   pageHeading,
@@ -572,6 +573,7 @@ const LocatorInternal = ({
   const mapProps = React.useMemo(
     () => ({
       mapStyle,
+      mapStartingZoom,
       centerCoords,
       onDragHandler: handleDrag,
       scrollToResult,
@@ -582,6 +584,7 @@ const LocatorInternal = ({
       centerCoords,
       handleDrag,
       mapStyle,
+      mapStartingZoom,
       markerOptionsOverride,
       scrollToResult,
       locationStylesConfig,

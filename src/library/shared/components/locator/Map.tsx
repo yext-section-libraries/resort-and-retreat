@@ -147,6 +147,7 @@ const LocatorTestMap = () => {
 
 interface MapProps {
   mapStyle?: string;
+  mapStartingZoom?: number;
   centerCoords?: Coordinate;
   onDragHandler?: OnDragHandler;
   scrollToResult?: (result: Result<Location> | undefined) => void;
@@ -156,6 +157,7 @@ interface MapProps {
 
 export const LocatorMap: React.FC<MapProps> = ({
   mapStyle,
+  mapStartingZoom,
   centerCoords,
   onDragHandler,
   scrollToResult,
@@ -182,10 +184,11 @@ export const LocatorMap: React.FC<MapProps> = ({
   const mapboxOptions = React.useMemo(
     () => ({
       center: centerCoords,
+      ...(mapStartingZoom != null ? { zoom: mapStartingZoom } : {}),
       fitBoundsOptions: { padding: mapPadding },
       ...(mapStyle ? { style: mapStyle } : {}),
     }),
-    [centerCoords, mapPadding, mapStyle]
+    [centerCoords, mapPadding, mapStyle, mapStartingZoom]
   );
   const PinComponent = React.useMemo(
     () =>

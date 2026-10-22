@@ -185,6 +185,7 @@
     "logoLeftInlineNav": "Logotyp till vänster med infogad navigering",
     "longitude": "Longitud",
     "map": "Karta",
+    "mapStartingZoom": "Kartans startzoom",
     "mapboxMapStyle": "Mapbox-kartstil",
     "mapStyle": "Kartstil",
     "monday": "Måndag",

@@ -187,6 +187,7 @@
     "logoLeftInlineNav": "Logo vľavo a navigácia v riadku",
     "longitude": "Dĺžka",
     "map": "Mapa",
+    "mapStartingZoom": "Počiatočné priblíženie mapy",
     "mapboxMapStyle": "Štýl mapy Mapbox",
     "mapStyle": "Mapový štýl",
     "monday": "Pondelok",
