@@ -186,6 +186,7 @@
     "logoLeftInlineNav": "Logotipo a la izquierda con navegación en línea",
     "longitude": "Longitud",
     "map": "Mapa",
+    "mapStartingZoom": "Nivel de zoom inicial del mapa",
     "mapboxMapStyle": "Estilo de mapa de Mapbox",
     "mapStyle": "Estilo de mapa",
     "monday": "Lunes",

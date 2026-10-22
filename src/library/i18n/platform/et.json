@@ -185,6 +185,7 @@
     "logoLeftInlineNav": "Logo vasakul ja navigeerimine samal real",
     "longitude": "Pikkuskraad",
     "map": "Kaart",
+    "mapStartingZoom": "Kaardi algne suumitase",
     "mapboxMapStyle": "Mapboxi kaardistiil",
     "mapStyle": "Kaardistiil",
     "monday": "Esmaspäev",

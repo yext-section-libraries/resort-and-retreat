@@ -185,6 +185,7 @@
     "logoLeftInlineNav": "Logo til venstre med indlejret navigation",
     "longitude": "Længde",
     "map": "Kort",
+    "mapStartingZoom": "Kortets startzoom",
     "mapboxMapStyle": "Mapbox-kortstil",
     "mapStyle": "Kortstil",
     "monday": "mandag",

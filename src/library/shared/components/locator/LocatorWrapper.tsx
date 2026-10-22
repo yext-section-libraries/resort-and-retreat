@@ -163,6 +163,7 @@ const LocatorInternal = ({
   locationStyles,
   filters: { openNowButton, showDistanceOptions, accentColor, facetFields },
   mapStartingLocation,
+  mapStartingZoom,
   resultCard: resultCardConfigs,
   distanceDisplay,
   pageHeading,
@@ -411,6 +412,16 @@ const LocatorInternal = ({
   );
   const [searchState, setSearchState] =
     React.useState<SearchState>("not started");
+  const initialSearchComplete = React.useRef(false);
+  const [hasSearchedAgain, setHasSearchedAgain] = React.useState(false);
+
+  React.useEffect(() => {
+    if (searchLoading === false) {
+      initialSearchComplete.current = true;
+    } else if (searchLoading && initialSearchComplete.current) {
+      setHasSearchedAgain(true);
+    }
+  }, [searchLoading]);
 
   React.useEffect(() => {
     if (!searchLoading && searchState === "loading") {
@@ -572,6 +583,8 @@ const LocatorInternal = ({
   const mapProps = React.useMemo(
     () => ({
       mapStyle,
+      mapStartingZoom,
+      preserveStartingView: !hasSearchedAgain && urlNavigationVersion === 0,
       centerCoords,
       onDragHandler: handleDrag,
       scrollToResult,
@@ -582,6 +595,9 @@ const LocatorInternal = ({
       centerCoords,
       handleDrag,
       mapStyle,
+      mapStartingZoom,
+      hasSearchedAgain,
+      urlNavigationVersion,
       markerOptionsOverride,
       scrollToResult,
       locationStylesConfig,

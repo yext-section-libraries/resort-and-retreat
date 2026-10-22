@@ -187,6 +187,7 @@
     "logoLeftInlineNav": "Logotipas kairėje ir naršymas vienoje eilutėje",
     "longitude": "Ilguma",
     "map": "Žemėlapis",
+    "mapStartingZoom": "Pradinis žemėlapio mastelio lygis",
     "mapboxMapStyle": "„Mapbox“ žemėlapio stilius",
     "mapStyle": "Žemėlapio stilius",
     "monday": "Pirmadienis",

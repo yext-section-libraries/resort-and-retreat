@@ -96,6 +96,9 @@ export interface LocatorProps {
     facetFields?: MultiSelectorValue<string>;
   };
 
+  /** The zoom for the initial results. Later searches auto-fit to their pins. */
+  mapStartingZoom?: number;
+
   /**
    * The starting location for the map.
    */
@@ -327,6 +330,12 @@ const locatorFields: YextFields<LocatorProps> = {
         ),
       } as any, // TODO(SUMO-8378): remove 'as any' when puck fixes objectFields typing
     },
+  },
+  mapStartingZoom: {
+    type: "number",
+    label: msg("fields.mapStartingZoom", "Map Starting Zoom"),
+    min: 0,
+    max: 22,
   },
   mapStartingLocation: {
     type: "object",

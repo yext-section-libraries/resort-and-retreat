@@ -147,6 +147,8 @@ const LocatorTestMap = () => {
 
 interface MapProps {
   mapStyle?: string;
+  mapStartingZoom?: number;
+  preserveStartingView?: boolean;
   centerCoords?: Coordinate;
   onDragHandler?: OnDragHandler;
   scrollToResult?: (result: Result<Location> | undefined) => void;
@@ -156,6 +158,8 @@ interface MapProps {
 
 export const LocatorMap: React.FC<MapProps> = ({
   mapStyle,
+  mapStartingZoom,
+  preserveStartingView = true,
   centerCoords,
   onDragHandler,
   scrollToResult,
@@ -182,10 +186,29 @@ export const LocatorMap: React.FC<MapProps> = ({
   const mapboxOptions = React.useMemo(
     () => ({
       center: centerCoords,
-      fitBoundsOptions: { padding: mapPadding },
+      ...(mapStartingZoom != null ? { zoom: mapStartingZoom } : {}),
+      fitBoundsOptions: {
+        padding: mapPadding,
+        // Search UI forwards these native camera options to Mapbox's fitBounds.
+        // Keep the initial results from replacing an explicitly configured view.
+        ...(preserveStartingView && mapStartingZoom != null
+          ? {
+              zoom: mapStartingZoom,
+              ...(centerCoords
+                ? {
+                    center: [centerCoords.longitude, centerCoords.latitude] as [
+                      number,
+                      number,
+                    ],
+                  }
+                : {}),
+              duration: 0,
+            }
+          : {}),
+      },
       ...(mapStyle ? { style: mapStyle } : {}),
     }),
-    [centerCoords, mapPadding, mapStyle]
+    [centerCoords, mapPadding, mapStyle, mapStartingZoom, preserveStartingView]
   );
   const PinComponent = React.useMemo(
     () =>

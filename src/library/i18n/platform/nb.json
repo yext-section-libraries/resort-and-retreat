@@ -185,6 +185,7 @@
     "logoLeftInlineNav": "Logo til venstre med innebygd navigasjon",
     "longitude": "Lengdegrad",
     "map": "Kart",
+    "mapStartingZoom": "Kartets startzoom",
     "mapboxMapStyle": "Mapbox-kartstil",
     "mapStyle": "Kartstil",
     "monday": "mandag",

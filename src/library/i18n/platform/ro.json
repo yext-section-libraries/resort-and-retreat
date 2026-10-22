@@ -186,6 +186,7 @@
     "logoLeftInlineNav": "Siglă în stânga cu navigare în linie",
     "longitude": "Longitudine",
     "map": "Hartă",
+    "mapStartingZoom": "Nivelul inițial de zoom al hărții",
     "mapboxMapStyle": "Stil hartă Mapbox",
     "mapStyle": "Stilul hărții",
     "monday": "luni",

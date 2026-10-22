@@ -184,6 +184,7 @@
     "logoLeftInlineNav": "左ロゴとインラインナビゲーション",
     "longitude": "経度",
     "map": "地図",
+    "mapStartingZoom": "地図の初期ズームレベル",
     "mapboxMapStyle": "Mapbox マップスタイル",
     "mapStyle": "マップスタイル",
     "monday": "月曜日",
