@@ -6,7 +6,12 @@ import { DirectoryCard as SharedComponent3 } from "./components/directory/Direct
 import { Address as SharedComponent4 } from "./components/contentBlocks/Address";
 import { HoursStatus as SharedComponent5 } from "./components/contentBlocks/HoursStatus";
 import { Phone as SharedComponent6 } from "./components/contentBlocks/Phone";
-import { directoryRootConfig, locatorRootConfig } from "./roots";
+import {
+  directoryRootConfig,
+  entityRootConfig,
+  locatorRootConfig,
+  rootAllowedComponents,
+} from "./roots";
 
 /** Hidden internal Puck components referenced by saved Directory layout data. */
 export const sharedComponentMetadata = [
@@ -36,24 +41,20 @@ export const sharedComponentConfigs: Record<
 export const sharedRootConfigs: Partial<
   Record<string, NonNullable<Config["root"]>>
 > = {
+  ENTITY: entityRootConfig,
   DIRECTORY: directoryRootConfig,
   LOCATOR: locatorRootConfig,
 };
 
-export const sharedRootPageSetTypes = ["DIRECTORY", "LOCATOR"] as const;
+export const sharedRootPageSetTypes = [
+  "ENTITY",
+  "DIRECTORY",
+  "LOCATOR",
+] as const;
 
 export const sharedRootAllowedComponentIds: Partial<Record<string, string[]>> =
   {
-    DIRECTORY: [
-      "MainContent",
-      "CustomCodeSection",
-      "ResortAndRetreatHeader",
-      "ResortAndRetreatFooter",
-    ],
-    LOCATOR: [
-      "MainContent",
-      "CustomCodeSection",
-      "ResortAndRetreatHeader",
-      "ResortAndRetreatFooter",
-    ],
+    ENTITY: rootAllowedComponents,
+    DIRECTORY: rootAllowedComponents,
+    LOCATOR: rootAllowedComponents,
   };
