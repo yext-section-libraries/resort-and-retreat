@@ -170,6 +170,9 @@ export interface LocatorResultCardProps {
     /** Whether to show the "Get Directions" link */
     showGetDirectionsLink: boolean;
 
+    /** Whether to open the Get Directions link in a new tab. Defaults to false. */
+    openInNewTab?: boolean;
+
     /** Whether the address block is visible in live mode */
     liveVisibility: boolean;
   };
@@ -296,6 +299,7 @@ export const DEFAULT_LOCATOR_RESULT_CARD_PROPS: LocatorResultCardProps = {
     showRegion: true,
     showCountry: false,
     showGetDirectionsLink: true,
+    openInNewTab: false,
     liveVisibility: true,
   },
   phone: {
@@ -604,6 +608,14 @@ export const LocatorResultCardFields: YextObjectField<LocatorResultCardProps> =
               "fields.showGetDirectionsLink",
               "Show Get Directions Link"
             ),
+            type: "radio",
+            options: [
+              { label: msg("fields.options.yes", "Yes"), value: true },
+              { label: msg("fields.options.no", "No"), value: false },
+            ],
+          },
+          openInNewTab: {
+            label: msg("fields.openInNewTab", "Open in new tab"),
             type: "radio",
             options: [
               { label: msg("fields.options.yes", "Yes"), value: true },
@@ -1029,6 +1041,8 @@ export const LocatorResultCard = React.memo(
                           props.address.showGetDirectionsLink && (
                             <a
                               href={getDirectionsLink}
+                              target={props.address.openInNewTab ? "_blank" : undefined}
+                              rel={props.address.openInNewTab ? "noopener noreferrer" : undefined}
                               onClick={handleGetDirectionsClick}
                               aria-label={t("getDirectionsForLocation", {
                                 address: location.address.line1,
