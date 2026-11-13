@@ -76,6 +76,7 @@
     "analytics": "Analytics",
     "answer": "Svar",
     "aspectRatio": "Aspektforhold",
+    "autoSearchOnMapMove": "Søk automatisk på kartbevegelse",
     "availabilityBadge": "Tilgjengelighetsmerke",
     "averageRatingText": "Average Vurderingstekst",
     "backgroundColor": "Bakgrunnsfarge",

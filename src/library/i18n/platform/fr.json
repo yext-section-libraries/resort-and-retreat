@@ -77,6 +77,7 @@
     "analytics": "Analytique",
     "answer": "Réponse",
     "aspectRatio": "Rapport d'aspect",
+    "autoSearchOnMapMove": "Recherche automatique sur le mouvement de la carte",
     "availabilityBadge": "Badge de disponibilité",
     "averageRatingText": "Average Texte de la note",
     "backgroundColor": "Couleur de fond",
