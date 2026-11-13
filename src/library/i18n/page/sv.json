@@ -43,6 +43,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} Plats within {{distance}} {{unit}} of {{name}}",
   "logo": "Logotyp",
   "mapRequiresOptIn": "Denna karta kan endast visas om cookies är aktiverade",
+  "mapRequiresWebGL": "Kartan är inte tillgänglig eftersom WebGL inte är tillgängligt.",
   "mile_one": "mil",
   "mile_other": "mil",
   "mile_zero": "mil",

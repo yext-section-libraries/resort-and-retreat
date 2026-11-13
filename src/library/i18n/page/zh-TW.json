@@ -37,6 +37,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} location within {{distance}} {{unit}} of {{name}}",
   "logo": "標識",
   "mapRequiresOptIn": "該地圖僅在啟用cookies的情況下才能顯示",
+  "mapRequiresWebGL": "由於 WebGL 無法使用，無法顯示地圖。",
   "mile_other": "英里",
   "mile_zero": "英里",
   "nearbyLocation": "附近地點",

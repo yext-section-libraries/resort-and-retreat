@@ -43,6 +43,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} Konum within {{distance}} {{unit}} of {{name}}",
   "logo": "Logo",
   "mapRequiresOptIn": "Bu harita yalnızca çerezler etkinse görüntülenebilir",
+  "mapRequiresWebGL": "WebGL kullanılamadığı için harita kullanılamıyor.",
   "mile_one": "mil",
   "mile_other": "mil",
   "mile_zero": "mil",
