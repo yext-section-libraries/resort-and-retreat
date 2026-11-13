@@ -75,6 +75,7 @@
     "analytics": "分析",
     "answer": "回答",
     "aspectRatio": "アスペクト比",
+    "autoSearchOnMapMove": "地図移動時に自動検索",
     "availabilityBadge": "空き状況バッジ",
     "averageRatingText": "Average 評価テキスト",
     "backgroundColor": "背景色",

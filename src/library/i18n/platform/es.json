@@ -77,6 +77,7 @@
     "analytics": "Analítica",
     "answer": "Respuesta",
     "aspectRatio": "Relación de aspecto",
+    "autoSearchOnMapMove": "Buscar automáticamente en el movimiento del mapa",
     "availabilityBadge": "Insignia de disponibilidad",
     "averageRatingText": "Average Texto de calificación",
     "backgroundColor": "Color de fondo",

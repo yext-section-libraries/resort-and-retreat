@@ -76,6 +76,7 @@
     "analytics": "Analytiikka",
     "answer": "Vastaus",
     "aspectRatio": "Kuvasuhde",
+    "autoSearchOnMapMove": "Hae automaattisesti kartan liikkeestä",
     "availabilityBadge": "Saatavuusmerkki",
     "averageRatingText": "Average Arvosteluteksti",
     "backgroundColor": "Taustaväri",

@@ -76,6 +76,7 @@
     "analytics": "Analytics",
     "answer": "Antwort",
     "aspectRatio": "Seitenverhältnis",
+    "autoSearchOnMapMove": "Automatische Suche nach Kartenbewegung",
     "availabilityBadge": "Verfügbarkeits-Badge",
     "averageRatingText": "Average Bewertungstext",
     "backgroundColor": "Hintergrundfarbe",
