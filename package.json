@@ -23,7 +23,7 @@
     "node": "^22.18.0"
   },
   "dependencies": {
-    "@puckeditor/core": "0.22.2",
+    "@puckeditor/core": "0.24.0",
     "@radix-ui/react-dialog": "^1.1.13",
     "@yext/search-headless-react": "^2.7.1",
     "@yext/search-ui-react": "^3.4.1",
