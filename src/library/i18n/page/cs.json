@@ -55,6 +55,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} umístění within {{distance}} {{unit}} of {{name}}",
   "logo": "Logo",
   "mapRequiresOptIn": "Tuto mapu lze zobrazit pouze v případě, že jsou povoleny soubory cookie",
+  "mapRequiresWebGL": "Mapa není dostupná, protože WebGL není k dispozici.",
   "mile_few": "míle",
   "mile_many": "míle",
   "mile_one": "míle",

@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { YextAutoField } from "@yext/visual-editor/section-library-support";
 import { useDocument } from "@yext/visual-editor/section-library-support";
 import { useTemplateMetadata } from "@yext/visual-editor/section-library-support";
-import { getPreferredDistanceUnit } from "@yext/visual-editor/section-library-support";
 import { getLocatorEntityTypeSourceMap } from "@yext/visual-editor/section-library-support";
 import { LocatorConfig } from "@yext/visual-editor/section-library-support";
 import { Body } from "@yext/visual-editor/section-library-support";
@@ -17,6 +16,8 @@ import {
   LocatorResultCardFields,
   LocatorResultCardProps,
 } from "./LocatorResultCard";
+
+import { MILE, type DistanceUnit } from "./distanceUnits";
 
 export const RESULTS_LIMIT = 20;
 export type SearchState = "not started" | "loading" | "complete";
@@ -42,10 +43,10 @@ const getLocatorConfigFromPageSet = (pageSet?: string): LocatorConfig => {
 
 export const translateDistanceUnit = (
   t: (key: string, options?: Record<string, unknown>) => string,
-  unit: "mile" | "kilometer",
+  unit: DistanceUnit,
   count: number
 ) => {
-  if (unit === "mile") {
+  if (unit === MILE) {
     return t("mile", { count, defaultValue: "mile" });
   }
 
@@ -198,6 +199,7 @@ interface ResultsCountSummaryProps {
   searchState: SearchState;
   resultCount: number;
   selectedDistanceOption: number | null;
+  distanceUnit: DistanceUnit;
   filterDisplayName?: string;
 }
 
@@ -205,9 +207,10 @@ export const ResultsCountSummary = ({
   searchState,
   resultCount,
   selectedDistanceOption,
+  distanceUnit,
   filterDisplayName,
 }: ResultsCountSummaryProps) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   if (resultCount === 0) {
     if (searchState === "not started") {
@@ -234,7 +237,6 @@ export const ResultsCountSummary = ({
 
   if (filterDisplayName) {
     if (selectedDistanceOption) {
-      const unit = getPreferredDistanceUnit(i18n.language);
       return (
         <Body>
           {t("locationsWithinDistanceOf", {
@@ -242,7 +244,7 @@ export const ResultsCountSummary = ({
               "{{count}} location within {{distance}} {{unit}} of {{name}}",
             count: resultCount,
             distance: selectedDistanceOption,
-            unit: translateDistanceUnit(t, unit, selectedDistanceOption),
+            unit: translateDistanceUnit(t, distanceUnit, selectedDistanceOption),
             name: filterDisplayName,
           })}
         </Body>
