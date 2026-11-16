@@ -73,6 +73,8 @@ import {
 } from "@yext/visual-editor/section-library-support";
 import { themeManagerCn } from "@yext/visual-editor/section-library-support";
 
+import { MILE, type DistanceUnit } from "./distanceUnits";
+
 export interface LocatorResultCardProps {
   /** The entity type this result card applies to. */
   entityType: LocatorEntityType;
@@ -840,12 +842,14 @@ export const LocatorResultCard = React.memo(
     result,
     resultCardProps: props,
     distanceDisplay = "distanceFromUser",
+    distanceUnit,
     searchLocationName,
     isSelected,
   }: {
     result: CardProps<Location>["result"];
     resultCardProps: LocatorResultCardProps;
     distanceDisplay?: DistanceDisplayOption;
+    distanceUnit?: DistanceUnit;
     searchLocationName?: string;
     isSelected?: boolean;
   }): React.JSX.Element => {
@@ -863,8 +867,8 @@ export const LocatorResultCard = React.memo(
           ? result.distanceFromFilter
           : undefined;
 
-    const unit = getPreferredDistanceUnit(i18n.language);
-    const unitLabel = unit === "mile" ? "mi" : "km"; // Abbreviations do not need translation
+    const unit = distanceUnit ?? getPreferredDistanceUnit(i18n.language);
+    const unitLabel = unit === MILE ? "mi" : "km"; // Abbreviations do not need translation
     const displayDistance =
       typeof distance === "number"
         ? `${formatDistance(fromMeters(distance, unit), i18n.language)} ${unitLabel}`

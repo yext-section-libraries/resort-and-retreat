@@ -55,6 +55,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} lokalizacja within {{distance}} {{unit}} of {{name}}",
   "logo": "Logo",
   "mapRequiresOptIn": "Ta mapa może być wyświetlana tylko wtedy, gdy włączona jest obsługa plików cookie",
+  "mapRequiresWebGL": "Mapa jest niedostępna, ponieważ WebGL jest niedostępny.",
   "mile_few": "mila",
   "mile_many": "mila",
   "mile_one": "mila",

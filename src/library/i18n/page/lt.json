@@ -55,6 +55,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} vieta within {{distance}} {{unit}} of {{name}}",
   "logo": "Logotipas",
   "mapRequiresOptIn": "Šis žemėlapis gali būti rodomas tik įjungus slapukus",
+  "mapRequiresWebGL": "Žemėlapis nepasiekiamas, nes WebGL nepasiekiamas.",
   "mile_few": "mylia",
   "mile_many": "mylia",
   "mile_one": "mylia",

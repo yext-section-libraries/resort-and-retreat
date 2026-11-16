@@ -28,6 +28,12 @@ import {
   DistanceDisplayOption,
   LocatorResultCardProps,
 } from "./LocatorResultCard";
+import {
+  BROWSER_LANGUAGE,
+  KILOMETER,
+  MILE,
+  type DefaultDistanceUnit,
+} from "./distanceUnits";
 import { ResultCardPropsField } from "./Results";
 import { LocatorWrapper } from "./LocatorWrapper";
 import {
@@ -135,6 +141,10 @@ export interface LocatorProps {
     /** Props to customize the locator result card component. */
     props: LocatorResultCardProps;
   }>;
+  /** Whether visitors can switch the locator between miles and kilometers. */
+  showDistanceUnitToggle?: boolean;
+  /** Unit used before a visitor selects one. Defaults to the page language. */
+  defaultDistanceUnit?: DefaultDistanceUnit;
   /** Controls which distance value to display on each locator result card. */
   distanceDisplay?: DistanceDisplayOption;
 }
@@ -405,9 +415,11 @@ const locatorFields: YextFields<LocatorProps> = {
       props: DEFAULT_LOCATOR_RESULT_CARD_PROPS,
     },
   },
+  // Keep saved distance display values working without exposing the old selector.
   distanceDisplay: {
     type: "basicSelector",
     label: msg("fields.distanceDisplay", "Distance Display"),
+    visible: false,
     options: [
       {
         label: msg("fields.options.distanceFromUser", "Distance from User"),
@@ -424,6 +436,31 @@ const locatorFields: YextFields<LocatorProps> = {
       {
         label: msg("fields.options.hidden", "Hidden"),
         value: "hidden",
+      },
+    ],
+  },
+  showDistanceUnitToggle: {
+    generation: { required: false },
+    type: "radio",
+    label: msg("fields.showDistanceUnitToggle", "Show Distance Unit Toggle"),
+    options: [
+      { label: msg("fields.options.yes", "Yes"), value: true },
+      { label: msg("fields.options.no", "No"), value: false },
+    ],
+  },
+  defaultDistanceUnit: {
+    generation: { required: false },
+    type: "basicSelector",
+    label: msg("fields.defaultDistanceUnit", "Default Distance Unit"),
+    options: [
+      { label: msg("fields.options.miles", "Miles (mi)"), value: MILE },
+      {
+        label: msg("fields.options.kilometers", "Kilometers (km)"),
+        value: KILOMETER,
+      },
+      {
+        label: msg("fields.options.browserLanguage", "Browser language"),
+        value: BROWSER_LANGUAGE,
       },
     ],
   },
@@ -476,6 +513,8 @@ export const LocatorComponent: YextComponentConfig<LocatorProps> = {
       title: { defaultValue: DEFAULT_TITLE },
     },
     distanceDisplay: DEFAULT_DISTANCE_DISPLAY,
+    showDistanceUnitToggle: false,
+    defaultDistanceUnit: BROWSER_LANGUAGE,
   },
   label: msg("components.locator", "Locator"),
   /**
@@ -546,6 +585,10 @@ export const LocatorComponent: YextComponentConfig<LocatorProps> = {
         };
       });
       data = setDeep(data, "props.resultCard", newResultCards);
+    }
+
+    if (data.props.defaultDistanceUnit === undefined) {
+      data = setDeep(data, "props.defaultDistanceUnit", BROWSER_LANGUAGE);
     }
 
     return data;

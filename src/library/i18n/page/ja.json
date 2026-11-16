@@ -37,6 +37,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} location within {{distance}} {{unit}} of {{name}}",
   "logo": "ロゴ",
   "mapRequiresOptIn": "この地図は Cookie が有効になっている場合にのみ表示できます",
+  "mapRequiresWebGL": "WebGL が利用できないため、地図を表示できません。",
   "mile_other": "マイル",
   "mile_zero": "マイル",
   "nearbyLocation": "近くの店舗",

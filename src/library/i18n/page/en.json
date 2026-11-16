@@ -43,6 +43,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} location within {{distance}} {{unit}} of {{name}}",
   "logo": "Logo",
   "mapRequiresOptIn": "This map can only be displayed if cookies are enabled",
+  "mapRequiresWebGL": "The map is unavailable because WebGL is unavailable.",
   "mile_one": "mile",
   "mile_other": "miles",
   "mile_zero": "miles",

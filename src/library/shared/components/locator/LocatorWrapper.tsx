@@ -38,7 +38,7 @@ import { resolveLocalizedAssetImage } from "@yext/visual-editor/section-library-
 import {
   getPreferredDistanceUnit,
   toMeters,
-  toMiles,
+  fromMeters,
 } from "@yext/visual-editor/section-library-support";
 import { resolveComponentData } from "@yext/visual-editor/section-library-support";
 import {
@@ -61,6 +61,12 @@ import {
   LocatorResultCard,
 } from "./LocatorResultCard";
 import type { LocatorProps } from "./Locator";
+import {
+  BROWSER_LANGUAGE,
+  DISTANCE_UNITS,
+  MILE,
+  type DistanceUnit,
+} from "./distanceUnits";
 import {
   COUNTRY_CODE_FIELD,
   FilterModal,
@@ -86,6 +92,7 @@ import {
   ResultsCountSummary,
   RESULTS_LIMIT,
   SearchState,
+  translateDistanceUnit,
 } from "./Results";
 
 export const INITIAL_LOCATION_KEY = "initialLocation";
@@ -167,6 +174,8 @@ const LocatorInternal = ({
   mapStartingZoom,
   resultCard: resultCardConfigs,
   distanceDisplay,
+  showDistanceUnitToggle,
+  defaultDistanceUnit,
   pageHeading,
 }: LocatorProps) => {
   // Adds unified [enable|disable]YextAnalytics to the window for both Pages and Search
@@ -194,6 +203,15 @@ const LocatorInternal = ({
   const windowWidth = useWindowWidth(previewWindow);
   const { isMobile } = getViewport(windowWidth);
   const preferredUnit = getPreferredDistanceUnit(i18n.language);
+  const [distanceUnitOverride, setDistanceUnitOverride] =
+    React.useState<DistanceUnit | null>(null);
+  const configuredDistanceUnit =
+    defaultDistanceUnit && defaultDistanceUnit !== BROWSER_LANGUAGE
+      ? defaultDistanceUnit
+      : preferredUnit;
+  const distanceUnit = distanceUnitOverride ?? configuredDistanceUnit;
+  React.useEffect(() => setDistanceUnitOverride(null), [defaultDistanceUnit]);
+
   const streamDocument = useDocument();
   const entityTypeSourceMap = getLocatorEntityTypeSourceMap(streamDocument);
   const entityTypes =
@@ -334,7 +352,7 @@ const LocatorInternal = ({
     cancelMapSearch();
     setShowSearchAreaButton(false);
     const { latitude, longitude, accuracy } = position.coords;
-    const radius = Math.max(accuracy, toMeters(DEFAULT_RADIUS, preferredUnit));
+    const radius = Math.max(accuracy, toMeters(DEFAULT_RADIUS, distanceUnit));
     const locationFilter = buildNearLocationFilterFromCoords(
       latitude,
       longitude,
@@ -459,8 +477,8 @@ const LocatorInternal = ({
       return;
     }
 
-    setSelectedDistanceMeters(toMeters(selectedDistanceOption, preferredUnit));
-  }, [preferredUnit, selectedDistanceOption]);
+    setSelectedDistanceMeters(toMeters(selectedDistanceOption, distanceUnit));
+  }, [distanceUnit, selectedDistanceOption]);
 
   const resultsRef = React.useRef<Array<HTMLDivElement | null>>([]);
   const resultsContainer = React.useRef<HTMLDivElement>(null);
@@ -548,12 +566,14 @@ const LocatorInternal = ({
           resultCardProps={resultCardProps}
           isSelected={result.result.index === selectedResultIndex}
           distanceDisplay={distanceDisplay}
+          distanceUnit={distanceUnit}
           searchLocationName={filterDisplayName}
         />
       );
     },
     [
       distanceDisplay,
+      distanceUnit,
       filterDisplayName,
       getResultCardProps,
       selectedResultIndex,
@@ -643,7 +663,7 @@ const LocatorInternal = ({
       const radius =
         showDistanceOptions && selectedDistanceMeters
           ? selectedDistanceMeters
-          : toMeters(DEFAULT_RADIUS, preferredUnit);
+          : toMeters(DEFAULT_RADIUS, distanceUnit);
       // default location filter to configured starting location or NYC
       let initialLocationFilter = buildNearLocationFilterFromCoords(
         initialMapCenter.latitude,
@@ -902,7 +922,7 @@ const LocatorInternal = ({
 
   const handleDistanceClick = (
     distance: number,
-    distanceUnit: "mile" | "kilometer"
+    distanceUnit: DistanceUnit
   ) => {
     const existingFilters = searchFilters.static || [];
     let updatedFilters: SelectableStaticFilter[];
@@ -913,7 +933,7 @@ const LocatorInternal = ({
       // revert to API radius (or default if none was found) if user clicks the same distance again
       updatedFilters = updateRadiusInNearFiltersOnLocationField(
         existingFilters,
-        apiFilterRadius.current ?? toMeters(DEFAULT_RADIUS, preferredUnit)
+        apiFilterRadius.current ?? toMeters(DEFAULT_RADIUS, distanceUnit)
       );
     } else {
       setSelectedDistanceOption(distance);
@@ -927,12 +947,29 @@ const LocatorInternal = ({
     executeSearch(searchActions);
   };
 
+  const handleDistanceUnitChange = (nextUnit: DistanceUnit) => {
+    if (nextUnit === distanceUnit) return;
+    setDistanceUnitOverride(nextUnit);
+
+    if (selectedDistanceOption !== null) {
+      const radius = toMeters(selectedDistanceOption, nextUnit);
+      const updatedFilters = updateRadiusInNearFiltersOnLocationField(
+        searchFilters.static || [],
+        radius
+      );
+      searchActions.setStaticFilters(updatedFilters);
+      searchActions.setOffset(0);
+      executeSearch(searchActions);
+      setSearchState("loading");
+    }
+  };
+
   const handleClearFiltersClick = () => {
     const existingFilters = searchFilters.static || [];
     // revert to API radius (or default if none was found)
     const partiallyUpdatedFilters = updateRadiusInNearFiltersOnLocationField(
       existingFilters,
-      apiFilterRadius.current ?? toMeters(DEFAULT_RADIUS, preferredUnit)
+      apiFilterRadius.current ?? toMeters(DEFAULT_RADIUS, distanceUnit)
     );
     const updatedFilters = deselectOpenNowFilters(partiallyUpdatedFilters);
 
@@ -1042,11 +1079,36 @@ const LocatorInternal = ({
               geolocationProps={{
                 handleClick: handleCurrentLocationClick,
                 radius:
-                  preferredUnit === "mile"
-                    ? DEFAULT_RADIUS
-                    : toMiles(DEFAULT_RADIUS), // this component uses miles, not meters
+                  fromMeters(toMeters(DEFAULT_RADIUS, distanceUnit), "mile"),
               }}
             />
+            {showDistanceUnitToggle && (
+              <div className="flex items-center justify-end gap-3 font-body-fontFamily text-body-sm-fontSize">
+                <span>{t("distance", "Distance")}</span>
+                <div
+                  role="group"
+                  aria-label={t("distance", "Distance")}
+                  className="inline-flex rounded-md border border-gray-300 overflow-hidden"
+                >
+                  {DISTANCE_UNITS.map((unit) => (
+                    <button
+                      key={unit}
+                      type="button"
+                      aria-label={translateDistanceUnit(t, unit, 2)}
+                      aria-pressed={distanceUnit === unit}
+                      onClick={() => handleDistanceUnitChange(unit)}
+                      className={`px-3 py-1 font-bold ${
+                        distanceUnit === unit
+                          ? "bg-palette-primary text-palette-primary-contrast"
+                          : "bg-white text-palette-primary-dark"
+                      }`}
+                    >
+                      {unit === MILE ? "mi" : "km"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <div className="relative flex-1 flex flex-col min-h-0">
             <div className="px-8 py-4 text-body-fontSize border-y border-gray-300 inline-block">
@@ -1058,6 +1120,7 @@ const LocatorInternal = ({
                   searchState={searchState}
                   resultCount={resultCount}
                   selectedDistanceOption={selectedDistanceOption}
+                  distanceUnit={distanceUnit}
                   filterDisplayName={filterDisplayName}
                 />
                 {hasFilterModalToggle && (
@@ -1132,6 +1195,7 @@ const LocatorInternal = ({
               handleOpenNowClick={handleOpenNowClick}
               showDistanceOptions={showDistanceOptions}
               selectedDistanceOption={selectedDistanceOption}
+              distanceUnit={distanceUnit}
               handleDistanceClick={handleDistanceClick}
               handleClearFiltersClick={handleClearFiltersClick}
               accentColorCssValue={filterAccentColorCssVariable}

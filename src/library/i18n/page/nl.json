@@ -43,6 +43,7 @@
   "locationsWithinDistanceOf_zero": "{{count}} locatie within {{distance}} {{unit}} of {{name}}",
   "logo": "Logo",
   "mapRequiresOptIn": "Deze kaart kan alleen worden weergegeven als cookies zijn ingeschakeld",
+  "mapRequiresWebGL": "De kaart is niet beschikbaar omdat WebGL niet beschikbaar is.",
   "mile_one": "mijl",
   "mile_other": "mijlen",
   "mile_zero": "mijl",
