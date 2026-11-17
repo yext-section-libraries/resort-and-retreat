@@ -8,6 +8,7 @@ import {
 import { Result } from "@yext/search-headless-react";
 import mapboxgl from "mapbox-gl";
 import React from "react";
+import { createRoot, type Root } from "react-dom/client";
 import { useTranslation } from "react-i18next";
 import { ImageField } from "@yext/visual-editor/section-library-support";
 import { useDocument } from "@yext/visual-editor/section-library-support";
@@ -149,6 +150,7 @@ interface MapProps {
   mapStyle?: string;
   mapStartingZoom?: number;
   preserveStartingView?: boolean;
+  preserveMapView?: React.MutableRefObject<boolean>;
   centerCoords?: Coordinate;
   onDragHandler?: OnDragHandler;
   scrollToResult?: (result: Result<Location> | undefined) => void;
@@ -160,6 +162,7 @@ export const LocatorMap: React.FC<MapProps> = ({
   mapStyle,
   mapStartingZoom,
   preserveStartingView = true,
+  preserveMapView,
   centerCoords,
   onDragHandler,
   scrollToResult,
@@ -210,17 +213,74 @@ export const LocatorMap: React.FC<MapProps> = ({
     }),
     [centerCoords, mapPadding, mapStyle, mapStartingZoom, preserveStartingView]
   );
-  const PinComponent = React.useMemo(
-    () =>
-      function PinComponent<T>(pinProps: PinComponentProps<T>) {
-        return (
-          <LocatorMapPin
-            {...pinProps}
-            locationStyleConfig={locationStyleConfig}
-          />
-        );
-      },
-    [locationStyleConfig]
+  const markerRoots = React.useRef(new Map<HTMLElement, Root>());
+  const restoreCamera = React.useRef<(() => void) | null>(null);
+
+  /**
+   * 1. Guard this map's camera before Search UI fits the new markers.
+   * 2. Render each pin and remove its React root when its marker is removed.
+   */
+  const renderPin = React.useCallback(
+    (
+      pinProps: PinComponentProps<Location> & { container: HTMLElement }
+    ): void => {
+      if (!restoreCamera.current) {
+        const nativeMap = pinProps.mapbox.getNativeInstance() as mapboxgl.Map;
+        const fitBounds = nativeMap.fitBounds;
+        const flyTo = nativeMap.flyTo;
+        nativeMap.fitBounds = (
+          ...args: Parameters<mapboxgl.Map["fitBounds"]>
+        ): mapboxgl.Map =>
+          preserveMapView?.current
+            ? nativeMap
+            : fitBounds.apply(nativeMap, args);
+        nativeMap.flyTo = (
+          ...args: Parameters<mapboxgl.Map["flyTo"]>
+        ): mapboxgl.Map =>
+          preserveMapView?.current ? nativeMap : flyTo.apply(nativeMap, args);
+
+        const observer = new MutationObserver((): void => {
+          for (const [container, root] of markerRoots.current) {
+            if (!nativeMap.getContainer().contains(container)) {
+              markerRoots.current.delete(container);
+              queueMicrotask((): void => root.unmount());
+            }
+          }
+        });
+        observer.observe(nativeMap.getContainer(), {
+          childList: true,
+          subtree: true,
+        });
+        restoreCamera.current = (): void => {
+          observer.disconnect();
+          nativeMap.fitBounds = fitBounds;
+          nativeMap.flyTo = flyTo;
+        };
+      }
+      let root = markerRoots.current.get(pinProps.container);
+      if (!root) {
+        root = createRoot(pinProps.container);
+        markerRoots.current.set(pinProps.container, root);
+      }
+      root.render(
+        <LocatorMapPin
+          {...pinProps}
+          locationStyleConfig={locationStyleConfig}
+        />
+      );
+    },
+    [locationStyleConfig, preserveMapView]
+  );
+  React.useEffect(
+    () => (): void => {
+      restoreCamera.current?.();
+      restoreCamera.current = null;
+      for (const root of markerRoots.current.values()) {
+        queueMicrotask((): void => root.unmount());
+      }
+      markerRoots.current.clear();
+    },
+    []
   );
 
   const [mapboxSupported, setMapboxSupported] = React.useState<boolean | undefined>(undefined);
@@ -258,7 +318,7 @@ export const LocatorMap: React.FC<MapProps> = ({
       mapboxAccessToken={mapboxApiKey || ""}
       mapboxOptions={mapboxOptions}
       onDrag={onDragHandler}
-      PinComponent={PinComponent}
+      renderPin={renderPin}
       iframeWindow={iframe?.contentWindow ?? undefined}
       allowUpdates={!!iframe?.contentDocument}
       onPinClick={scrollToResult}
